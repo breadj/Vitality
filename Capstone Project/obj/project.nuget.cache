@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "pFUMTUcz1373nogzjYoT3C4LPMbZYh1QOqakRrjosYPPbw+VwEfw1Yq12YIqCjW2jt8EVXs9RQD+dAz3fA8/gQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Capstone Project.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\asus\\.nuget\\packages\\monogame.content.builder.task\\3.8.1.303\\monogame.content.builder.task.3.8.1.303.nupkg.sha512",
+    "C:\\Users\\asus\\.nuget\\packages\\monogame.framework.desktopgl\\3.8.1.303\\monogame.framework.desktopgl.3.8.1.303.nupkg.sha512"
+  ],
+  "logs": []
+}
