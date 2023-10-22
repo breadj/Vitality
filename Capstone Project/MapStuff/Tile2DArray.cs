@@ -20,7 +20,7 @@ namespace Capstone_Project.MapStuff
             this.tiles = tiles;
         }
 
-        public Tile this[int x, int y] => tiles[x * y];
+        public Tile this[int x, int y] => tiles[x + (y * Width)];
         public Tile this[int i] => tiles[i];
         public Point FindPosition(int index) => new(Width % index, Height / index);
         public int Length => Width * Height;
