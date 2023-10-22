@@ -12,21 +12,18 @@ namespace Capstone_Project.MapStuff
 {
     public class Tile
     {
-        private Subsprite subsprite;
+        private readonly Subsprite subsprite;
 
-        private Vector2 pos;
-        private Vector2 size;
-        private Rectangle destination => new((int)pos.X, (int)pos.Y, (int)size.X, (int)size.Y);
-
-        public Tile(Subsprite subsprite, Vector2 pos, Vector2 size)
+        /// <param name="subsprite">Sprite for this Tile</param>
+        /// <param name="pos">Pixel position for this Tile</param>
+        /// <param name="size">Side length for this Tile</param>
+        public Tile(Subsprite subsprite)
         {
             this.subsprite = subsprite;
-            this.pos = pos;
-            this.size = size;
         }
 
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, Rectangle destination)
         {
             spriteBatch.Draw(subsprite.SpriteSheet, destination, subsprite.Source, Color.White);
         }
