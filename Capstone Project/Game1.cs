@@ -1,12 +1,18 @@
 ﻿using Capstone_Project.MapStuff;
+using Capstone_Project.GameObjects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Capstone_Project.Input;
+using Capstone_Project.Globals;
 
 namespace Capstone_Project
 {
     public class Game1 : Game
     {
+        public static Texture2D BLANK = null;
+        public static Controls Controls = new();
+
         private GraphicsDeviceManager graphics;
         private RenderTarget2D renderTarget;
         private SpriteBatch spriteBatch;
@@ -14,6 +20,8 @@ namespace Capstone_Project
         private Texture2D tileTexture;
 
         private TileMap tileMap;
+
+        private Player player;
 
         public Game1()
         {
@@ -45,12 +53,17 @@ namespace Capstone_Project
 
             // TODO: use this.Content to load your game content here
 
+            BLANK = new Texture2D(graphics.GraphicsDevice, 1, 1);
+
+            Texture2D playerSprite = Content.Load<Texture2D>("Player");
+            Subsprite playerSubsprite = new Subsprite(ref playerSprite, playerSprite.Bounds);
+            player = new Player(playerSubsprite, new(0));
             tileTexture = Content.Load<Texture2D>("MissingTexture");
 
             // for testing purposes
             Tile[] tiles = new Tile[135];
             for (int i = 0; i < tiles.Length; i++)
-                tiles[i] = new Tile(new Globals.Subsprite(ref tileTexture, new Rectangle(0, 0, 8, 8)));
+                tiles[i] = new Tile(new Subsprite(ref tileTexture, new Rectangle(0, 0, 8, 8)));
 
             tileMap = new TileMap(15, 9, 128, tiles);
         }
@@ -62,6 +75,10 @@ namespace Capstone_Project
 
             // TODO: Add your update logic here
 
+            Controls.Update(gameTime);
+
+            player.Update(gameTime);
+
             base.Update(gameTime);
         }
 
@@ -70,11 +87,13 @@ namespace Capstone_Project
             GraphicsDevice.SetRenderTarget(renderTarget);
             GraphicsDevice.Clear(Color.CornflowerBlue); // default colour, change to black later
 
-            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.PointClamp);
+            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp);
 
             // TODO: Add your drawing code here
 
             tileMap.Draw(spriteBatch);
+
+            player.Draw(spriteBatch);
 
             spriteBatch.End();
             GraphicsDevice.SetRenderTarget(null);

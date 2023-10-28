@@ -24,3 +24,4 @@ C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-
 C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\obj\Debug\net6.0\Capstone Project.genruntimeconfig.cache
 C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\obj\Debug\net6.0\ref\Capstone Project.dll
 C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\bin\Debug\net6.0\Content\MissingTexture.xnb
+C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\bin\Debug\net6.0\Content\Player.xnb
