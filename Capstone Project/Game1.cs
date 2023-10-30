@@ -20,8 +20,9 @@ namespace Capstone_Project
         private Texture2D tileTexture;
 
         private TileMap tileMap;
-
         private Player player;
+
+        public Camera Camera;
 
         public Game1()
         {
@@ -66,6 +67,8 @@ namespace Capstone_Project
                 tiles[i] = new Tile(new Subsprite(ref tileTexture, new Rectangle(0, 0, 8, 8)));
 
             tileMap = new TileMap(15, 9, 128, tiles);
+
+            Camera = new Camera(new(0, 0, 1920, 1080), player.Position);
         }
 
         protected override void Update(GameTime gameTime)
@@ -79,6 +82,8 @@ namespace Capstone_Project
 
             player.Update(gameTime);
 
+            Camera.Update(player.Position);
+
             base.Update(gameTime);
         }
 
@@ -87,17 +92,15 @@ namespace Capstone_Project
             GraphicsDevice.SetRenderTarget(renderTarget);
             GraphicsDevice.Clear(Color.CornflowerBlue); // default colour, change to black later
 
-            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp);
+            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp, null, RasterizerState.CullCounterClockwise, null, Camera.TransformMatrix);
 
             // TODO: Add your drawing code here
 
             tileMap.Draw(spriteBatch);
-
             player.Draw(spriteBatch);
 
             spriteBatch.End();
             GraphicsDevice.SetRenderTarget(null);
-
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
             spriteBatch.Draw(renderTarget, new Rectangle(0, 0, 1920, 1080), Color.White);
