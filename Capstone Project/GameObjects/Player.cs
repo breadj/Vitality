@@ -3,6 +3,7 @@ using static Capstone_Project.Globals.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using Capstone_Project.GameObjects.Hitboxes;
 
 namespace Capstone_Project.GameObjects
 {
@@ -13,7 +14,7 @@ namespace Capstone_Project.GameObjects
 
         public Player(Subsprite subsprite, Vector2 position, Vector2? direction = null) : base(subsprite, position, direction)
         {
-
+            Hitbox = new CircleHitbox(position, new(size));
         }
 
         public override void Update(GameTime gameTime)
