@@ -1,10 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Capstone_Project.MapStuff
 {
@@ -13,7 +10,8 @@ namespace Capstone_Project.MapStuff
         private Tile2DArray tileMap;
 
         private readonly int width;
-        private readonly int height;
+        public readonly int height;
+        public Rectangle MapBounds => new Rectangle(0, 0, width, height);
         // width and height of the Tiles (tiles are square so w and h are the same value)
         private readonly int tileSize;
 
@@ -21,15 +19,17 @@ namespace Capstone_Project.MapStuff
         /// <param name="width">The width in number of tiles the map is</param>
         /// <param name="height">The height in number of tiles the map is</param>
         /// <param name="tileSize">Side length of the tiles</param>
-        public TileMap(int width, int height, int tileSize, Tile[] tiles)
+        public TileMap(int tileWidth, int tileHeight, int tileSize, Tile[] tiles)
         {
             this.tileSize = tileSize;
 
-            if (tiles.Length != width * height)
+            if (tiles.Length != tileWidth * tileHeight)
                 throw new Exception("Number of Tiles and size of the TileMap are different");
 
-            tileMap = new Tile2DArray(width, height, tiles);
+            tileMap = new Tile2DArray(tileWidth, tileHeight, tiles);
             
+            width = tileWidth * tileSize;
+            height = tileHeight * tileSize;
         }
 
         public void Draw(SpriteBatch spriteBatch)

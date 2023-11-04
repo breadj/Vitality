@@ -10,11 +10,11 @@ namespace Capstone_Project.GameObjects
     public class Player : Entity
     {
         private float speed = 200;      // in px/s
-        private int size = 100;         // in px
+        private new int size = 100;     // in pxW
 
         public Player(Subsprite subsprite, Vector2 position, Vector2? direction = null) : base(subsprite, position, direction)
         {
-            Hitbox = new CircleHitbox(position, new(size));
+            Hitbox = new CircleHitbox(this, new(size));
         }
 
         public override void Update(GameTime gameTime)

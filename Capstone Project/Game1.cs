@@ -1,10 +1,12 @@
-﻿using Capstone_Project.MapStuff;
+﻿using static Capstone_Project.Globals.Utility;
+using Capstone_Project.MapStuff;
 using Capstone_Project.GameObjects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Capstone_Project.Input;
 using Capstone_Project.Globals;
+using System.Collections.Generic;
 
 namespace Capstone_Project
 {
@@ -21,6 +23,7 @@ namespace Capstone_Project
 
         private TileMap tileMap;
         private Player player;
+        private List<Entity> entities;
 
         public Camera Camera;
 
@@ -45,6 +48,8 @@ namespace Capstone_Project
             // initialises renderTarget for drawing to
             renderTarget = new RenderTarget2D(graphics.GraphicsDevice, 1920, 1080);
 
+            entities = new List<Entity>();
+
             base.Initialize();
         }
 
@@ -58,7 +63,6 @@ namespace Capstone_Project
 
             Texture2D playerSprite = Content.Load<Texture2D>("Player");
             Subsprite playerSubsprite = new Subsprite(ref playerSprite, playerSprite.Bounds);
-            player = new Player(playerSubsprite, new(0));
             tileTexture = Content.Load<Texture2D>("MissingTexture");
 
             // for testing purposes
@@ -67,8 +71,11 @@ namespace Capstone_Project
                 tiles[i] = new Tile(new Subsprite(ref tileTexture, new Rectangle(0, 0, 8, 8)));
 
             tileMap = new TileMap(15, 9, 128, tiles);
+            player = new Player(playerSubsprite, PtoV(tileMap.MapBounds.Center));
 
             Camera = new Camera(new(0, 0, 1920, 1080), player.Position);
+
+            entities.Add(player);
         }
 
         protected override void Update(GameTime gameTime)
@@ -78,9 +85,18 @@ namespace Capstone_Project
 
             // TODO: Add your update logic here
 
+            
             Controls.Update(gameTime);
 
-            player.Update(gameTime);
+            #region Collision and Entity.Update() Logic
+            // proper collision here
+            foreach (Entity entity in entities)
+            {
+                entity.Update(gameTime);
+
+                entity.ClampToMap(tileMap.MapBounds);   // this always comes at the end
+            }
+            #endregion
 
             Camera.Update(player.Position);
 
@@ -98,6 +114,7 @@ namespace Capstone_Project
 
             tileMap.Draw(spriteBatch);
             player.Draw(spriteBatch);
+            spriteBatch.Draw(BLANK, new(0, 0, 50, 50), BLANK.Bounds, Color.Blue, 0f, PtoV(BLANK.Bounds.Size) / 2f, SpriteEffects.None, 1f);
 
             spriteBatch.End();
             GraphicsDevice.SetRenderTarget(null);

@@ -1,16 +1,19 @@
-﻿using Microsoft.Xna.Framework;
+﻿using static Capstone_Project.Globals.Utility;
+using Microsoft.Xna.Framework;
 
 namespace Capstone_Project.GameObjects.Hitboxes
 {
     public class CircleHitbox : IHitbox
     {
-        public Vector2 Centre { get; init; }
+        public Entity entity { get; init; }
+        public Vector2 Centre { get { return entity.Position; } }
         public Vector2 Size { get; init; }
+        public Rectangle BoundingBox { get { return new Rectangle(VtoP(Centre - (Size / 2f)), VtoP(Size)); } }
         public float Radius { get; init; }
 
-        public CircleHitbox(Vector2 centre, Vector2 size)
+        public CircleHitbox(Entity entity, Vector2 size)
         {
-            Centre = centre;
+            this.entity = entity;
             Size = size;
             Radius = size.X / 2f;
         }

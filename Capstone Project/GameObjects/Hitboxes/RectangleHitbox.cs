@@ -6,14 +6,14 @@ namespace Capstone_Project.GameObjects.Hitboxes
 {
     public class RectangleHitbox : IHitbox
     {
-        public Vector2 Centre { get; init; }
+        public Entity entity { get; init; }
+        public Vector2 Centre { get { return entity.Position; } }
         public Vector2 Size { get; init; }
-        public Rectangle BoundingBox { get; private set; }
+        public Rectangle BoundingBox { get { return new Rectangle(VtoP(Centre - (Size / 2f)), VtoP(Size)); } }
 
-        public RectangleHitbox(Vector2 centre, Vector2 size)
+        public RectangleHitbox(Entity entity, Vector2 size)
         {
-            BoundingBox = new Rectangle(VtoP(Centre - Size / 2f), VtoP(Size));
-            Centre = centre;
+            this.entity = entity;
             Size = size;
         }
 
