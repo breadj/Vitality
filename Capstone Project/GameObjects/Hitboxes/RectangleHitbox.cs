@@ -28,7 +28,7 @@ namespace Capstone_Project.GameObjects.Hitboxes
 
         private bool Intersects(CircleHitbox circle)
         {
-            /// please see Explanations > RectangleHitbox.Intersects(CircleHitbox) to really understand wtf is happening here
+            /*/// please see Explanations > RectangleHitbox.Intersects(CircleHitbox) to really understand wtf is happening here
 
             // if the centre of the circle is inside the BoundingBox of the rectangle
             if (BoundingBox.Contains(circle.Centre))
@@ -45,7 +45,16 @@ namespace Capstone_Project.GameObjects.Hitboxes
             if (!smallerlocalRectangle.Contains(localCircleCentre))
                 return true;
 
-            return (localCircleCentre - PtoV(smallerlocalRectangle.Location)).Length() < circle.Radius;
+            return (localCircleCentre - PtoV(smallerlocalRectangle.Location)).Length() < circle.Radius;*/
+
+            Vector2 localCirclePos = new Vector2(MathF.Abs(circle.Centre.X - Centre.X), MathF.Abs(circle.Centre.Y - Centre.Y));
+
+            // testing if any of the corners of the Rectangle are in the Circle
+            if (((Size / 2) - localCirclePos).LengthSquared() < circle.Radius * circle.Radius)
+                return true;
+
+            // check if the local Circle's cardinal points are within the bounds of the local Rectangle
+            return localCirclePos.X < Size.X / 2 && localCirclePos.Y < Size.Y / 2;
         }
     }
 }

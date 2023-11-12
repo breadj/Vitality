@@ -43,17 +43,16 @@ namespace Capstone_Project.GameObjects
 
             Vector2 offset = Vector2.Zero;
 
-            // I'm not too sure why I need to add the '+1/-1', but if I don't,
-            // the Entity will be able to go 1px past the edges in the top-left and will be stopped 1px before reaching the edge at the bottom-right
+            // I'm not too sure why I need to add the '+1', but if I don't, the Entity will be able to go 1px past the edges in the top-left
             if (mapBounds.Left > Hitbox.BoundingBox.Left)
                 offset.X = mapBounds.Left - Hitbox.BoundingBox.Left + 1;
             else if (mapBounds.Right < Hitbox.BoundingBox.Right)
-                offset.X = mapBounds.Right - Hitbox.BoundingBox.Right - 1;
+                offset.X = mapBounds.Right - Hitbox.BoundingBox.Right;
 
             if (mapBounds.Top > Hitbox.BoundingBox.Top)
                 offset.Y = mapBounds.Top - Hitbox.BoundingBox.Top + 1;
             else if (mapBounds.Bottom < Hitbox.BoundingBox.Bottom)
-                offset.Y = mapBounds.Bottom - Hitbox.BoundingBox.Bottom - 1;
+                offset.Y = mapBounds.Bottom - Hitbox.BoundingBox.Bottom;
 
             Position += offset;
         }
