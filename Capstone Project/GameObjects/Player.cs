@@ -1,9 +1,9 @@
-﻿using Capstone_Project.Globals;
-using static Capstone_Project.Globals.Utility;
+﻿using static Capstone_Project.Globals.Utility;
+using Capstone_Project.GameObjects.Hitboxes;
+using Capstone_Project.SpriteTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using Capstone_Project.GameObjects.Hitboxes;
 
 namespace Capstone_Project.GameObjects
 {
@@ -34,7 +34,7 @@ namespace Capstone_Project.GameObjects
 
         private Vector2 Movement(List<Input.Action> relevantActions)
         {
-            Vector2 tempDirection = new Vector2(0);
+            Vector2 tempDirection = Vector2.Zero;
             foreach (var action in relevantActions)
             {
                 switch (action.Name)

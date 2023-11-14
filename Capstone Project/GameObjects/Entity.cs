@@ -1,5 +1,5 @@
 ﻿using Capstone_Project.GameObjects.Hitboxes;
-using Capstone_Project.Globals;
+using Capstone_Project.SpriteTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -21,6 +21,7 @@ namespace Capstone_Project.GameObjects
             this.subsprite = subsprite;
             Position = position;
             Direction = direction ?? Vector2.Zero;
+            Velocity = Vector2.Zero;
         }
 
         public virtual void Update(GameTime gameTime)

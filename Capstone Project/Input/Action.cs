@@ -27,30 +27,30 @@ namespace Capstone_Project.Input
             {
                 switch (actionType)
                 {
-                    case ActionType.OnPress:
-                        if (curState.IsKeyDown(Keys[i]))
-                            return true;
-                        break;
-                     case ActionType.OnRelease:
-                         if (curState.IsKeyUp(Keys[i]))
-                            return true;
-                        break;
-                     case ActionType.OnHold:
-                        if (prevState.IsKeyUp(Keys[i]) && curState.IsKeyDown(Keys[i]))      // if the player has only just started holding, start the timer from 0
-                            holdTimer = 0;
-                        if (curState.IsKeyDown(Keys[i]))
-                            holdTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-                        if (holdTimer >= holdTime)
-                            return true;
-                        break;
-                    case ActionType.OnFirstPress:
-                        if (curState.IsKeyDown(Keys[i]) && prevState.IsKeyUp(Keys[i]))
-                            return true;
-                        break;
-                    case ActionType.OnFirstRelease:
-                        if (curState.IsKeyUp(Keys[i]) && prevState.IsKeyDown(Keys[i]))
-                            return true;
-                        break;
+                case ActionType.OnPress:
+                    if (curState.IsKeyDown(Keys[i]))
+                        return true;
+                    break;
+                case ActionType.OnRelease:
+                    if (curState.IsKeyUp(Keys[i]))
+                        return true;
+                    break;
+                case ActionType.OnHold:
+                    if (prevState.IsKeyUp(Keys[i]) && curState.IsKeyDown(Keys[i]))      // if the player has only just started holding, start the timer from 0
+                        holdTimer = 0;
+                    if (curState.IsKeyDown(Keys[i]))
+                        holdTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    if (holdTimer >= holdTime)
+                        return true;
+                    break;
+                case ActionType.OnFirstPress:
+                    if (curState.IsKeyDown(Keys[i]) && prevState.IsKeyUp(Keys[i]))
+                        return true;
+                    break;
+                case ActionType.OnFirstRelease:
+                    if (curState.IsKeyUp(Keys[i]) && prevState.IsKeyDown(Keys[i]))
+                        return true;
+                    break;
                 }
             }
             return false;

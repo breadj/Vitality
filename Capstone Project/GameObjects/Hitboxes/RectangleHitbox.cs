@@ -6,7 +6,7 @@ namespace Capstone_Project.GameObjects.Hitboxes
 {
     public class RectangleHitbox : IHitbox
     {
-        public Entity entity { get; init; }
+        private Entity entity { get; init; }
         public Vector2 Centre { get { return entity.Position; } }
         public Vector2 Size { get; init; }
         public Rectangle BoundingBox { get { return new Rectangle(VtoP(Centre - (Size / 2f)), VtoP(Size)); } }
@@ -23,6 +23,8 @@ namespace Capstone_Project.GameObjects.Hitboxes
                 return Intersects(circleHitbox);
             if (other is RectangleHitbox rectangleHitbox)
                 return BoundingBox.Intersects(rectangleHitbox.BoundingBox);
+            if (other is TileHitbox tileHitbox)
+                return BoundingBox.Intersects(tileHitbox.BoundingBox);
             return false;
         }
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Capstone_Project.Globals
+namespace Capstone_Project.SpriteTextures
 {
     public record class Subsprite
     {
@@ -9,9 +9,9 @@ namespace Capstone_Project.Globals
         // The area on the SpriteSheet where the texture for this sprite is taken from
         public Rectangle Source { get; init; }   // might change the perms for mutator if it's animated
 
-        public Subsprite(ref Texture2D spriteSheet, Rectangle source)
+        public Subsprite(Texture2D spriteSheet, Rectangle source)
         {
-            SpriteSheet = spriteSheet;      // IMPORTANT that the SpriteSheet is passed by reference
+            SpriteSheet = spriteSheet;
             Source = source;
         }
     }

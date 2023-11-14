@@ -11,6 +11,7 @@ namespace Capstone_Project.Input
         private Action[] Actions { get; set; }
 
         public List<Action> ActivatedActions { get; private set; }
+        public Action Exit { get; private set; }
 
         public Controls()
         {
@@ -21,9 +22,12 @@ namespace Capstone_Project.Input
             Action Down = new Action("Down", new Keys[] { Keys.S, Keys.Down }, ActionType.OnPress);
             Action Left = new Action("Left", new Keys[] { Keys.A, Keys.Left }, ActionType.OnPress);
             Action Right = new Action("Right", new Keys[] { Keys.D, Keys.Right }, ActionType.OnPress);
+
+            // other Actions
+            Exit = new Action("Exit", new Keys[] { Keys.Escape }, ActionType.OnPress);
             // TODO: add interaction, attack, etc Actions
 
-            Actions = new Action[] { Up, Down, Left, Right };
+            Actions = new Action[] { Exit, Up, Down, Left, Right };
         }
 
         public void Update(GameTime gameTime)

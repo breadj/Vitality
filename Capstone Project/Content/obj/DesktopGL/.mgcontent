@@ -4,8 +4,8 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/asus/OneDrive - University of Essex/Year 3/CE301 - Capstone Project/23-24_CE301_darby_joseph_r_p/Capstone Project/Content/MissingTexture.png</File>
     <File>C:/Users/asus/OneDrive - University of Essex/Year 3/CE301 - Capstone Project/23-24_CE301_darby_joseph_r_p/Capstone Project/Content/Player.png</File>
+    <File>C:/Users/asus/OneDrive - University of Essex/Year 3/CE301 - Capstone Project/23-24_CE301_darby_joseph_r_p/Capstone Project/Content/Spritesheet.png</File>
   </SourceFiles>
   <DestFiles>
     <File xsi:nil="true" />

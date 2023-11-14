@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Capstone_Project.MapStuff
 {
-    internal class Tile2DArray
+    public class Tile2DArray
     {
         private Tile[] tiles;
         public int Width { get; init; }

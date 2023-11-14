@@ -7,7 +7,7 @@ namespace Capstone_Project.MapStuff
 {
     public class TileMap
     {
-        private Tile2DArray tileMap;
+        public Tile2DArray TileArray { get; init; }
 
         private readonly int width;
         public readonly int height;
@@ -26,18 +26,19 @@ namespace Capstone_Project.MapStuff
             if (tiles.Length != tileWidth * tileHeight)
                 throw new Exception("Number of Tiles and size of the TileMap are different");
 
-            tileMap = new Tile2DArray(tileWidth, tileHeight, tiles);
+            TileArray = new Tile2DArray(tileWidth, tileHeight, tiles);
             
             width = tileWidth * tileSize;
             height = tileHeight * tileSize;
         }
 
+        // probably deprecated
         public void Draw(SpriteBatch spriteBatch)
         {
-            for (int y = 0; y < tileMap.Height; y++)
-                for (int x = 0; x < tileMap.Width; x++)
-                    if (tileMap[x, y] != null)
-                        tileMap[x, y].Draw(spriteBatch, new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize));
+            for (int y = 0; y < TileArray.Height; y++)
+                for (int x = 0; x < TileArray.Width; x++)
+                    if (TileArray[x, y] != null)
+                        TileArray[x, y].Draw(spriteBatch);
         }
     }
 }
