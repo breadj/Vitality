@@ -1,9 +1,9 @@
 ﻿using static Capstone_Project.Globals.Utility;
+using static Capstone_Project.Globals.Globals;
 using Capstone_Project.MapStuff;
 using Capstone_Project.GameObjects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Capstone_Project.Input;
 using Capstone_Project.Globals;
 using System.Collections.Generic;
@@ -14,7 +14,6 @@ namespace Capstone_Project
 {
     public class Game1 : Game
     {
-        public static Texture2D BLANK = null;
         public static Controls Controls = new();
 
         public Camera Camera;
@@ -54,6 +53,7 @@ namespace Capstone_Project
 
             visibleTiles = new List<Tile>();
             Entities = new List<Entity>();
+            visibleEntities = new List<Entity>();
 
             base.Initialize();
         }
@@ -65,6 +65,9 @@ namespace Capstone_Project
             // TODO: use this.Content to load your game content here
 
             BLANK = new Texture2D(graphics.GraphicsDevice, 1, 1);
+            BLANK.SetData(new Color[] { Color.White });
+
+            DebugFont = Content.Load<SpriteFont>("DebugFont");
 
             Texture2D playerSprite = Content.Load<Texture2D>("Player");
             Subsprite playerSubsprite = new Subsprite(playerSprite, playerSprite.Bounds);
@@ -76,12 +79,13 @@ namespace Capstone_Project
             Tile[] tiles = new Tile[135];
             for (int i = 0; i < tiles.Length; i++)
             {
-                bool isWater = i % 4 == 0;
-                tiles[i] = new Tile(Spritesheet.GetSubsprite(isWater ? 1 : 0), IndexToCoord(i, 15, 9), tileSize, isWater);
+                bool isWater = i % 7 == 0;
+                Point globalPos = IndexToCoord(i, 15, 9) * new Point(tileSize);
+                tiles[i] = new Tile(Spritesheet.GetSubsprite(isWater ? 1 : 0), globalPos, tileSize, isWater);
             }
 
             tileMap = new TileMap(15, 9, tileSize, tiles);
-            player = new Player(playerSubsprite, PtoV(tileMap.MapBounds.Center));
+            player = new Player(playerSubsprite, tileMap.MapBounds.Center.ToVector2());
 
             Camera = new Camera(new(0, 0, 1920, 1080), player.Position);
 
@@ -129,11 +133,19 @@ namespace Capstone_Project
 
             #region Collision and Entity.Update() Logic
             // proper collision here
-            foreach (Entity entity in simulatedEntities)
+            for (int i = 0; i < simulatedEntities.Count; i++)
             {
-                entity.Update(gameTime);
+                simulatedEntities[i].Update(gameTime);
 
-                entity.ClampToMap(tileMap.MapBounds);   // this always comes at the end
+                // checks collisions with other simulated Entities without 'repetition' (AKA: i.collide(j), then j.collide(i))
+                for (int j = i + 1; j < simulatedEntities.Count; j++)
+                    simulatedEntities[i].HandleCollision(simulatedEntities[j], gameTime);
+
+                // checks collisions against Tiles
+                foreach (Tile tile in simulatedTiles)
+                    simulatedEntities[i].HandleCollision(tile, gameTime);
+
+                simulatedEntities[i].ClampToMap(tileMap.MapBounds);   // this always comes at the end
             }
             #endregion
 
@@ -145,17 +157,22 @@ namespace Capstone_Project
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.SetRenderTarget(renderTarget);
-            GraphicsDevice.Clear(Color.CornflowerBlue); // default colour, change to black later
+            GraphicsDevice.Clear(Color.DarkGray); // default colour, change to black later
 
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp, null, RasterizerState.CullCounterClockwise, null, Camera.TransformMatrix);
 
             // TODO: Add your drawing code here
 
+            // draws only the visible Tiles and Entities
             foreach (Tile tile in visibleTiles)
                 tile.Draw(spriteBatch);
             foreach (Entity entity in visibleEntities)
                 entity.Draw(spriteBatch);
-            //spriteBatch.Draw(BLANK, new(0, 0, 50, 50), BLANK.Bounds, Color.Blue, 0f, PtoV(BLANK.Bounds.Size) / 2f, SpriteEffects.None, 1f);
+
+            //spriteBatch.Draw(BLANK, tileMap.MapBounds, null, new Color(Color.Purple, 0.5f), 0f, Vector2.Zero, SpriteEffects.None, 0.999f);
+            //spriteBatch.DrawString(DebugFont, visibleTiles.Count.ToString(), Camera.ScreenToWorld(new(0, 0)), Color.White);
+            //spriteBatch.Draw(BLANK, Camera.VisibleArea, new Color(Color.DarkOliveGreen, 0.4f));
+            //spriteBatch.Draw(BLANK, Camera.SimulationArea, new Color(Color.DarkOliveGreen, 0.4f));
 
             spriteBatch.End();
             GraphicsDevice.SetRenderTarget(null);

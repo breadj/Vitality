@@ -1,5 +1,4 @@
-﻿using static Capstone_Project.Globals.Utility;
-using Capstone_Project.GameObjects.Hitboxes;
+﻿using Capstone_Project.GameObjects.Hitboxes;
 using Capstone_Project.SpriteTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,26 +8,28 @@ namespace Capstone_Project.GameObjects
 {
     public class Player : Entity
     {
-        private float speed = 200;      // in px/s
-        private new int size = 100;     // in pxW
+        private float speed = 250;      // in px/s
+        private new int size = 100;     // in px
 
         public Player(Subsprite subsprite, Vector2 position, Vector2? direction = null) : base(subsprite, position, direction)
         {
-            Hitbox = new CircleHitbox(this, new(size));
+            Hitbox = new RectangleHitbox(this, new(size));
         }
 
         public override void Update(GameTime gameTime)
         {
-            Velocity = Movement(Game1.Controls.ActivatedActions);
+            Direction = Movement(Game1.Controls.ActivatedActions);
+            Velocity = Direction * speed;
 
             base.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            Vector2 origin = new Vector2(subsprite.Source.Width / 2f, subsprite.Source.Height / 2f);
-            spriteBatch.Draw(subsprite.SpriteSheet, new Rectangle(VtoP(Position), new (size)),
-                subsprite.Source, Color.White, 0f, origin, SpriteEffects.None, 0.1f);
+            spriteBatch.Draw(subsprite.SpriteSheet, Hitbox.BoundingBox,
+                subsprite.Source, Color.White, 0f, subsprite.Origin, SpriteEffects.None, 0.1f);
+
+            //spriteBatch.Draw(Globals.Globals.BLANK, Hitbox.BoundingBox, null, new Color(Color.Pink, 0.5f), 0f, Vector2.One / 2f, SpriteEffects.None, 0.05f);
         }
 
 
@@ -53,11 +54,10 @@ namespace Capstone_Project.GameObjects
                         break;
                 }
             }
-            Direction = tempDirection;
 
-            if (Direction == Vector2.Zero)
+            if (tempDirection == Vector2.Zero)
                 return Vector2.Zero;
-            return Vector2.Normalize(Direction) * speed;
+            return Vector2.Normalize(tempDirection);
         }
     }
 }

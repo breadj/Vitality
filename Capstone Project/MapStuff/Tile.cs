@@ -9,7 +9,7 @@ namespace Capstone_Project.MapStuff
     {
         private readonly Subsprite subsprite;
         private readonly int size;
-        private readonly bool isWall;
+        public readonly bool IsWall;
 
         public Point Position { get; init; }
         public TileHitbox Hitbox { get; init; }
@@ -18,18 +18,21 @@ namespace Capstone_Project.MapStuff
         {
             this.subsprite = subsprite;
             this.size = size;
-            this.isWall = isWall;
+            IsWall = isWall;
 
             Position = position;
-            if (isWall)
-                Hitbox = new TileHitbox(new Point(size));
+            Hitbox = new TileHitbox(this, new Point(size));
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             // assuming the destination Rectangle is the same as the Hitbox BoundingBox
-            spriteBatch.Draw(subsprite.SpriteSheet, Hitbox.BoundingBox, subsprite.Source, Color.White, 
+            spriteBatch.Draw(subsprite.SpriteSheet, new Rectangle(Position, new Point(size)), subsprite.Source, Color.White, 
                 0f, Vector2.Zero, SpriteEffects.None, 0f);
+
+            //spriteBatch.DrawString(Globals.Globals.DebugFont, IsWall.ToString(), Position.ToVector2(), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.2f);
+            if (IsWall)
+                spriteBatch.Draw(Globals.Globals.BLANK, Hitbox.BoundingBox, null, new Color(Color.Pink, 0.4f), 0f, Vector2.Zero, SpriteEffects.None, 0.2f);
         }
     }
 }

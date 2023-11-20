@@ -22,7 +22,7 @@ namespace Capstone_Project.MapStuff
 
         public Tile this[int x, int y] => tiles[x + (y * Width)];
         public Tile this[int i] => tiles[i];
-        public Point FindPosition(int index) => new(Width % index, Height / index);
+        public Point FindPosition(int index) => new(index % Width, index / Width);
         public int Length => Width * Height;
     }
 }

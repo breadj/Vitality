@@ -1,5 +1,4 @@
-﻿using static Capstone_Project.Globals.Utility;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using System;
 
 namespace Capstone_Project.GameObjects.Hitboxes
@@ -9,7 +8,7 @@ namespace Capstone_Project.GameObjects.Hitboxes
         private Entity entity { get; init; }
         public Vector2 Centre { get { return entity.Position; } }
         public Vector2 Size { get; init; }
-        public Rectangle BoundingBox { get { return new Rectangle(VtoP(Centre - (Size / 2f)), VtoP(Size)); } }
+        public Rectangle BoundingBox { get { return new Rectangle((Centre - (Size / 2f)).ToPoint(), Size.ToPoint()); } }
 
         public RectangleHitbox(Entity entity, Vector2 size)
         {
@@ -17,18 +16,39 @@ namespace Capstone_Project.GameObjects.Hitboxes
             Size = size;
         }
 
-        public bool Intersects(IHitbox other)
+        public CollisionDetails Intersects(IHitbox other)
         {
+            CollisionDetails collisionDetails = new CollisionDetails();
+            collisionDetails.From = this;
+            collisionDetails.To = other;
+
+            // if the BoundingBoxes don't intersect, then they can't be colliding
+            Rectangle intersection = Rectangle.Intersect(BoundingBox, other.BoundingBox);
+            if (intersection.IsEmpty)
+                return collisionDetails;
+
+            collisionDetails.Intersection = intersection;
+
             if (other is CircleHitbox circleHitbox)
-                return Intersects(circleHitbox);
+            {
+                return Intersects(circleHitbox, collisionDetails);
+            }
             if (other is RectangleHitbox rectangleHitbox)
-                return BoundingBox.Intersects(rectangleHitbox.BoundingBox);
+            {
+                collisionDetails.Type = CollisionType.RectOnRect;
+                return collisionDetails;
+
+            }
             if (other is TileHitbox tileHitbox)
-                return BoundingBox.Intersects(tileHitbox.BoundingBox);
-            return false;
+            {
+                collisionDetails.Type = CollisionType.RectOnRect;
+                return collisionDetails;
+
+            }
+            return collisionDetails;
         }
 
-        private bool Intersects(CircleHitbox circle)
+        private CollisionDetails Intersects(CircleHitbox circle, CollisionDetails collisionDetails)
         {
             /*/// please see Explanations > RectangleHitbox.Intersects(CircleHitbox) to really understand wtf is happening here
 
@@ -52,11 +72,24 @@ namespace Capstone_Project.GameObjects.Hitboxes
             Vector2 localCirclePos = new Vector2(MathF.Abs(circle.Centre.X - Centre.X), MathF.Abs(circle.Centre.Y - Centre.Y));
 
             // testing if any of the corners of the Rectangle are in the Circle
-            if (((Size / 2) - localCirclePos).LengthSquared() < circle.Radius * circle.Radius)
-                return true;
+            float intersectionDepth = circle.Radius - (localCirclePos - (Size / 2)).Length();
+            if (intersectionDepth > 0)
+            {
+                collisionDetails.IntersectionDepth = intersectionDepth;
+                collisionDetails.Type = CollisionType.CircOnCirc;
+                if (localCirclePos.X > Size.X / 2f && localCirclePos.Y > Size.Y / 2f)
+                    collisionDetails.CornerCollision = true;
+                return collisionDetails;
+            }
 
             // check if the local Circle's cardinal points are within the bounds of the local Rectangle
-            return localCirclePos.X < Size.X / 2 && localCirclePos.Y < Size.Y / 2;
+            if (localCirclePos.X - circle.Radius < Size.X / 2 && localCirclePos.Y - circle.Radius < Size.Y / 2)
+            {
+                collisionDetails.Type = CollisionType.CircOnCirc;
+                collisionDetails.CornerCollision = false;
+                return collisionDetails;
+            }
+            return collisionDetails;
         }
     }
 }

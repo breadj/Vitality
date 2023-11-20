@@ -1,5 +1,4 @@
-﻿using static Capstone_Project.Globals.Utility;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
@@ -47,7 +46,7 @@ namespace Capstone_Project
         {
             PlayerDeviation(playerPosition);
 
-            if (!moved)
+            if (moved)
             {
                 UpdateVisibleArea();
                 UpdateSimulationArea();
@@ -67,14 +66,14 @@ namespace Capstone_Project
         public void UpdateVisibleArea()
         {
             Vector2 zoomedBounds = new Vector2(Bounds.Width / Zoom, Bounds.Height / Zoom);
-            VisibleArea = new Rectangle(VtoP(Position - (zoomedBounds / 2f)), VtoP(zoomedBounds));
+            VisibleArea = new Rectangle((Position - (zoomedBounds / 2f)).ToPoint(), zoomedBounds.ToPoint());
         }
 
         public void UpdateSimulationArea()
         {
             // simulation bounds are 1.5x wider and higher than VisibleArea
             Vector2 simBounds = new Vector2(1.5f * Bounds.Width / Zoom, 1.5f * Bounds.Height / Zoom);
-            SimulationArea = new Rectangle(VtoP(Position - (simBounds / 2)), VtoP(simBounds));
+            SimulationArea = new Rectangle((Position - (simBounds / 2)).ToPoint(), simBounds.ToPoint());
         }
 
         private void PlayerDeviation(Vector2 playerPosition) 
