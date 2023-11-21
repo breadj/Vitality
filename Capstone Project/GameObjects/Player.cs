@@ -1,5 +1,4 @@
-﻿using Capstone_Project.GameObjects.Hitboxes;
-using Capstone_Project.SpriteTextures;
+﻿using Capstone_Project.SpriteTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;

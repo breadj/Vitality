@@ -22,7 +22,6 @@ namespace Capstone_Project
 
         private GraphicsDeviceManager graphics;
         private RenderTarget2D renderTarget;
-        private SpriteBatch spriteBatch;
 
         private TileMap tileMap;
         private List<Tile> visibleTiles;
@@ -99,44 +98,46 @@ namespace Capstone_Project
 
             // TODO: Add your update logic here
 
+            Camera.Update(player.Position);
+            Controls.Update(gameTime);
+
             #region Simulated & Visible Tiles
             visibleTiles.Clear();
             List<Tile> simulatedTiles = new List<Tile>();
 
             for (int i = 0; i < tileMap.TileArray.Length; i++)
             {
-                if (Camera.SimulationArea.Intersects(tileMap.TileArray[i].Hitbox.BoundingBox))
+                if (Camera.SimulationArea.Intersects(tileMap.TileArray[i].Hitbox))
                 {
                     simulatedTiles.Add(tileMap.TileArray[i]);
 
-                    if (Camera.VisibleArea.Intersects(tileMap.TileArray[i].Hitbox.BoundingBox))
+                    if (Camera.VisibleArea.Intersects(tileMap.TileArray[i].Hitbox))
                         visibleTiles.Add(tileMap.TileArray[i]);
                 }
             }
             #endregion
-            #region Simulated & Visible Entities
+            #region Simulated (w/ Update) & Visible Entities
             visibleEntities.Clear();
             List<Entity> simulatedEntities = new List<Entity>();
 
             foreach (Entity entity in Entities)
             {
-                if (Camera.SimulationArea.Intersects(entity.Hitbox.BoundingBox))
+                if (Camera.SimulationArea.Intersects(entity.Hitbox))
                 {
                     simulatedEntities.Add(entity);
-                    if (Camera.VisibleArea.Intersects(entity.Hitbox.BoundingBox))
+                    entity.Update(gameTime);
+
+                    if (Camera.VisibleArea.Intersects(entity.Hitbox) && entity.Visible)
                         visibleEntities.Add(entity);
                 }
             }
             #endregion
 
-            Controls.Update(gameTime);
 
             #region Collision and Entity.Update() Logic
             // proper collision here
             for (int i = 0; i < simulatedEntities.Count; i++)
             {
-                simulatedEntities[i].Update(gameTime);
-
                 // checks collisions with other simulated Entities without 'repetition' (AKA: i.collide(j), then j.collide(i))
                 for (int j = i + 1; j < simulatedEntities.Count; j++)
                     simulatedEntities[i].HandleCollision(simulatedEntities[j], gameTime);
@@ -148,8 +149,6 @@ namespace Capstone_Project
                 simulatedEntities[i].ClampToMap(tileMap.MapBounds);   // this always comes at the end
             }
             #endregion
-
-            Camera.Update(player.Position);
 
             base.Update(gameTime);
         }

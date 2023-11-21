@@ -1,69 +1,75 @@
-﻿using Capstone_Project.GameObjects.Hitboxes;
+﻿using static Capstone_Project.Globals.Globals;
+using Capstone_Project.GameObjects.Interfaces;
 using Capstone_Project.MapStuff;
 using Capstone_Project.SpriteTextures;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 
 namespace Capstone_Project.GameObjects
 {
-    public abstract class Entity
+    public abstract class Entity : Interfaces.IDrawable, IUpdatable, ICollidable, IMovable
     {
-        protected Subsprite subsprite;
-        protected int size = 0;
+        public bool Visible { get; set; } = true;
+        public Subsprite Subsprite { get; init; }
+        public Rectangle Destination => Hitbox;
+        public Vector2 Origin => Subsprite.Source.Size.ToVector2() / 2f;        // Entities have their positions as the centre of the sprite
+        public float Layer { get; set; } = 0.01f;
 
+        public bool Active { get; set; } = true;
+
+        public Rectangle Hitbox => new Rectangle((int)(Position.X - (Size / 2f)), (int)(Position.Y - (Size / 2f)), Size, Size);
         public Vector2 Position { get; protected set; }
-        private Vector2 lastPosition = Vector2.Zero;
-        public Vector2 Direction { get; protected set; }
-        public Vector2 Velocity { get; protected set; }
+        public Vector2 Direction { get; protected set; } = Vector2.Zero;
+        public Vector2 Velocity { get; protected set; } = Vector2.Zero;
+        public int Speed { get; protected set; } = 0;
 
-        public IHitbox Hitbox { get; protected set; }
+        public int Size { get; init; }
+        public bool Dead { get; set; } = false;
 
-        public Entity(Subsprite subsprite, Vector2 position, Vector2? direction = null) 
+        public Entity(Subsprite subsprite, Vector2 position, int size = 0) 
         {
-            this.subsprite = subsprite;
+            Subsprite = subsprite;
+
             Position = position;
-            lastPosition = position;
-            Direction = direction ?? Vector2.Zero;
-            Velocity = Vector2.Zero;
+            
+            Size = size;
         }
 
         public virtual void Update(GameTime gameTime)
         {
-            lastPosition = Position;
-            // default movement code
+            Velocity = Direction * Speed;
             Position += Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch)
+        public virtual void Draw()
         {
-            // default draw code
-            spriteBatch.Draw(Globals.Globals.BLANK, Position, Color.Red); // draws a red dot
+            if (Visible && !Destination.IsEmpty)
+                spriteBatch.Draw(Subsprite.SpriteSheet, Destination, Subsprite.Source, Color.White, 0f, Origin, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, Layer);
         }
 
         public void ClampToMap(Rectangle mapBounds)
         {
             // checks if the Hitbox Rectangle is fully contained within the mapBounds Rectangle
-            if (mapBounds.Contains(Hitbox.BoundingBox))
+            if (mapBounds.Contains(Hitbox))
                 return;
 
             Vector2 offset = Vector2.Zero;
 
             // I'm not too sure why I need to add the '+1', but if I don't, the Entity will be able to go 1px past the edges in the top-left
-            if (mapBounds.Left > Hitbox.BoundingBox.Left)
-                offset.X = mapBounds.Left - Hitbox.BoundingBox.Left + 1;
-            else if (mapBounds.Right < Hitbox.BoundingBox.Right)
-                offset.X = mapBounds.Right - Hitbox.BoundingBox.Right;
+            if (mapBounds.Left > Hitbox.Left)
+                offset.X = mapBounds.Left - Hitbox.Left + 1;
+            else if (mapBounds.Right < Hitbox.Right)
+                offset.X = mapBounds.Right - Hitbox.Right;
 
-            if (mapBounds.Top > Hitbox.BoundingBox.Top)
-                offset.Y = mapBounds.Top - Hitbox.BoundingBox.Top + 1;
-            else if (mapBounds.Bottom < Hitbox.BoundingBox.Bottom)
-                offset.Y = mapBounds.Bottom - Hitbox.BoundingBox.Bottom;
+            if (mapBounds.Top > Hitbox.Top)
+                offset.Y = mapBounds.Top - Hitbox.Top + 1;
+            else if (mapBounds.Bottom < Hitbox.Bottom)
+                offset.Y = mapBounds.Bottom - Hitbox.Bottom;
 
             Position += offset;
         }
 
-        public virtual void HandleCollision(Entity other, GameTime gameTime)
+        /*public virtual void HandleCollision(Entity other, GameTime gameTime)
         {
             CollisionDetails cd = CollidesWith(other);
             if (cd)
@@ -132,6 +138,6 @@ namespace Capstone_Project.GameObjects
                 Vector2 pushDirection = new Vector2(Math.Abs(Direction.X) * signX, Math.Abs(Direction.Y) * signY) * cd.IntersectionDepth;
                 Position += pushDirection;
             }
-        }
+        }*/
     }
 }
