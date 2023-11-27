@@ -7,12 +7,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Capstone_Project.GameObjects
+namespace Capstone_Project.GameObjects.Entities
 {
     public class Mob : Entity, IRespondable
     {
         public Vector2 TargetPos { get; set; }
-        public Rectangle TargetHitbox => new Rectangle((int)(TargetPos.X - (Size / 2f)), (int)(TargetPos.Y - (Size / 2f)), Size, Size);
+        public Rectangle TargetHitbox => new Rectangle((int)(TargetPos.X - Size / 2f), (int)(TargetPos.Y - Size / 2f), Size, Size);
         public Rectangle PathCollider => generatePathCollider();
         public LinkedList<CollisionDetails> Collisions { get; protected set; }
 
@@ -28,6 +28,8 @@ namespace Capstone_Project.GameObjects
         // to move the actual Position, use Move() after using this and handling the collisions
         public override void Update(GameTime gameTime)
         {
+            if (!Active) return;
+
             lastPosition = Position;
             TargetPos = Position;
 
@@ -122,8 +124,8 @@ namespace Capstone_Project.GameObjects
             }
 
             // check if the local circle's cardinal points are within the bounds of the local square
-            if ((localCirclePos.X - circle.Radius < square.Radius && localCirclePos.Y < square.Radius) 
-                || (localCirclePos.Y - circle.Radius < square.Radius && localCirclePos.X < square.Radius))
+            if (localCirclePos.X - circle.Radius < square.Radius && localCirclePos.Y < square.Radius
+                || localCirclePos.Y - circle.Radius < square.Radius && localCirclePos.X < square.Radius)
             {
                 details.Type = CollisionType.CircOnRect;
                 details.CornerCollision = false;    // not needed because it's false by default, but it doesn't hurt to show it explicitly
@@ -276,8 +278,8 @@ namespace Capstone_Project.GameObjects
             int absDiffY = Math.Abs(displacement.Y);
 
             // if the absolute different has X > Y then that means it's an East-West-wise collision (on x-axis), and vice versa
-            float newX = absDiffX < absDiffY ? responder.TargetPos.X : responder.TargetPos.X + (Sign(displacement.X) * details.Intersection.Width);
-            float newY = absDiffY < absDiffX ? responder.TargetPos.Y : responder.TargetPos.Y + (Sign(displacement.Y) * details.Intersection.Height);
+            float newX = absDiffX < absDiffY ? responder.TargetPos.X : responder.TargetPos.X + Sign(displacement.X) * details.Intersection.Width;
+            float newY = absDiffY < absDiffX ? responder.TargetPos.Y : responder.TargetPos.Y + Sign(displacement.Y) * details.Intersection.Height;
 
             Vector2 newTargetPos = new Vector2(newX, newY);
             if (responder.TargetPos == newTargetPos)

@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Capstone_Project.GameObjects
+namespace Capstone_Project.GameObjects.Entities
 {
     public class Player : Mob
     {
@@ -25,7 +25,7 @@ namespace Capstone_Project.GameObjects
         {
             base.Draw();
 
-            spriteBatch.Draw(BLANK, PathCollider, null, new Color(Color.MediumPurple, 0.5f), 0f, Vector2.Zero, SpriteEffects.None, 0.9f);
+            //spriteBatch.Draw(BLANK, PathCollider, null, new Color(Color.MediumPurple, 0.5f), 0f, Vector2.Zero, SpriteEffects.None, 0.9f);
             //spriteBatch.DrawString(DebugFont, Position.ToString(), Position, Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.9f);
             //spriteBatch.Draw(BLANK, new Rectangle(Position.ToPoint(), new Point(Size)), null, new Color(Color.Pink, 0.5f), 0f, BLANK.Bounds.Size.ToVector2() / 2f, SpriteEffects.None, 0.05f);
         }
@@ -38,7 +38,7 @@ namespace Capstone_Project.GameObjects
             {
                 switch (action.Name)
                 {
-                    case "Up": 
+                    case "Up":
                         tempDirection.Y -= 1;
                         break;
                     case "Down":

@@ -5,11 +5,11 @@ using Capstone_Project.GameObjects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Capstone_Project.Input;
-using Capstone_Project.Globals;
 using System.Collections.Generic;
 using Capstone_Project.SpriteTextures;
 using System.Linq;
 using Capstone_Project.GameObjects.Interfaces;
+using Capstone_Project.GameObjects.Entities;
 
 namespace Capstone_Project
 {

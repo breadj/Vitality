@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace Capstone_Project.GameObjects
+namespace Capstone_Project.GameObjects.Entities
 {
     public abstract class Entity : Interfaces.IDrawable, IUpdatable, ICollidable, IMovable
     {
@@ -16,7 +16,7 @@ namespace Capstone_Project.GameObjects
         public float Layer { get; set; } = 0.01f;
 
         public bool Active { get; set; } = true;
-        public Rectangle Hitbox => new Rectangle((int)(Position.X - (Size / 2f)), (int)(Position.Y - (Size / 2f)), Size, Size);
+        public Rectangle Hitbox => new Rectangle((int)(Position.X - Size / 2f), (int)(Position.Y - Size / 2f), Size, Size);
         public bool IsCircle { get; init; } = true; // Entities are by default Circles (in terms of collision)
         public float Radius => Size / 2f;
 
@@ -30,7 +30,7 @@ namespace Capstone_Project.GameObjects
 
         protected Vector2 lastPosition { get; set; } = Vector2.Zero;
 
-        public Entity(Subsprite subsprite, Vector2 position, int size = 0, int speed = 0) 
+        public Entity(Subsprite subsprite, Vector2 position, int size = 0, int speed = 0)
         {
             Subsprite = subsprite;
             //Origin = Subsprite.Source.Size.ToVector2() / 2f;
@@ -43,6 +43,8 @@ namespace Capstone_Project.GameObjects
 
         public virtual void Update(GameTime gameTime)
         {
+            if (!Active) return;
+
             // sets lastPosition to Position before Position is changed
             lastPosition = Position;
 
@@ -68,7 +70,7 @@ namespace Capstone_Project.GameObjects
             if (details.Intersection.IsEmpty)
                 return details;
             // continues if there is a tangible intersection
-            
+
             // if both are square
             if (!IsCircle && !other.IsCircle)
             {
@@ -122,8 +124,8 @@ namespace Capstone_Project.GameObjects
             }
 
             // check if the local circle's cardinal points are within the bounds of the local square
-            if ((localCirclePos.X - circle.Radius < square.Radius && localCirclePos.Y < square.Radius)
-                || (localCirclePos.Y - circle.Radius < square.Radius && localCirclePos.X < square.Radius))
+            if (localCirclePos.X - circle.Radius < square.Radius && localCirclePos.Y < square.Radius
+                || localCirclePos.Y - circle.Radius < square.Radius && localCirclePos.X < square.Radius)
             {
                 details.Type = CollisionType.CircOnRect;
                 details.CornerCollision = false;    // not needed because it's false by default, but it doesn't hurt to show it explicitly
@@ -142,8 +144,8 @@ namespace Capstone_Project.GameObjects
                 return;
 
             Vector2 clampedPos = Position;
-            clampedPos.X = MathHelper.Clamp(Position.X, mapBounds.Left + (Size / 2f), mapBounds.Right - (Size / 2f));
-            clampedPos.Y = MathHelper.Clamp(Position.Y, mapBounds.Top + (Size / 2f), mapBounds.Bottom - (Size / 2f));
+            clampedPos.X = MathHelper.Clamp(Position.X, mapBounds.Left + Size / 2f, mapBounds.Right - Size / 2f);
+            clampedPos.Y = MathHelper.Clamp(Position.Y, mapBounds.Top + Size / 2f, mapBounds.Bottom - Size / 2f);
 
             Position = clampedPos;
         }
