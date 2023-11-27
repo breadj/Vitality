@@ -9,6 +9,7 @@ using Capstone_Project.Globals;
 using System.Collections.Generic;
 using Capstone_Project.SpriteTextures;
 using System.Linq;
+using Capstone_Project.GameObjects.Interfaces;
 
 namespace Capstone_Project
 {
@@ -109,9 +110,10 @@ namespace Capstone_Project
             {
                 if (Camera.SimulationArea.Intersects(tileMap.TileArray[i].Hitbox))
                 {
-                    simulatedTiles.Add(tileMap.TileArray[i]);
+                    if (tileMap.TileArray[i].Active)
+                        simulatedTiles.Add(tileMap.TileArray[i]);
 
-                    if (Camera.VisibleArea.Intersects(tileMap.TileArray[i].Hitbox))
+                    if (Camera.VisibleArea.Intersects(tileMap.TileArray[i].Hitbox) && tileMap.TileArray[i].Visible)
                         visibleTiles.Add(tileMap.TileArray[i]);
                 }
             }
@@ -134,17 +136,38 @@ namespace Capstone_Project
             #endregion
 
 
-            #region Collision and Entity.Update() Logic
+            #region Collision and Logic
             // proper collision here
             for (int i = 0; i < simulatedEntities.Count; i++)
             {
+                if (simulatedEntities[i] is IRespondable responsive)
+                {
+                    for (int j = i + 1; j < simulatedEntities.Count; j++)
+                    {
+                        if (responsive.PathCollider.Intersects(simulatedEntities[j].Hitbox))
+                        {
+                            CollisionDetails cd = responsive.CollidesWith(simulatedEntities[j]);
+                            responsive.InsertIntoCollisions(cd);
+                            if (simulatedEntities[j] is IRespondable other)
+                                other.InsertIntoCollisions(cd);
+                        }
+
+                    }
+
+                    foreach (Tile tile in simulatedTiles)
+                        if (responsive.PathCollider.Intersects(tile.Hitbox))
+                            responsive.InsertIntoCollisions(responsive.CollidesWith(tile));
+
+                    responsive.HandleCollisions();
+                    responsive.Move();
+                }
                 // checks collisions with other simulated Entities without 'repetition' (AKA: i.collide(j), then j.collide(i))
-                for (int j = i + 1; j < simulatedEntities.Count; j++)
+                /*for (int j = i + 1; j < simulatedEntities.Count; j++)
                     simulatedEntities[i].HandleCollision(simulatedEntities[j], gameTime);
 
                 // checks collisions against Tiles
                 foreach (Tile tile in simulatedTiles)
-                    simulatedEntities[i].HandleCollision(tile, gameTime);
+                    simulatedEntities[i].HandleCollision(tile, gameTime);*/
 
                 simulatedEntities[i].ClampToMap(tileMap.MapBounds);   // this always comes at the end
             }
@@ -164,10 +187,12 @@ namespace Capstone_Project
 
             // draws only the visible Tiles and Entities
             foreach (Tile tile in visibleTiles)
-                tile.Draw(spriteBatch);
+                tile.Draw();
             foreach (Entity entity in visibleEntities)
-                entity.Draw(spriteBatch);
+                entity.Draw();
 
+            //Point dev = new Point(220, 150);
+            //spriteBatch.Draw(BLANK, new Rectangle((int)Camera.Position.X - dev.X, (int)Camera.Position.Y - dev.Y, dev.X * 2, dev.Y * 2), null, new Color(Color.Black, 0.2f), 0f, Vector2.Zero, SpriteEffects.None, 0.99f);
             //spriteBatch.Draw(BLANK, tileMap.MapBounds, null, new Color(Color.Purple, 0.5f), 0f, Vector2.Zero, SpriteEffects.None, 0.999f);
             //spriteBatch.DrawString(DebugFont, visibleTiles.Count.ToString(), Camera.ScreenToWorld(new(0, 0)), Color.White);
             //spriteBatch.Draw(BLANK, Camera.VisibleArea, new Color(Color.DarkOliveGreen, 0.4f));

@@ -6,5 +6,8 @@ namespace Capstone_Project.GameObjects.Interfaces
     {
         public bool Active { get; }
         public Rectangle Hitbox { get; }
+        public bool IsCircle { get; }
+        public float Radius { get; }
+        public CollisionDetails CollidesWith(ICollidable other);
     }
 }
