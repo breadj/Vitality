@@ -39,8 +39,6 @@ namespace Capstone_Project.GameObjects
         public override void Draw()
         {
             base.Draw();
-
-            spriteBatch.DrawString(DebugFont, whichHandler, Position, Color.White, 0f, Vector2.Zero, 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0.9f);
         }
 
         #region Overridden Entity Collision Checking
@@ -124,7 +122,8 @@ namespace Capstone_Project.GameObjects
             }
 
             // check if the local circle's cardinal points are within the bounds of the local square
-            if (localCirclePos.X - circle.Radius < square.Radius && localCirclePos.Y - circle.Radius < square.Radius)
+            if ((localCirclePos.X - circle.Radius < square.Radius && localCirclePos.Y < square.Radius) 
+                || (localCirclePos.Y - circle.Radius < square.Radius && localCirclePos.X < square.Radius))
             {
                 details.Type = CollisionType.CircOnRect;
                 details.CornerCollision = false;    // not needed because it's false by default, but it doesn't hurt to show it explicitly
@@ -191,7 +190,6 @@ namespace Capstone_Project.GameObjects
             }
 
             bool insertion = false;
-
             // inserts into the list before the first element that has a smaller IntersectionArea than it
             for (var node = Collisions.First; node != null; node = node.Next)
             {
@@ -263,10 +261,8 @@ namespace Capstone_Project.GameObjects
             };
         }
 
-        private static string whichHandler = "";
         protected static bool HandleRectOnRect(CollisionDetails details)
         {
-            whichHandler = "RectOnRect";
             IRespondable responder;
             ICollidable collider;
 
@@ -293,12 +289,10 @@ namespace Capstone_Project.GameObjects
 
         protected static bool HandleCircOnRect(CollisionDetails details)
         {
-            whichHandler = "CircOnRect";
-            // if it's not corner collision, and just cardinal collision, then it's the same as RectOnRect collision
-            if (!details.CornerCollision)
-                return HandleRectOnRect(details);
+            // if it's not corner collision, and just cardinal collision, then it's the same as RectOnRect collision, and vice versa with CircOnCirc
+            return details.CornerCollision ? HandleCircOnCirc(details) : HandleRectOnRect(details);
 
-            IRespondable responder;
+            /*IRespondable responder;
             ICollidable collider;
 
             if (!FindRespondable(details, out responder, out collider))
@@ -309,14 +303,16 @@ namespace Capstone_Project.GameObjects
             // push initialised as bottom-right-facing (+x, +y) version of Direction, then rotates it by the sign of the displacement.
             // Since it's already normalised (Direction should always be normalised), multiplying by IntersectionDepth will push the
             // IRespondable away from the ICollidable enough to escape collision
-            Vector2 pushAway = new Vector2(Math.Abs(responder.Direction.X) * Sign(displacement.X), Math.Abs(responder.Direction.Y) * Sign(displacement.Y)) * details.IntersectionDepth;
+            //Vector2 pushAway = new Vector2(Math.Abs(responder.Direction.X) * Sign(displacement.X), Math.Abs(responder.Direction.Y) * Sign(displacement.Y)) * details.IntersectionDepth;
+
+            Vector2 pushAway = Vector2.Normalize((responder.TargetHitbox.Center - collider.Hitbox.Center).ToVector2()) * details.IntersectionDepth;
 
             Vector2 newTargetPos = responder.TargetPos + pushAway;
             if (responder.TargetPos == newTargetPos)
                 return false;
 
             responder.TargetPos = newTargetPos;
-            return true;
+            return true;*/
         }
 
         protected static bool HandleCircOnCirc(CollisionDetails details)

@@ -122,7 +122,8 @@ namespace Capstone_Project.GameObjects
             }
 
             // check if the local circle's cardinal points are within the bounds of the local square
-            if (localCirclePos.X - circle.Radius < square.Radius && localCirclePos.Y - circle.Radius < square.Radius)
+            if ((localCirclePos.X - circle.Radius < square.Radius && localCirclePos.Y < square.Radius)
+                || (localCirclePos.Y - circle.Radius < square.Radius && localCirclePos.X < square.Radius))
             {
                 details.Type = CollisionType.CircOnRect;
                 details.CornerCollision = false;    // not needed because it's false by default, but it doesn't hurt to show it explicitly
