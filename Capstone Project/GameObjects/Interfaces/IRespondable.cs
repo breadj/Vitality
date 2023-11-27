@@ -10,9 +10,12 @@ namespace Capstone_Project.GameObjects.Interfaces
     /// </summary>
     public interface IRespondable : IMovable, ICollidable
     {
-        public bool CanMove => CollidesWith.Any();
-        public List<ICollidable> CollidesWith { get; }
-        public Rectangle ProjectHitbox();
-        public void FinallyMove(Vector2 newPos);
+        public Vector2 TargetPos { get; set; }                      // where the implementer wants to move, regardless of collision status 
+        public Rectangle TargetHitbox { get; }
+        public Rectangle PathCollider { get; }                      // the large Rectangle that encapsulates both the current Position and TargetPos Hitboxes
+        public LinkedList<CollisionDetails> Collisions { get; }     // this should be ordered by Rectangle intersection area ([0] = largest intersection, [n] = smallest intersection) 
+        public void InsertIntoCollisions(CollisionDetails details); // this method should ensure the above ^ to be true
+        public void HandleCollisions();
+        public void Move();                                         // should be called after collision is dealt with
     }
 }

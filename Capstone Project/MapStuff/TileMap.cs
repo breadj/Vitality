@@ -7,8 +7,10 @@ namespace Capstone_Project.MapStuff
     {
         public Tile2DArray TileArray { get; init; }
 
+        // in px
         private readonly int width;
         public readonly int height;
+
         public Rectangle MapBounds => new Rectangle(0, 0, width, height);
         // width and height of the Tiles (tiles are square so w and h are the same value)
         private readonly int tileSize;

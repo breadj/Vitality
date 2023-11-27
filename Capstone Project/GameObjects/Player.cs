@@ -1,34 +1,33 @@
-﻿using Capstone_Project.SpriteTextures;
+﻿using static Capstone_Project.Globals.Globals;
+using Capstone_Project.SpriteTextures;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Capstone_Project.GameObjects
 {
-    public class Player : Entity
+    public class Player : Mob
     {
-        private float speed = 250;      // in px/s
-        private new int size = 100;     // in px
 
-        public Player(Subsprite subsprite, Vector2 position, Vector2? direction = null) : base(subsprite, position, direction)
+        public Player(Subsprite subsprite, Vector2 position, int size = 100, int speed = 250) : base(subsprite, position, size, speed)
         {
-            Hitbox = new RectangleHitbox(this, new(size));
+
         }
 
         public override void Update(GameTime gameTime)
         {
             Direction = Movement(Game1.Controls.ActivatedActions);
-            Velocity = Direction * speed;
 
             base.Update(gameTime);
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw()
         {
-            spriteBatch.Draw(subsprite.SpriteSheet, Hitbox.BoundingBox,
-                subsprite.Source, Color.White, 0f, subsprite.Origin, SpriteEffects.None, 0.1f);
+            base.Draw();
 
-            //spriteBatch.Draw(Globals.Globals.BLANK, Hitbox.BoundingBox, null, new Color(Color.Pink, 0.5f), 0f, Vector2.One / 2f, SpriteEffects.None, 0.05f);
+            spriteBatch.Draw(BLANK, PathCollider, null, new Color(Color.MediumPurple, 0.5f), 0f, Vector2.Zero, SpriteEffects.None, 0.9f);
+            //spriteBatch.DrawString(DebugFont, Position.ToString(), Position, Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.9f);
+            //spriteBatch.Draw(BLANK, new Rectangle(Position.ToPoint(), new Point(Size)), null, new Color(Color.Pink, 0.5f), 0f, BLANK.Bounds.Size.ToVector2() / 2f, SpriteEffects.None, 0.05f);
         }
 
 
