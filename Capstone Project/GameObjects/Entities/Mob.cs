@@ -16,11 +16,14 @@ namespace Capstone_Project.GameObjects.Entities
         public Rectangle PathCollider => generatePathCollider();
         public LinkedList<CollisionDetails> Collisions { get; protected set; }
 
+        public Vector2 Orientation { get; protected set; }
         protected Vector2 actualVelocity { get; set; }      // how far is actually travelled in a frame (Velocity * seconds elapsed)
 
         public Mob(Subsprite subsprite, Vector2 position, int size = 0, int speed = 1) : base(subsprite, position, size, speed)
         {
-            Collisions = new LinkedList<CollisionDetails>();      // reverses Comparer so the largest area is always first
+            Collisions = new LinkedList<CollisionDetails>();
+
+            Orientation = new Vector2(0, 1); // down
             actualVelocity = Vector2.Zero;
         }
 
@@ -36,6 +39,8 @@ namespace Capstone_Project.GameObjects.Entities
             Velocity = Direction * Speed;
             actualVelocity = Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
             TargetPos += actualVelocity;
+
+            Rotation = VectorToAngle(Orientation);
         }
 
         public override void Draw()

@@ -1,23 +1,24 @@
 ﻿using static Capstone_Project.Globals.Utility;
 using static Capstone_Project.Globals.Globals;
 using Capstone_Project.MapStuff;
-using Capstone_Project.GameObjects;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Capstone_Project.Input;
-using System.Collections.Generic;
 using Capstone_Project.SpriteTextures;
-using System.Linq;
+using Capstone_Project.GameObjects;
 using Capstone_Project.GameObjects.Interfaces;
 using Capstone_Project.GameObjects.Entities;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using System.Linq;
+using System;
 
 namespace Capstone_Project
 {
     public class Game1 : Game
     {
         public static Controls Controls = new();
+        public static Camera Camera;
 
-        public Camera Camera;
         public Spritesheet Spritesheet;
         public List<Entity> Entities;
 
@@ -71,6 +72,8 @@ namespace Capstone_Project
 
             Texture2D playerSprite = Content.Load<Texture2D>("Player");
             Subsprite playerSubsprite = new Subsprite(playerSprite, playerSprite.Bounds);
+            Texture2D enemySprite = Content.Load<Texture2D>("Enemy");
+            Subsprite enemySubsprite = new Subsprite(enemySprite, enemySprite.Bounds);
             Texture2D spritesheet = Content.Load<Texture2D>("Spritesheet");
             Spritesheet = new Spritesheet(spritesheet, 1);
 
@@ -90,6 +93,7 @@ namespace Capstone_Project
             Camera = new Camera(new(0, 0, 1920, 1080), player.Position);
 
             Entities.Add(player);
+            Entities.Add(new Enemy(enemySubsprite, tileMap.MapBounds.Size.ToVector2() / 2.5f));
         }
 
         protected override void Update(GameTime gameTime)

@@ -12,6 +12,7 @@ namespace Capstone_Project.MapStuff
         public bool Visible { get; set; } = true;
         public Subsprite Subsprite { get; init; }
         public Rectangle Destination { get; init; }
+        public float Rotation => 0f;
         public Vector2 Origin { get; init; }            // Tiles have their positions as the top-left of their sprite
         public float Layer { get; set; } = 0.001f;
 
@@ -41,7 +42,7 @@ namespace Capstone_Project.MapStuff
         {
             // assuming the destination Rectangle is the same as the Hitbox BoundingBox
             spriteBatch.Draw(Subsprite.SpriteSheet, Destination, Subsprite.Source, Color.White, 
-                0f, Origin, SpriteEffects.None, Layer);
+                Rotation, Origin, SpriteEffects.None, Layer);
 
             //spriteBatch.DrawString(Globals.Globals.DebugFont, IsWall.ToString(), Position.ToVector2(), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.2f);
             /*if (Active)

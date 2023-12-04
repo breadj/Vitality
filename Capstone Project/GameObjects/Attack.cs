@@ -33,7 +33,11 @@ namespace Capstone_Project.GameObjects
 
         public void Update(GameTime gameTime)
         {
-            throw new NotImplementedException();
+            Windup.Update(gameTime);
+            Linger.Update(gameTime);
+            Cooldown.Update(gameTime);
+
+
         }
 
         public CollisionDetails CollidesWith(ICollidable other)

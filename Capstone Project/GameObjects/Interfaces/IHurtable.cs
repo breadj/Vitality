@@ -5,6 +5,6 @@ namespace Capstone_Project.GameObjects.Interfaces
     {
         public int Vitality { get; }    // basically hit points
         public float Defence { get; }
-        public void TakeDamage(int damage);
+        public void TakeDamage(float damage);
     }
 }

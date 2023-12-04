@@ -8,6 +8,7 @@ namespace Capstone_Project.GameObjects.Interfaces
         public bool Visible { get; }
         public Subsprite Subsprite { get; }
         public Rectangle Destination { get; }
+        public float Rotation { get; }
         public Vector2 Origin { get; }
         public float Layer { get; }
         public void Draw();

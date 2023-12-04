@@ -11,7 +11,8 @@ namespace Capstone_Project.GameObjects.Entities
     {
         public bool Visible { get; set; } = true;
         public Subsprite Subsprite { get; init; }
-        public Rectangle Destination => Hitbox;
+        public Rectangle Destination => new Rectangle((int)Position.X, (int)Position.Y, Size, Size);
+        public float Rotation { get; protected set; } = 0f;
         public Vector2 Origin { get; init; }        // Entities have their positions as the centre of the sprite
         public float Layer { get; set; } = 0.01f;
 
@@ -34,7 +35,7 @@ namespace Capstone_Project.GameObjects.Entities
         {
             Subsprite = subsprite;
             //Origin = Subsprite.Source.Size.ToVector2() / 2f;
-            Origin = Vector2.Zero;
+            Origin = subsprite.Source.Size.ToVector2() / 2f;
             Position = position;
             Speed = speed;
 
@@ -55,7 +56,7 @@ namespace Capstone_Project.GameObjects.Entities
         public virtual void Draw()
         {
             if (Visible && !Destination.IsEmpty)
-                spriteBatch.Draw(Subsprite.SpriteSheet, Destination, Subsprite.Source, Color.White, 0f, Origin, SpriteEffects.None, Layer);
+                spriteBatch.Draw(Subsprite.SpriteSheet, Destination, Subsprite.Source, Color.White, Rotation, Origin, SpriteEffects.None, Layer);
         }
 
         #region Collision Stuff
