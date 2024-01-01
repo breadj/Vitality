@@ -102,9 +102,6 @@ namespace Capstone_Project
             Globals.Globals.BasicEffect = new EasyBasicEffect(GraphicsDevice);
 
             Entities.Add(player);
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
             Entities.Add(new Enemy(enemySubsprite, tileMap.MapBounds.Size.ToVector2() / 2.5f));
 
             testPoly = new Polygon(Polygon.Rotate(Polygon.GenerateWideArc(100), MathF.PI / 2), new Vector2(768, 384));

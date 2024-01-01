@@ -7,7 +7,7 @@ using Capstone_Project.GameObjects;
 
 namespace Capstone_Project.MapStuff
 {
-    public class Tile : GameObjects.Interfaces.ITexturable, ICollidable
+    public class Tile : ITexturable, ICollidable
     {
         public bool Visible { get; set; } = true;
         public Subsprite Subsprite { get; init; }
