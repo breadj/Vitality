@@ -11,7 +11,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using Capstone_Project.Fundamentals;
 
 namespace Capstone_Project
 {
@@ -76,6 +75,10 @@ namespace Capstone_Project
             BLANK = new Texture2D(graphics.GraphicsDevice, 1, 1);
             BLANK.SetData(new Color[] { Color.White });
 
+            Pixel = new Texture2D(graphics.GraphicsDevice, 1, 1);
+            Pixel.SetData(new Color[] { Color.White });
+            // only difference between BLANK and Pixel is semantics lmao
+
             DebugFont = Content.Load<SpriteFont>("DebugFont");
 
             Texture2D playerSprite = Content.Load<Texture2D>("Player");
@@ -99,12 +102,11 @@ namespace Capstone_Project
             player = new Player(playerSubsprite, tileMap.MapBounds.Center.ToVector2());
 
             Camera = new Camera(new(0, 0, 1920, 1080), player.Position);
-            Globals.Globals.BasicEffect = new EasyBasicEffect(GraphicsDevice);
 
             Entities.Add(player);
             Entities.Add(new Enemy(enemySubsprite, tileMap.MapBounds.Size.ToVector2() / 2.5f));
 
-            testPoly = new Polygon(Polygon.Rotate(Polygon.GenerateWideArc(100), MathF.PI / 2), new Vector2(768, 384));
+            testPoly = new Polygon(Polygon.Rotate(Polygon.GenerateNarrowArc(100), MathF.PI / 2), Color.Red, new Vector2(480, 300));
         }
 
         protected override void Update(GameTime gameTime)
@@ -200,20 +202,9 @@ namespace Capstone_Project
             GraphicsDevice.Clear(Color.DarkGray); // default colour, change to black later
 
             spritebatchBegin();
-            // draws only the visible Tiles
+            // draws only the visible Tiles & Entities
             foreach (Tile tile in visibleTiles)
                 tile.Draw();
-            spriteBatch.End();
-
-            
-            if ((timer += (float)gameTime.ElapsedGameTime.TotalSeconds) >= 2f)
-                testPoly.ChangeColour(new Color(Color.Red, 0.5f));
-            testPoly.Draw();
-            
-
-            spritebatchBegin();
-
-            // draws all visible Entities
             foreach (Entity entity in visibleEntities)
                 entity.Draw();
 
@@ -223,6 +214,9 @@ namespace Capstone_Project
             //spriteBatch.DrawString(DebugFont, visibleTiles.Count.ToString(), Camera.ScreenToWorld(new(0, 0)), Color.White);
             //spriteBatch.Draw(BLANK, Camera.VisibleArea, new Color(Color.DarkOliveGreen, 0.4f));
             //spriteBatch.Draw(BLANK, Camera.SimulationArea, new Color(Color.DarkOliveGreen, 0.4f));
+            if ((timer += (float)gameTime.ElapsedGameTime.TotalSeconds) >= 2f)
+                testPoly.Colour = new Color(Color.Red, 0.5f);
+            testPoly.Draw();
 
             spriteBatch.End();
 
