@@ -4,8 +4,11 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using Capstone_Project.GameObjects.Interfaces;
+<<<<<<< HEAD
 using System.Linq;
 using System.Diagnostics;
+=======
+>>>>>>> bc39f8d78e4142e23321cca44295f357bb9c4054
 
 namespace Capstone_Project.GameObjects.Entities
 {
@@ -14,6 +17,7 @@ namespace Capstone_Project.GameObjects.Entities
         public int Vitality { get; private set; }
         public float Defence { get; private set; }
 
+<<<<<<< HEAD
         public float Damage { get; private set; } = 10f;
         public Attack Attack { get; private set; }
         public float Range { get; private set; } = 85f;
@@ -21,10 +25,19 @@ namespace Capstone_Project.GameObjects.Entities
         public Player(Subsprite subsprite, Vector2 position, int size = 100, int speed = 250) : base(subsprite, position, size, speed)
         {
             Attack = new Attack(this, Vector2.Zero, 2.5f, 0.5f, 1f);
+=======
+        public float Damage { get; private set; }
+        public Attack Attack { get; private set; }
+
+        public Player(Subsprite subsprite, Vector2 position, int size = 100, int speed = 250) : base(subsprite, position, size, speed)
+        {
+
+>>>>>>> bc39f8d78e4142e23321cca44295f357bb9c4054
         }
 
         public override void Update(GameTime gameTime)
         {
+<<<<<<< HEAD
             Attack.Update(gameTime);
             if (!Attack.Lock)
             {
@@ -37,17 +50,26 @@ namespace Capstone_Project.GameObjects.Entities
 
             if (!Attack.Lock)
                 base.Update(gameTime);
+=======
+            Direction = Movement(Game1.Controls.ActivatedActions);
+            Orientation = LookAt(Game1.Camera.ScreenToWorld(Game1.Controls.MousePos.ToVector2()));
+
+            base.Update(gameTime);
+>>>>>>> bc39f8d78e4142e23321cca44295f357bb9c4054
         }
 
         public override void Draw()
         {
             base.Draw();
 
+<<<<<<< HEAD
             Attack.Draw();
             if (Attack.Cooldown.Active)
                 spriteBatch.Draw(Attack.Subsprite.SpriteSheet, new Rectangle(Hitbox.Left, Hitbox.Bottom, (int)(Size * Attack.Cooldown.Percentage), 10), Attack.Subsprite.Source,
                     new Color(Color.DarkGray, 0.9f), Attack.Rotation, Vector2.Zero, SpriteEffects.None, Attack.Layer);
 
+=======
+>>>>>>> bc39f8d78e4142e23321cca44295f357bb9c4054
             //spriteBatch.Draw(BLANK, PathCollider, null, new Color(Color.MediumPurple, 0.5f), 0f, Vector2.Zero, SpriteEffects.None, 0.9f);
             //spriteBatch.DrawString(DebugFont, Position.ToString(), Position, Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.9f);
             //spriteBatch.Draw(BLANK, new Rectangle(Position.ToPoint(), new Point(Size)), null, new Color(Color.Pink, 0.5f), MathHelper.PiOver4, BLANK.Bounds.Size.ToVector2() / 2f, SpriteEffects.None, 0.05f);
@@ -64,7 +86,11 @@ namespace Capstone_Project.GameObjects.Entities
 
         public void Swing()
         {
+<<<<<<< HEAD
             Attack.Start(Position + (Orientation * Range));
+=======
+
+>>>>>>> bc39f8d78e4142e23321cca44295f357bb9c4054
         }
 
         private Vector2 Movement(List<Input.Action> relevantActions)

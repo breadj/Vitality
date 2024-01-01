@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 ﻿using static Capstone_Project.Globals.Globals;
 using Capstone_Project.GameObjects.Interfaces;
 using Capstone_Project.SpriteTextures;
+=======
+﻿using Capstone_Project.GameObjects.Interfaces;
+>>>>>>> bc39f8d78e4142e23321cca44295f357bb9c4054
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -10,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace Capstone_Project.GameObjects
 {
+<<<<<<< HEAD
     public class Attack : Interfaces.ITexturable, ICollidable, IUpdatable
     {
         public bool Visible { get; private set; }
@@ -21,10 +26,17 @@ namespace Capstone_Project.GameObjects
 
         public bool Active { get; set; } = false;
         public Rectangle Hitbox => new Rectangle(Position.ToPoint() - new Point((int)(attacker.Range / 2f)), new Point((int)attacker.Range));
+=======
+    public class Attack : ICollidable, IUpdatable
+    {
+        public bool Active { get; set; } = false;
+        public Rectangle Hitbox { get; set; }
+>>>>>>> bc39f8d78e4142e23321cca44295f357bb9c4054
         public bool IsCircle { get; } = false;  // will probably never use this
         public float Radius { get; init; }      // nor this
 
         // all CDs in seconds
+<<<<<<< HEAD
         public Timer Windup { get; private set; }            // how long until the attack actually happens (how long to wind up the attacK)
         public Timer Linger { get; private set; }            // how long the attack hurtbox stays there 
         public Timer Cooldown { get; private set; }          // how long until attacker can attack again
@@ -53,10 +65,30 @@ namespace Capstone_Project.GameObjects
             if (!Active)
                 return;
 
+=======
+        public Cooldown Windup { get; private set; }            // how long until the attack actually happens (how long to wind up the attacK)
+        public Cooldown Linger { get; private set; }            // how long the attack hurtbox stays there 
+        public Cooldown Cooldown { get; private set; }          // how long until attacker can attack again
+
+
+        public Attack(Rectangle swingbox, float windupTime, float lingerTime, float cooldown)
+        {
+            Hitbox = swingbox;
+            Radius = swingbox.Size.X;
+
+            Windup = new Cooldown(windupTime);
+            Linger = new Cooldown(lingerTime);
+            Cooldown = new Cooldown(cooldown);
+        }
+
+        public void Update(GameTime gameTime)
+        {
+>>>>>>> bc39f8d78e4142e23321cca44295f357bb9c4054
             Windup.Update(gameTime);
             Linger.Update(gameTime);
             Cooldown.Update(gameTime);
 
+<<<<<<< HEAD
             if (Windup.Active && Windup.Done)
             {
                 Windup.Active = false;
@@ -138,6 +170,14 @@ namespace Capstone_Project.GameObjects
             }
 
             return cd;
+=======
+
+        }
+
+        public CollisionDetails CollidesWith(ICollidable other)
+        {
+            throw new NotImplementedException();
+>>>>>>> bc39f8d78e4142e23321cca44295f357bb9c4054
         }
     }
 }

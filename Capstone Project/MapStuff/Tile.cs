@@ -1,42 +1,66 @@
-﻿using Capstone_Project.GameObjects.Hitboxes;
+﻿using static Capstone_Project.Globals.Globals;
+using Capstone_Project.GameObjects.Interfaces;
 using Capstone_Project.SpriteTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Capstone_Project.GameObjects;
 
 namespace Capstone_Project.MapStuff
 {
+<<<<<<< HEAD
 <<<<<<< Updated upstream
     public class Tile
 =======
     public class Tile : GameObjects.Interfaces.ITexturable, ICollidable
 >>>>>>> Stashed changes
+=======
+    public class Tile : GameObjects.Interfaces.IDrawable, ICollidable
+>>>>>>> bc39f8d78e4142e23321cca44295f357bb9c4054
     {
-        private readonly Subsprite subsprite;
-        private readonly int size;
-        public readonly bool IsWall;
+        public bool Visible { get; set; } = true;
+        public Subsprite Subsprite { get; init; }
+        public Rectangle Destination { get; init; }
+        public float Rotation => 0f;
+        public Vector2 Origin { get; init; }            // Tiles have their positions as the top-left of their sprite
+        public float Layer { get; set; } = 0.001f;
+
+        public bool Active { get; set; } = false;
+        public Rectangle Hitbox { get; init; }
+        public bool IsCircle { get; } = false;          // always a square
+        public float Radius => size / 2f;
 
         public Point Position { get; init; }
-        public TileHitbox Hitbox { get; init; }
+        private int size { get; init; }
+
 
         public Tile(Subsprite subsprite, Point position, int size, bool isWall = false)
         {
-            this.subsprite = subsprite;
-            this.size = size;
-            IsWall = isWall;
+            Subsprite = subsprite;
+            Destination = new Rectangle(position, new Point(size));
+            Origin = Vector2.Zero;
+
+            Active = isWall;
+            Hitbox = Destination;
 
             Position = position;
-            Hitbox = new TileHitbox(this, new Point(size));
+            this.size = size;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw()
         {
             // assuming the destination Rectangle is the same as the Hitbox BoundingBox
-            spriteBatch.Draw(subsprite.SpriteSheet, new Rectangle(Position, new Point(size)), subsprite.Source, Color.White, 
-                0f, Vector2.Zero, SpriteEffects.None, 0f);
+            spriteBatch.Draw(Subsprite.SpriteSheet, Destination, Subsprite.Source, Color.White, 
+                Rotation, Origin, SpriteEffects.None, Layer);
 
             //spriteBatch.DrawString(Globals.Globals.DebugFont, IsWall.ToString(), Position.ToVector2(), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.2f);
-            if (IsWall)
-                spriteBatch.Draw(Globals.Globals.BLANK, Hitbox.BoundingBox, null, new Color(Color.Pink, 0.4f), 0f, Vector2.Zero, SpriteEffects.None, 0.2f);
+            /*if (Active)
+                spriteBatch.Draw(BLANK, Hitbox, null, new Color(Color.Pink, 0.4f), 0f, Vector2.Zero, SpriteEffects.None, 0.2f);*/
+        }
+
+        // this shouldn't actually ever have to be called, since it will always be 'other' that checks and handles collision with a Tile
+        public CollisionDetails CollidesWith(ICollidable other)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

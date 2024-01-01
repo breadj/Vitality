@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/asus/OneDrive - University of Essex/Year 3/CE301 - Capstone Project/23-24_CE301_darby_joseph_r_p/Capstone Project/Content/Player.png</SourceFile>
-  <SourceTime>2023-10-28T16:53:51.2782068+01:00</SourceTime>
+  <SourceFile>C:/Users/asus/OneDrive - University of Essex/Year 3/CE301 - Capstone Project/23-24_CE301_darby_joseph_r_p/Capstone Project/Content/../Textures/Player.png</SourceFile>
+  <SourceTime>2023-11-28T22:44:36.7553111+00:00</SourceTime>
   <DestFile>C:/Users/asus/OneDrive - University of Essex/Year 3/CE301 - Capstone Project/23-24_CE301_darby_joseph_r_p/Capstone Project/Content/bin/DesktopGL/Player.xnb</DestFile>
-  <DestTime>2023-11-19T23:23:07.1313142+00:00</DestTime>
+  <DestTime>2023-11-28T22:46:00.5635723+00:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2022-07-26T12:44:56+01:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

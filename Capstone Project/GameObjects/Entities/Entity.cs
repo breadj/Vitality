@@ -7,7 +7,11 @@ using System;
 
 namespace Capstone_Project.GameObjects.Entities
 {
+<<<<<<< HEAD
     public abstract class Entity : ITexturable, IUpdatable, ICollidable, IMovable
+=======
+    public abstract class Entity : Interfaces.IDrawable, IUpdatable, ICollidable, IMovable
+>>>>>>> bc39f8d78e4142e23321cca44295f357bb9c4054
     {
         public bool Visible { get; set; } = true;
         public Subsprite Subsprite { get; init; }
