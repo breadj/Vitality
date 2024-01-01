@@ -9,6 +9,11 @@ using Capstone_Project.Globals;
 using System.Collections.Generic;
 using Capstone_Project.SpriteTextures;
 using System.Linq;
+<<<<<<< Updated upstream
+=======
+using System;
+using Capstone_Project.Fundamentals;
+>>>>>>> Stashed changes
 
 namespace Capstone_Project
 {
@@ -29,6 +34,9 @@ namespace Capstone_Project
 
         private Player player;
         private List<Entity> visibleEntities;
+
+        // debug and testing:
+        private Polygon testPoly;
 
         public Game1()
         {
@@ -60,7 +68,11 @@ namespace Capstone_Project
 
         protected override void LoadContent()
         {
+            Globals.Globals.GraphicsDevice = graphics.GraphicsDevice;
             spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true, DepthBufferFunction = CompareFunction.Less };
+            GraphicsDevice.RasterizerState = new RasterizerState() { FillMode = FillMode.Solid, CullMode = CullMode.None };
 
             // TODO: use this.Content to load your game content here
 
@@ -88,8 +100,15 @@ namespace Capstone_Project
             player = new Player(playerSubsprite, tileMap.MapBounds.Center.ToVector2());
 
             Camera = new Camera(new(0, 0, 1920, 1080), player.Position);
+            Globals.Globals.BasicEffect = new EasyBasicEffect(GraphicsDevice);
 
             Entities.Add(player);
+<<<<<<< Updated upstream
+=======
+            Entities.Add(new Enemy(enemySubsprite, tileMap.MapBounds.Size.ToVector2() / 2.5f));
+
+            testPoly = new Polygon(Polygon.Rotate(Polygon.GenerateWideArc(100), MathF.PI / 2), new Vector2(768, 384));
+>>>>>>> Stashed changes
         }
 
         protected override void Update(GameTime gameTime)
@@ -135,6 +154,7 @@ namespace Capstone_Project
             // proper collision here
             for (int i = 0; i < simulatedEntities.Count; i++)
             {
+<<<<<<< Updated upstream
                 simulatedEntities[i].Update(gameTime);
 
                 // checks collisions with other simulated Entities without 'repetition' (AKA: i.collide(j), then j.collide(i))
@@ -144,6 +164,38 @@ namespace Capstone_Project
                 // checks collisions against Tiles
                 foreach (Tile tile in simulatedTiles)
                     simulatedEntities[i].HandleCollision(tile, gameTime);
+=======
+                for (int j = i + 1; j < simulatedEntities.Count; j++)
+                {
+                    if (simulatedEntities[i] is IRespondable responsive1)
+                    {
+                        if (responsive1.PathCollider.Intersects(simulatedEntities[j].Hitbox))
+                        {
+                            CollisionDetails cd = responsive1.CollidesWith(simulatedEntities[j]);
+                            responsive1.InsertIntoCollisions(cd);
+                            if (simulatedEntities[j] is IRespondable other)
+                                other.InsertIntoCollisions(cd);
+                        }
+                    }
+
+                    if (simulatedEntities[i] is IAttacker attacker && simulatedEntities[j] is IHurtable hurtable)
+                    {
+                        CollisionDetails cd = attacker.Attack.CollidesWith(hurtable);
+                        if (cd)
+                            hurtable.TakeDamage(attacker.Damage);
+                    }
+                }
+
+                if (simulatedEntities[i] is IRespondable responsive2)
+                {
+                    foreach (Tile tile in simulatedTiles)
+                        if (responsive2.PathCollider.Intersects(tile.Hitbox))
+                            responsive2.InsertIntoCollisions(responsive2.CollidesWith(tile));
+
+                    responsive2.HandleCollisions();
+                    responsive2.Move();
+                }
+>>>>>>> Stashed changes
 
                 simulatedEntities[i].ClampToMap(tileMap.MapBounds);   // this always comes at the end
             }
@@ -154,18 +206,31 @@ namespace Capstone_Project
             base.Update(gameTime);
         }
 
+        private float timer = 0f;
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.SetRenderTarget(renderTarget);
             GraphicsDevice.Clear(Color.DarkGray); // default colour, change to black later
 
-            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp, null, RasterizerState.CullCounterClockwise, null, Camera.TransformMatrix);
-
-            // TODO: Add your drawing code here
-
-            // draws only the visible Tiles and Entities
+            spritebatchBegin();
+            // draws only the visible Tiles
             foreach (Tile tile in visibleTiles)
+<<<<<<< Updated upstream
                 tile.Draw(spriteBatch);
+=======
+                tile.Draw();
+            spriteBatch.End();
+
+            
+            if ((timer += (float)gameTime.ElapsedGameTime.TotalSeconds) >= 2f)
+                testPoly.ChangeColour(new Color(Color.Red, 0.5f));
+            testPoly.Draw();
+            
+
+            spritebatchBegin();
+
+            // draws all visible Entities
+>>>>>>> Stashed changes
             foreach (Entity entity in visibleEntities)
                 entity.Draw(spriteBatch);
 
@@ -175,6 +240,7 @@ namespace Capstone_Project
             //spriteBatch.Draw(BLANK, Camera.SimulationArea, new Color(Color.DarkOliveGreen, 0.4f));
 
             spriteBatch.End();
+
             GraphicsDevice.SetRenderTarget(null);
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
@@ -182,6 +248,11 @@ namespace Capstone_Project
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        private void spritebatchBegin()
+        {
+            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp, null, RasterizerState.CullCounterClockwise, null, Camera.TransformMatrix);
         }
     }
 }

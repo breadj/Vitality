@@ -5,7 +5,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Capstone_Project.MapStuff
 {
+<<<<<<< Updated upstream
     public class Tile
+=======
+    public class Tile : GameObjects.Interfaces.ITexturable, ICollidable
+>>>>>>> Stashed changes
     {
         private readonly Subsprite subsprite;
         private readonly int size;

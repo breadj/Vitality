@@ -9,8 +9,13 @@ using System.Threading.Tasks;
 namespace Capstone_Project.GameObjects
 {
     // Rect (Rectangle) is interchangeable with Tile
+<<<<<<< Updated upstream
     public enum CollisionType { None, RectOnRect, RectOnCirc, CircOnCirc }
     public class CollisionDetails
+=======
+    public enum CollisionType { None, RectOnRect, CircOnRect, CircOnCirc }
+    public struct CollisionDetails
+>>>>>>> Stashed changes
     {
         public CollisionType Type;
         
