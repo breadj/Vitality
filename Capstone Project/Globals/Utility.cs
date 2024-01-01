@@ -1,15 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Capstone_Project.Globals
 {
     public static class Utility
     {
         public static Point IndexToCoord(int index, int width, int height) => new Point(index % width, index / width);
+        public static int Sign(float x) => x < 0 ? -1 : 1;
+        public static int Sign(int x) => x < 0 ? -1 : 1;
+        public static Vector2 AngleToVector(float angle) => new Vector2(-MathF.Sin(angle), MathF.Cos(angle));       // 0 degrees is down
+        public static float VectorToAngle(Vector2 vector) => MathF.Atan2(-vector.X, vector.Y);
+        public static float AngleTowards(Vector2 from, Vector2 to) => VectorToAngle(to - from);
     }
 }

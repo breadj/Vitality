@@ -1,10 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Xna.Framework.Graphics;
 
 namespace Capstone_Project.Globals
 {
@@ -13,5 +7,6 @@ namespace Capstone_Project.Globals
 
         public static Texture2D BLANK = null;
         public static SpriteFont DebugFont = null;
+        public static SpriteBatch spriteBatch = null;
     }
 }

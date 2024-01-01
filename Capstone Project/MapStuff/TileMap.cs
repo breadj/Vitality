@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Capstone_Project.MapStuff
 {
@@ -9,8 +7,10 @@ namespace Capstone_Project.MapStuff
     {
         public Tile2DArray TileArray { get; init; }
 
+        // in px
         private readonly int width;
         public readonly int height;
+
         public Rectangle MapBounds => new Rectangle(0, 0, width, height);
         // width and height of the Tiles (tiles are square so w and h are the same value)
         private readonly int tileSize;
@@ -33,12 +33,12 @@ namespace Capstone_Project.MapStuff
         }
 
         // probably deprecated
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw()
         {
             for (int y = 0; y < TileArray.Height; y++)
                 for (int x = 0; x < TileArray.Width; x++)
                     if (TileArray[x, y] != null)
-                        TileArray[x, y].Draw(spriteBatch);
+                        TileArray[x, y].Draw();
         }
     }
 }
