@@ -1,33 +1,30 @@
 ﻿using static Capstone_Project.Globals.Utility;
 using static Capstone_Project.Globals.Globals;
 using Capstone_Project.MapStuff;
+using Capstone_Project.Input;
+using Capstone_Project.SpriteTextures;
 using Capstone_Project.GameObjects;
+using Capstone_Project.GameObjects.Interfaces;
+using Capstone_Project.GameObjects.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Capstone_Project.Input;
-using Capstone_Project.Globals;
 using System.Collections.Generic;
-using Capstone_Project.SpriteTextures;
 using System.Linq;
-<<<<<<< Updated upstream
-=======
 using System;
 using Capstone_Project.Fundamentals;
->>>>>>> Stashed changes
 
 namespace Capstone_Project
 {
     public class Game1 : Game
     {
         public static Controls Controls = new();
+        public static Camera Camera;
 
-        public Camera Camera;
         public Spritesheet Spritesheet;
         public List<Entity> Entities;
 
         private GraphicsDeviceManager graphics;
         private RenderTarget2D renderTarget;
-        private SpriteBatch spriteBatch;
 
         private TileMap tileMap;
         private List<Tile> visibleTiles;
@@ -83,6 +80,8 @@ namespace Capstone_Project
 
             Texture2D playerSprite = Content.Load<Texture2D>("Player");
             Subsprite playerSubsprite = new Subsprite(playerSprite, playerSprite.Bounds);
+            Texture2D enemySprite = Content.Load<Texture2D>("Enemy");
+            Subsprite enemySubsprite = new Subsprite(enemySprite, enemySprite.Bounds);
             Texture2D spritesheet = Content.Load<Texture2D>("Spritesheet");
             Spritesheet = new Spritesheet(spritesheet, 1);
 
@@ -103,12 +102,12 @@ namespace Capstone_Project
             Globals.Globals.BasicEffect = new EasyBasicEffect(GraphicsDevice);
 
             Entities.Add(player);
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
             Entities.Add(new Enemy(enemySubsprite, tileMap.MapBounds.Size.ToVector2() / 2.5f));
 
             testPoly = new Polygon(Polygon.Rotate(Polygon.GenerateWideArc(100), MathF.PI / 2), new Vector2(768, 384));
->>>>>>> Stashed changes
         }
 
         protected override void Update(GameTime gameTime)
@@ -118,53 +117,47 @@ namespace Capstone_Project
 
             // TODO: Add your update logic here
 
+            Camera.Update(player.Position);
+            Controls.Update(gameTime);
+
             #region Simulated & Visible Tiles
             visibleTiles.Clear();
             List<Tile> simulatedTiles = new List<Tile>();
 
             for (int i = 0; i < tileMap.TileArray.Length; i++)
             {
-                if (Camera.SimulationArea.Intersects(tileMap.TileArray[i].Hitbox.BoundingBox))
+                if (Camera.SimulationArea.Intersects(tileMap.TileArray[i].Hitbox))
                 {
-                    simulatedTiles.Add(tileMap.TileArray[i]);
+                    if (tileMap.TileArray[i].Active)
+                        simulatedTiles.Add(tileMap.TileArray[i]);
 
-                    if (Camera.VisibleArea.Intersects(tileMap.TileArray[i].Hitbox.BoundingBox))
+                    if (Camera.VisibleArea.Intersects(tileMap.TileArray[i].Hitbox) && tileMap.TileArray[i].Visible)
                         visibleTiles.Add(tileMap.TileArray[i]);
                 }
             }
             #endregion
-            #region Simulated & Visible Entities
+            #region Simulated (w/ Update) & Visible Entities
             visibleEntities.Clear();
             List<Entity> simulatedEntities = new List<Entity>();
 
             foreach (Entity entity in Entities)
             {
-                if (Camera.SimulationArea.Intersects(entity.Hitbox.BoundingBox))
+                if (Camera.SimulationArea.Intersects(entity.Hitbox))
                 {
                     simulatedEntities.Add(entity);
-                    if (Camera.VisibleArea.Intersects(entity.Hitbox.BoundingBox))
+                    entity.Update(gameTime);
+
+                    if (Camera.VisibleArea.Intersects(entity.Hitbox) && entity.Visible)
                         visibleEntities.Add(entity);
                 }
             }
             #endregion
 
-            Controls.Update(gameTime);
 
-            #region Collision and Entity.Update() Logic
+            #region Collision and Logic
             // proper collision here
             for (int i = 0; i < simulatedEntities.Count; i++)
             {
-<<<<<<< Updated upstream
-                simulatedEntities[i].Update(gameTime);
-
-                // checks collisions with other simulated Entities without 'repetition' (AKA: i.collide(j), then j.collide(i))
-                for (int j = i + 1; j < simulatedEntities.Count; j++)
-                    simulatedEntities[i].HandleCollision(simulatedEntities[j], gameTime);
-
-                // checks collisions against Tiles
-                foreach (Tile tile in simulatedTiles)
-                    simulatedEntities[i].HandleCollision(tile, gameTime);
-=======
                 for (int j = i + 1; j < simulatedEntities.Count; j++)
                 {
                     if (simulatedEntities[i] is IRespondable responsive1)
@@ -195,13 +188,10 @@ namespace Capstone_Project
                     responsive2.HandleCollisions();
                     responsive2.Move();
                 }
->>>>>>> Stashed changes
 
                 simulatedEntities[i].ClampToMap(tileMap.MapBounds);   // this always comes at the end
             }
             #endregion
-
-            Camera.Update(player.Position);
 
             base.Update(gameTime);
         }
@@ -215,9 +205,6 @@ namespace Capstone_Project
             spritebatchBegin();
             // draws only the visible Tiles
             foreach (Tile tile in visibleTiles)
-<<<<<<< Updated upstream
-                tile.Draw(spriteBatch);
-=======
                 tile.Draw();
             spriteBatch.End();
 
@@ -230,10 +217,11 @@ namespace Capstone_Project
             spritebatchBegin();
 
             // draws all visible Entities
->>>>>>> Stashed changes
             foreach (Entity entity in visibleEntities)
-                entity.Draw(spriteBatch);
+                entity.Draw();
 
+            //Point dev = new Point(220, 150);
+            //spriteBatch.Draw(BLANK, new Rectangle((int)Camera.Position.X - dev.X, (int)Camera.Position.Y - dev.Y, dev.X * 2, dev.Y * 2), null, new Color(Color.Black, 0.2f), 0f, Vector2.Zero, SpriteEffects.None, 0.99f);
             //spriteBatch.Draw(BLANK, tileMap.MapBounds, null, new Color(Color.Purple, 0.5f), 0f, Vector2.Zero, SpriteEffects.None, 0.999f);
             //spriteBatch.DrawString(DebugFont, visibleTiles.Count.ToString(), Camera.ScreenToWorld(new(0, 0)), Color.White);
             //spriteBatch.Draw(BLANK, Camera.VisibleArea, new Color(Color.DarkOliveGreen, 0.4f));

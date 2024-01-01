@@ -1,45 +1,31 @@
-﻿using Capstone_Project.GameObjects.Hitboxes;
+﻿using Capstone_Project.GameObjects.Interfaces;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Capstone_Project.GameObjects
 {
     // Rect (Rectangle) is interchangeable with Tile
-<<<<<<< Updated upstream
-    public enum CollisionType { None, RectOnRect, RectOnCirc, CircOnCirc }
-    public class CollisionDetails
-=======
     public enum CollisionType { None, RectOnRect, CircOnRect, CircOnCirc }
     public struct CollisionDetails
->>>>>>> Stashed changes
     {
-        public CollisionType Type;
-        
-        // order only really matters if the CollisionType is RectOnCirc
-        public IHitbox To;
-        public IHitbox From;
+        public CollisionType Type { get; set; } = CollisionType.None;
 
-        public Rectangle Intersection;
+        // order only really matters if the CollisionType is CircOnRect
+        public ICollidable From { get; set; } = null;
+        public ICollidable Against { get; set; } = null;
+
+        public Rectangle Intersection { get; set; } = Rectangle.Empty;
+        public int IntersectionArea => Intersection.Width * Intersection.Height;
 
         // only used for RectOnCirc
-        public bool CornerCollision;
-        public float IntersectionDepth;
+        public bool CornerCollision { get; set; } = false;
+        public float IntersectionDepth { get; set; } = 0;
 
         // if the CollisionType is anything other than None then it returns true to a collision
         public bool HasCollided => !(Type == CollisionType.None);
 
         public CollisionDetails()
         {
-            Type = CollisionType.None;
-            To = null;
-            From = null;
-            Intersection = Rectangle.Empty;
-            CornerCollision = false;
-            IntersectionDepth = 0;
+            
         }
 
         public static implicit operator bool(CollisionDetails cd) => cd.HasCollided;
