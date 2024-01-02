@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
+using System.Transactions;
 
 namespace Capstone_Project.GameObjects
 {
@@ -23,6 +24,8 @@ namespace Capstone_Project.GameObjects
         public Color Colour { get; set; }
 
         private List<Point> outline { get; init; }
+        private Rectangle[] scanLines { get; init; }
+        private List<Point> pixels { get; init; }
 
         public Polygon(Vector2[] vertices, Color colour, Vector2? centre = null)
         {
@@ -32,6 +35,8 @@ namespace Capstone_Project.GameObjects
 
             outline = GenerateWireframe(Vertices);
             Hitbox = GenerateHitbox(Vertices);
+            scanLines = GenerateLineFill(outline, Hitbox.Top, Hitbox.Bottom);
+            pixels = GeneratePixelFill(outline, Hitbox.Top, Hitbox.Bottom);
         }
 
         public void Update(GameTime gameTime)
@@ -49,6 +54,19 @@ namespace Capstone_Project.GameObjects
             {
                 spriteBatch.Draw(Pixel, px.ToVector2(), null, Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.005f);
             }
+
+            // to draw via scanlines
+            /*foreach (Rectangle line in scanLines)
+            {
+                spriteBatch.Draw(Pixel, line, null, Colour, 0f, Vector2.Zero, SpriteEffects.None, 0.004f);
+            }*/
+
+            // to draw via individual pixels
+            foreach (Point px in pixels)
+                spriteBatch.Draw(Pixel, px.ToVector2(), null, Colour, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.004f);
+
+            // draw hitbox (debug only)
+            //spriteBatch.Draw(BLANK, Hitbox, null, Colour, 0f, Vector2.Zero, SpriteEffects.None, 0.004f);
         }
 
         public CollisionDetails CollidesWith(ICollidable other)
@@ -73,7 +91,7 @@ namespace Capstone_Project.GameObjects
                     maxY = vertex.Y;
             }
 
-            return new Rectangle((int)minX, (int)minY, (int)(maxX - minX), (int)(maxY - minY));
+            return new Rectangle((int)minX, (int)minY, (int)(maxX - minX) + 1, (int)(maxY - minY) + 1);
         }
 
         #region Line-Rasterising & Wireframe Algorithms
@@ -85,13 +103,14 @@ namespace Capstone_Project.GameObjects
             (int x, int y) d = (Math.Abs(b.X - a.X), -Math.Abs(b.Y - a.Y));
             (int x, int y) s = (Globals.Utility.Sign(b.X - a.X), Globals.Utility.Sign(b.Y -a.Y));
             int e = d.x + d.y;
-            int e2 = e * 2;
 
             Point current = new Point(a.X, a.Y);
             while (true)
             {
                 if (current == b)
                     break;
+
+                int e2 = e * 2;
 
                 if (e2 >= d.y)
                 {
@@ -129,7 +148,57 @@ namespace Capstone_Project.GameObjects
         #endregion
 
         #region Scan Conversion
+        private static (int[], int[]) FindXBounds(List<Point> outline, int minY, int height)
+        {
+            int[] minXs = new int[height];
+            int[] maxXs = new int[height];
+            Array.Fill(minXs, int.MaxValue);
+            Array.Fill(maxXs, int.MinValue);
 
+            foreach (Point p in outline)
+            {
+                int trueIndex = p.Y - minY;
+                if (p.X < minXs[trueIndex])
+                    minXs[trueIndex] = p.X;
+                if (p.X > maxXs[trueIndex])
+                    maxXs[trueIndex] = p.X;
+            }
+
+            return (minXs, maxXs);
+        }
+
+        private static Rectangle[] GenerateLineFill(List<Point> outline, int minY, int maxY)
+        {
+            int height = maxY - minY;
+            (int[] minXs, int[] maxXs) = FindXBounds(outline, minY, height);
+
+            Rectangle[] lines = new Rectangle[height];
+
+            for (int i = 0; i < height; i++)
+            {
+                int trueY = i + minY;
+                lines[i] = new Rectangle(minXs[i], trueY, maxXs[i] - minXs[i], 1);
+            }
+
+            return lines;
+        }
+
+        private static List<Point> GeneratePixelFill(List<Point> outline, int minY, int maxY)
+        {
+            int height = maxY - minY;
+            (int[] minXs, int[] maxXs) = FindXBounds(outline, minY, height);
+
+            List<Point> pixels = new List<Point>();
+
+            for (int y = 0; y < height; y++)
+            {
+                int trueY = y + minY;
+                for (int x = 0; x < maxXs[y] - minXs[y]; x++)
+                    pixels.Add(new Point(minXs[y] + x, trueY));
+            }
+
+            return pixels;
+        }
         #endregion
 
         #region Pre-defined Polygons & Generators
