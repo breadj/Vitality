@@ -3,7 +3,7 @@ using Capstone_Project.GameObjects.Interfaces;
 using Capstone_Project.SpriteTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Capstone_Project.GameObjects;
+using Capstone_Project.Collision;
 
 namespace Capstone_Project.MapStuff
 {

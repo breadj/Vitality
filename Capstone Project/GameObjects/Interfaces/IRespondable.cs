@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Capstone_Project.Collision;
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
 
