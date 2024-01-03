@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
+using Capstone_Project.Collision;
 
 namespace Capstone_Project.GameObjects
 {

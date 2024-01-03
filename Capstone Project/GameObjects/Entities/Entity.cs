@@ -4,6 +4,7 @@ using Capstone_Project.SpriteTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using Capstone_Project.Collision;
 
 namespace Capstone_Project.GameObjects.Entities
 {
