@@ -3,6 +3,8 @@ using Capstone_Project.Collision.CollisionShapes;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
+using Capstone_Project.GameObjects.Interfaces;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Capstone_Project.Collision
 {
@@ -58,8 +60,9 @@ namespace Capstone_Project.Collision
             }
             else
             {
+                bool swapped;
                 // makes sure that a is always the Polygon
-                if (bType == CShapes.Polygon)
+                if (swapped = bType == CShapes.Polygon)
                 {
                     Utility.Swap(ref aType, ref bType);
                     Utility.Swap(ref a, ref b);
@@ -68,7 +71,10 @@ namespace Capstone_Project.Collision
                 switch (aType)
                 {
                     case CShapes.Polygon:
-                        return PolygonOnNonPolygon(a as CPolygon, bType, b, out cd);
+                        bool collided = PolygonOnNonPolygon(a as CPolygon, bType, b, out cd);
+                        if (swapped)
+                            cd.SwapAB();
+                        return collided;
                     case CShapes.Circle:
                         return RectangleOnCircle(b as CRectangle, a as CCircle, out cd);
                     case CShapes.Rectangle:
@@ -168,13 +174,47 @@ namespace Capstone_Project.Collision
 
         public static bool RectangleOnCircle(CRectangle rect, CCircle circ, out CollisionDetails cd)
         {
+            cd = new CollisionDetails(CShapes.Rectangle, rect, CShapes.Circle, circ);
 
+            if (RectangleOnCircle(rect.BoundingBox, (circ.Centre, circ.Radius), out Vector2 rectNormal, out Vector2 circNormal, out float depth))
+            {
+                cd.Collided = true;
+                cd.ANormal = rectNormal;
+                cd.BNormal = circNormal;
+                cd.Depth = depth;
+            }
+
+            return cd.Collided;
         }
 
-        public static bool RectangleOnCircle(Rectangle rect, (Vector2 centre, float r) circ, 
+        public static bool RectangleOnCircle(Rectangle rect, (Vector2 centre, float radius) circ, 
             out Vector2 rectNormal, out Vector2 circNormal, out float depth)
         {
+            rectNormal = Vector2.Zero;
+            circNormal = Vector2.Zero;
+            depth = 0;
 
+            // gets the absolute position of the circle translated as if the centre of the rect was (0,0)
+            Vector2 localCirc = new Vector2(MathF.Abs(circ.centre.X - rect.Center.X), MathF.Abs(circ.centre.Y - rect.Center.Y));
+            Vector2 localCircSubLocalRect = localCirc - (rect.Size.ToVector2() / 2f);
+
+            // tests if any of the (local) circ's cardinal points aren't within the bounds of the (local) rect
+            if (localCircSubLocalRect.X > circ.radius || localCircSubLocalRect.Y > circ.radius)
+                return false;
+            /*if (!(localCircSubLocalRect.X <= circ.radius && localCircSubLocalRect.Y <= 0
+                || localCircSubLocalRect.Y <= circ.radius && localCircSubLocalRect.X <= 0))
+                return false;*/
+
+            // tests if any of the corners of the (local) rect are within the radius of the (local) circle
+            depth = circ.radius - localCircSubLocalRect.Length();
+            if (depth <= 0)
+                return false;
+
+            rectNormal = rect.Center.ToVector2() - circ.centre;
+            rectNormal.Normalize();
+            circNormal = -rectNormal;
+
+            return true;
         }
 
         #endregion Rectangle-on-Circle
@@ -392,7 +432,25 @@ namespace Capstone_Project.Collision
 
         #region Collision Handling
 
+        public static void HandleCollision(ref ICollidable a, ref ICollidable b, CollisionDetails cd)
+        {
+            if (!cd.Collided)
+                return;
 
+            if (a is IRespondable aRespondable)
+            {
+                if (b is IRespondable bRespondable)
+                {
+                    float moveBy = cd.Depth / 2f;
+                    aRespondable.TargetPos += cd.ANormal * moveBy;
+                    bRespondable.TargetPos += cd.BNormal * moveBy;
+                }
+                else    // if b is static (only ICollidable)
+                    aRespondable.TargetPos += cd.ANormal * cd.Depth;
+            }
+            else if (b is IRespondable bRespondable)
+                bRespondable.TargetPos += cd.BNormal * cd.Depth;
+        }
 
         #endregion Collision Handling
     }

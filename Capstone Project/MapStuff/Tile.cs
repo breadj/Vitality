@@ -4,6 +4,7 @@ using Capstone_Project.SpriteTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Capstone_Project.Collision;
+using Capstone_Project.Collision.CollisionShapes;
 
 namespace Capstone_Project.MapStuff
 {
@@ -17,9 +18,7 @@ namespace Capstone_Project.MapStuff
         public float Layer { get; set; } = 0.001f;
 
         public bool Active { get; set; } = false;
-        public Rectangle Hitbox { get; init; }
-        public bool IsCircle { get; } = false;          // always a square
-        public float Radius => size / 2f;
+        public CShape Collider { get; init; }
 
         public Point Position { get; init; }
         private int size { get; init; }
@@ -32,7 +31,7 @@ namespace Capstone_Project.MapStuff
             Origin = Vector2.Zero;
 
             Active = isWall;
-            Hitbox = Destination;
+            Collider = new CRectangle(Destination.Center.ToVector2(), (size, size), false);
 
             Position = position;
             this.size = size;
