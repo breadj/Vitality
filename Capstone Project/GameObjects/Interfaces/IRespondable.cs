@@ -1,7 +1,7 @@
 ﻿using Capstone_Project.Collision;
+using Capstone_Project.Collision.CollisionShapes;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Capstone_Project.GameObjects.Interfaces
 {
@@ -12,7 +12,7 @@ namespace Capstone_Project.GameObjects.Interfaces
     public interface IRespondable : IMovable, ICollidable
     {
         public Vector2 TargetPos { get; set; }                      // where the implementer wants to move, regardless of collision status 
-        public Rectangle TargetHitbox { get; }
+        public CShape TargetCollider { get; }
         public Rectangle PathCollider { get; }                      // the large Rectangle that encapsulates both the current Position and TargetPos Hitboxes
         public LinkedList<CollisionDetails> Collisions { get; }     // this should be ordered by Rectangle intersection area ([0] = largest intersection, [n] = smallest intersection) 
         public void InsertIntoCollisions(CollisionDetails details); // this method should ensure the above ^ to be true

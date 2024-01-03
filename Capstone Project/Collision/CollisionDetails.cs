@@ -1,5 +1,6 @@
 ﻿using Capstone_Project.Collision.CollisionShapes;
 using Capstone_Project.GameObjects.Interfaces;
+using Capstone_Project.Globals;
 using Microsoft.Xna.Framework;
 
 namespace Capstone_Project.Collision
@@ -33,6 +34,11 @@ namespace Capstone_Project.Collision
             B = b;
         }
 
-        public static implicit operator bool(CollisionDetails cd) => cd.Collided;
+        public void SwapAB()
+        {
+            (AType, BType) = (BType, AType);
+            (A, B) = (B, A);
+            (ANormal, BNormal) = (BNormal, ANormal);
+        }
     }
 }
