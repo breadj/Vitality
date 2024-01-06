@@ -1,12 +1,11 @@
 ﻿using Capstone_Project.Globals;
-using Capstone_Project.Collision.CollisionShapes;
+using Capstone_Project.CollisionStuff.CollisionShapes;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
 using Capstone_Project.GameObjects.Interfaces;
-using Microsoft.Xna.Framework.Graphics;
 
-namespace Capstone_Project.Collision
+namespace Capstone_Project.CollisionStuff
 {
     public enum CShapes { None, Rectangle, Circle, Polygon };
 
@@ -20,22 +19,25 @@ namespace Capstone_Project.Collision
             _ => CShapes.None
         };
 
-        // clockwise
-        public static Vector2[] GetRectangleVertices(Rectangle rect)
+        public static Rectangle GeneratePathCollider(Rectangle current, Rectangle target)
         {
-            return new Vector2[]
-            {
-                new Vector2(rect.Left, rect.Top),
-                new Vector2(rect.Right, rect.Top),
-                new Vector2(rect.Right, rect.Bottom),
-                new Vector2(rect.Left, rect.Bottom)
-            };
+            int x = Math.Min(current.Left, target.Left);
+            int y = Math.Min(current.Top, target.Top);
+            int width = Math.Max(current.Right, target.Right) - x;
+            int height = Math.Max(current.Bottom, target.Bottom) - y;
 
+            return new Rectangle(x, y, width, height);
         }
 
         #region Collision Detection
 
         #region Proper Collision Detection
+
+        public static bool PrelimCheck(CShape a, CShape b)
+        {
+            return Rectangular(a.BoundingBox, b.BoundingBox);
+        }
+
         public static bool Colliding(CShape a, CShape b)
         {
             return Colliding(a, b, out _);
@@ -43,6 +45,12 @@ namespace Capstone_Project.Collision
 
         public static bool Colliding(CShape a, CShape b, out CollisionDetails cd)
         {
+            if (!PrelimCheck(a, b))
+            {
+                cd = new CollisionDetails();
+                return false;
+            }
+
             CShapes aType = GetShape(a);
             CShapes bType = GetShape(b);
 
@@ -104,7 +112,6 @@ namespace Capstone_Project.Collision
             cd = new CollisionDetails();
             return false;
         }
-
 
         #endregion
 
@@ -168,7 +175,7 @@ namespace Capstone_Project.Collision
             bNormal = -aNormal;
         }
 
-        #endregion
+        #endregion AABB Collision
 
         #region Rectangle-on-Circle
 
@@ -187,6 +194,8 @@ namespace Capstone_Project.Collision
             return cd.Collided;
         }
 
+        // checks if the square and circle collide by creating localised versions of each around the Rectangle's center being at the origin
+        // note: localised rect has side lengths (rect.Width, rect.Height) and top-left (0, 0)
         public static bool RectangleOnCircle(Rectangle rect, (Vector2 centre, float radius) circ, 
             out Vector2 rectNormal, out Vector2 circNormal, out float depth)
         {
@@ -245,6 +254,7 @@ namespace Capstone_Project.Collision
         #endregion Circle Collision
 
         #region Polygon Collision (+Polygon-on-Circle, +Polygon-on-Rectangle)
+        // AKA: Separating Axis Theorem
 
         public static bool PolygonOnCircle(CPolygon poly, CCircle circ, out CollisionDetails cd)
         {
@@ -429,10 +439,9 @@ namespace Capstone_Project.Collision
 
         #endregion Collision Detection
 
-
         #region Collision Handling
 
-        public static void HandleCollision(ref ICollidable a, ref ICollidable b, CollisionDetails cd)
+        public static void HandleCollision(ICollidable a, ICollidable b, CollisionDetails cd)
         {
             if (!cd.Collided)
                 return;

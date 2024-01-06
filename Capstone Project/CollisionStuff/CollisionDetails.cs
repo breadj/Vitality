@@ -1,9 +1,7 @@
-﻿using Capstone_Project.Collision.CollisionShapes;
-using Capstone_Project.GameObjects.Interfaces;
-using Capstone_Project.Globals;
+﻿using Capstone_Project.CollisionStuff.CollisionShapes;
 using Microsoft.Xna.Framework;
 
-namespace Capstone_Project.Collision
+namespace Capstone_Project.CollisionStuff
 {
     // Rect (Rectangle) is interchangeable with Tile
     public struct CollisionDetails
