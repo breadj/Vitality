@@ -3,8 +3,8 @@ using Capstone_Project.GameObjects.Interfaces;
 using Capstone_Project.SpriteTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Capstone_Project.Collision;
-using Capstone_Project.Collision.CollisionShapes;
+using Capstone_Project.CollisionStuff;
+using Capstone_Project.CollisionStuff.CollisionShapes;
 
 namespace Capstone_Project.MapStuff
 {
@@ -49,7 +49,7 @@ namespace Capstone_Project.MapStuff
         }
 
         // this shouldn't actually ever have to be called, since it will always be 'other' that checks and handles collision with a Tile
-        public CollisionDetails CollidesWith(ICollidable other)
+        public bool CollidesWith(ICollidable other, out CollisionDetails cd)
         {
             throw new System.NotImplementedException();
         }

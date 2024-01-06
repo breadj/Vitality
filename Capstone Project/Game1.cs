@@ -3,7 +3,6 @@ using static Capstone_Project.Globals.Globals;
 using Capstone_Project.MapStuff;
 using Capstone_Project.Input;
 using Capstone_Project.SpriteTextures;
-using Capstone_Project.GameObjects;
 using Capstone_Project.GameObjects.Interfaces;
 using Capstone_Project.GameObjects.Entities;
 using Microsoft.Xna.Framework;
@@ -11,7 +10,9 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using Capstone_Project.Collision;
+using Capstone_Project.CollisionStuff;
+using Capstone_Project.Fundamentals.DrawableShapes;
+using Capstone_Project.GameObjects;
 
 namespace Capstone_Project
 {
@@ -33,7 +34,7 @@ namespace Capstone_Project
         private List<Entity> visibleEntities;
 
         // debug and testing:
-        private Polygon testPoly;
+        private DPolygon testPoly;
 
         public Game1()
         {
@@ -107,7 +108,7 @@ namespace Capstone_Project
             Entities.Add(player);
             Entities.Add(new Enemy(enemySubsprite, tileMap.MapBounds.Size.ToVector2() / 2.5f));
 
-            testPoly = new Polygon(Polygon.Rotate(Polygon.GenerateNarrowArc(100), MathF.PI / 2), Color.Red, new Vector2(480, 300));
+            testPoly = new DPolygon(DPolygon.Rotate(DPolygon.GenerateNarrowArc(100), MathF.PI / 2), Color.Red, new Vector2(480, 300));
         }
 
         protected override void Update(GameTime gameTime)
@@ -121,40 +122,45 @@ namespace Capstone_Project
             Controls.Update(gameTime);
 
             #region Simulated & Visible Tiles
+
             visibleTiles.Clear();
             List<Tile> simulatedTiles = new List<Tile>();
 
             for (int i = 0; i < tileMap.TileArray.Length; i++)
             {
-                if (Camera.SimulationArea.Intersects(tileMap.TileArray[i].Hitbox))
+                if (Collision.Rectangular(Camera.SimulationArea, tileMap.TileArray[i].Collider.BoundingBox))
                 {
                     if (tileMap.TileArray[i].Active)
                         simulatedTiles.Add(tileMap.TileArray[i]);
 
-                    if (Camera.VisibleArea.Intersects(tileMap.TileArray[i].Hitbox) && tileMap.TileArray[i].Visible)
+                    if (tileMap.TileArray[i].Visible && Collision.Rectangular(Camera.VisibleArea, tileMap.TileArray[i].Collider.BoundingBox))
                         visibleTiles.Add(tileMap.TileArray[i]);
                 }
             }
+
             #endregion
             #region Simulated (w/ Update) & Visible Entities
+
             visibleEntities.Clear();
             List<Entity> simulatedEntities = new List<Entity>();
 
             foreach (Entity entity in Entities)
             {
-                if (Camera.SimulationArea.Intersects(entity.Hitbox))
+                if (Collision.Rectangular(Camera.SimulationArea, entity.Collider.BoundingBox))
                 {
                     simulatedEntities.Add(entity);
                     entity.Update(gameTime);
 
-                    if (Camera.VisibleArea.Intersects(entity.Hitbox) && entity.Visible)
+                    if (Collision.Rectangular(Camera.VisibleArea, entity.Collider.BoundingBox) && entity.Visible)
                         visibleEntities.Add(entity);
                 }
             }
+
             #endregion
 
 
             #region Collision and Logic
+
             // proper collision here
             for (int i = 0; i < simulatedEntities.Count; i++)
             {
@@ -162,28 +168,21 @@ namespace Capstone_Project
                 {
                     if (simulatedEntities[i] is IRespondable responsive1)
                     {
-                        if (responsive1.PathCollider.Intersects(simulatedEntities[j].Hitbox))
-                        {
-                            CollisionDetails cd = responsive1.CollidesWith(simulatedEntities[j]);
-                            responsive1.InsertIntoCollisions(cd);
-                            if (simulatedEntities[j] is IRespondable other)
-                                other.InsertIntoCollisions(cd);
-                        }
+                        if (responsive1.CollidesWith(simulatedEntities[j], out CollisionDetails cd))
+                            responsive1.InsertIntoCollisions(simulatedEntities[j], cd);
                     }
 
-                    if (simulatedEntities[i] is IAttacker attacker && simulatedEntities[j] is IHurtable hurtable)
-                    {
-                        CollisionDetails cd = attacker.Attack.CollidesWith(hurtable);
-                        if (cd)
-                            hurtable.TakeDamage(attacker.Damage);
-                    }
+                    Attack.Swing(simulatedEntities[i] as IAttacker, simulatedEntities[j] as IHurtable);
+                    Attack.Swing(simulatedEntities[j] as IAttacker, simulatedEntities[i] as IHurtable);
                 }
 
                 if (simulatedEntities[i] is IRespondable responsive2)
                 {
                     foreach (Tile tile in simulatedTiles)
-                        if (responsive2.PathCollider.Intersects(tile.Hitbox))
-                            responsive2.InsertIntoCollisions(responsive2.CollidesWith(tile));
+                    {
+                        if (responsive2.CollidesWith(tile, out CollisionDetails cd))
+                            responsive2.InsertIntoCollisions(tile, cd);
+                    }
 
                     responsive2.HandleCollisions();
                     responsive2.Move();
@@ -191,6 +190,7 @@ namespace Capstone_Project
 
                 simulatedEntities[i].ClampToMap(tileMap.MapBounds);   // this always comes at the end
             }
+
             #endregion
 
             base.Update(gameTime);

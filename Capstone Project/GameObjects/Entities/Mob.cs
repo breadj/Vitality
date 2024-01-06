@@ -3,26 +3,26 @@ using static Capstone_Project.Globals.Utility;
 using Capstone_Project.GameObjects.Interfaces;
 using Capstone_Project.SpriteTextures;
 using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Capstone_Project.Collision;
+using Capstone_Project.CollisionStuff;
+using Capstone_Project.CollisionStuff.CollisionShapes;
 
 namespace Capstone_Project.GameObjects.Entities
 {
     public class Mob : Entity, IRespondable
     {
         public Vector2 TargetPos { get; set; }
-        public Rectangle TargetHitbox => new Rectangle((int)(TargetPos.X - Size / 2f), (int)(TargetPos.Y - Size / 2f), Size, Size);
-        public Rectangle PathCollider => generatePathCollider();
-        public LinkedList<CollisionDetails> Collisions { get; protected set; }
+        public CShape TargetCollider { get; set; }
+        public Rectangle PathCollider => Collision.GeneratePathCollider(Collider.BoundingBox, TargetCollider.BoundingBox);
+        public LinkedList<(ICollidable Other, CollisionDetails Details)> Collisions { get; protected set; }
 
         public Vector2 Orientation { get; protected set; }
         protected Vector2 actualVelocity { get; set; }      // how far is actually travelled in a frame (Velocity * seconds elapsed)
 
         public Mob(Subsprite subsprite, Vector2 position, int size = 0, int speed = 1) : base(subsprite, position, size, speed)
         {
-            Collisions = new LinkedList<CollisionDetails>();
+            Collisions = new LinkedList<(ICollidable Other, CollisionDetails Details)>();
 
             Orientation = new Vector2(0, 1); // down
             actualVelocity = Vector2.Zero;
@@ -49,167 +49,46 @@ namespace Capstone_Project.GameObjects.Entities
             base.Draw();
         }
 
-        #region Overridden Entity Collision Checking
-        public override CollisionDetails CollidesWith(ICollidable other)
-        {
-            CollisionDetails details = new CollisionDetails();
-            details.From = this;
-            details.Against = other;
-            details.Intersection = Rectangle.Intersect(TargetHitbox, other.Hitbox);
-
-            // if there is no intersection between the Hitboxes
-            if (details.Intersection.IsEmpty)
-                return details;
-            // continues if there is a tangible intersection
-
-            // if both are square
-            if (!IsCircle && !other.IsCircle)
-            {
-                details.Type = CollisionType.RectOnRect;
-                return details;
-            }
-
-            // knowing that at least one is a circle:
-            if (!IsCircle)                              // if this is the square
-                return CircOnRect(other, this, details);
-            if (!other.IsCircle)                        // if other is the square
-                return CircOnRect(this, other, details);
-            return CircOnCirc(this, other, details);    // finally, knowing that neither are squares (aka: both are circles)
-        }
-
-        protected static CollisionDetails CircOnCirc(IRespondable a, ICollidable b, CollisionDetails details)
-        {
-            // pretty much impossible for two circles to collide only cardinally, so may as well deal with it as a corner collision
-            details.CornerCollision = true;
-
-            float intersectionDepth = a.Radius + b.Radius - (a.TargetHitbox.Center - b.Hitbox.Center).ToVector2().Length();
-            if (intersectionDepth > 0)
-            {
-                details.IntersectionDepth = intersectionDepth;
-                details.Type = CollisionType.CircOnCirc;
-            }
-
-            return details;
-        }
-
-        protected static CollisionDetails CircOnCirc(ICollidable a, IRespondable b, CollisionDetails details)
-        {
-            details.CornerCollision = true;
-
-            float intersectionDepth = a.Radius + b.Radius - (a.Hitbox.Center - b.TargetHitbox.Center).ToVector2().Length();
-            if (intersectionDepth > 0)
-            {
-                details.IntersectionDepth = intersectionDepth;
-                details.Type = CollisionType.CircOnCirc;
-            }
-
-            return details;
-        }
-
-        // checks if the square and circle collide by creating localised versions of each around the square's center being at the origin
-        // note: localised square has side lengths (square.Radius, square.Radius) and top-left (0, 0)
-        protected static CollisionDetails CircOnRect(IRespondable circle, ICollidable square, CollisionDetails details)
-        {
-            details.From = circle;
-            details.Against = square;
-
-            Vector2 localCirclePos = new Vector2(MathF.Abs(circle.TargetHitbox.Center.X - square.Hitbox.Center.X), MathF.Abs(circle.TargetHitbox.Center.Y - square.Hitbox.Center.Y));
-
-            // testing to see if any of the corners of the square are in the circle
-            float intersectionDepth = circle.Radius - (localCirclePos - new Vector2(square.Radius)).Length();
-            if (intersectionDepth > 0)
-            {
-                details.IntersectionDepth = intersectionDepth;
-                details.Type = CollisionType.CircOnRect;
-
-                // knowing there's already intersection, checks if the intersection is on the corner or just via a cardinal point
-                if (localCirclePos.X > square.Radius && localCirclePos.Y > square.Radius)
-                    details.CornerCollision = true;
-
-                return details;
-            }
-
-            // check if the local circle's cardinal points are within the bounds of the local square
-            if (localCirclePos.X - circle.Radius < square.Radius && localCirclePos.Y < square.Radius
-                || localCirclePos.Y - circle.Radius < square.Radius && localCirclePos.X < square.Radius)
-            {
-                details.Type = CollisionType.CircOnRect;
-                details.CornerCollision = false;    // not needed because it's false by default, but it doesn't hurt to show it explicitly
-
-                return details;
-            }
-
-            return details;
-        }
-
-        protected static CollisionDetails CircOnRect(ICollidable circle, IRespondable square, CollisionDetails details)
-        {
-            details.From = circle;
-            details.Against = square;
-
-            Vector2 localCirclePos = new Vector2(MathF.Abs(circle.Hitbox.Center.X - square.TargetHitbox.Center.X), MathF.Abs(circle.Hitbox.Center.Y - square.TargetHitbox.Center.Y));
-
-            // testing to see if any of the corners of the square are in the circle
-            float intersectionDepth = circle.Radius - (localCirclePos - new Vector2(square.Radius)).Length();
-            if (intersectionDepth > 0)
-            {
-                details.IntersectionDepth = intersectionDepth;
-                details.Type = CollisionType.CircOnRect;
-
-                // knowing there's already intersection, checks if the intersection is on the corner or just via a cardinal point
-                if (localCirclePos.X > square.Radius && localCirclePos.Y > square.Radius)
-                    details.CornerCollision = true;
-
-                return details;
-            }
-
-            // check if the local circle's cardinal points are within the bounds of the local square
-            if (localCirclePos.X - circle.Radius < square.Radius && localCirclePos.Y - circle.Radius < square.Radius)
-            {
-                details.Type = CollisionType.CircOnRect;
-                details.CornerCollision = false;    // not needed because it's false by default, but it doesn't hurt to show it explicitly
-
-                return details;
-            }
-
-            return details;
-        }
-        #endregion
 
         #region Collision Handling
-        private Rectangle generatePathCollider()
-        {
-            // gets the smallest x and y, then the largest width and height to encapsulate both Rectangles
-            int x = MathHelper.Min(Hitbox.Left, TargetHitbox.Left);
-            int y = MathHelper.Min(Hitbox.Top, TargetHitbox.Top);
-            int width = MathHelper.Max(Hitbox.Right, TargetHitbox.Right) - x;
-            int height = MathHelper.Max(Hitbox.Bottom, TargetHitbox.Bottom) - y;
 
-            return new Rectangle(x, y, width, height);
+        public override bool CollidesWith(ICollidable other, out CollisionDetails cd)
+        {
+            // needs to intersect the PathCollider
+            if (!Collision.Rectangular(PathCollider, other.Collider.BoundingBox, out Rectangle intersection))
+            {
+                cd = new CollisionDetails();
+                return false;
+            }
+
+            if (base.CollidesWith(other, out cd));
+                cd.Intersection = intersection;
+            return cd.Collided;
         }
 
-        public virtual void InsertIntoCollisions(CollisionDetails details)
+        public virtual void InsertIntoCollisions(ICollidable other, CollisionDetails details)
         {
             // if the list is empty, just add it straight in
             if (!Collisions.Any())
             {
-                Collisions.AddFirst(details);
+                Collisions.AddFirst((other, details));
                 return;
             }
 
             bool insertion = false;
             // inserts into the list before the first element that has a smaller IntersectionArea than it
+            // can't be a foreach loop as you can't convert Collisions.First.Value back into a LinkedListNode
             for (var node = Collisions.First; node != null; node = node.Next)
             {
-                if (details.IntersectionArea > node.Value.IntersectionArea)
+                if (details.IntersectionArea > node.Value.Details.IntersectionArea)
                 {
-                    Collisions.AddBefore(node, details);
+                    Collisions.AddBefore(node, (other, details));
                     insertion = true;
                     break;
                 }
             }
             if (!insertion)
-                Collisions.AddLast(details);
+                Collisions.AddLast((other, details));
 
             // remember to do other.InsertIntoCollisions(details) if other is also an IRespondable
         }
@@ -221,126 +100,31 @@ namespace Capstone_Project.GameObjects.Entities
             {
                 RecalculateCollisions();
 
-                bool anyChange = HandleCollision(Collisions.First.Value);
-                if (anyChange)
-                    Collisions.RemoveFirst();
-                else
+                // if the first collision doesn't even BB collide with the PathCollider, then neither does the rest of them
+                if (Collisions.First.Value.Details.IntersectionArea == 0)
+                {
                     Collisions.Clear();
-            }
-        }
+                    break;
+                }
 
-        private static bool FindRespondable(CollisionDetails details, out IRespondable responder, out ICollidable collider)
-        {
-            if (details.From is IRespondable)
-            {
-                responder = details.From as IRespondable;
-                collider = details.Against;
+                Collision.HandleCollision(this, Collisions.First.Value.Other, Collisions.First.Value.Details);
+                Collisions.RemoveFirst();
             }
-            else
-            {
-                responder = details.Against as IRespondable;
-                collider = details.From;
-            }
-
-            return !(responder == null || collider == null);
         }
 
         protected virtual void RecalculateCollisions()
         {
-            List<CollisionDetails> newCollisions = new List<CollisionDetails>(Collisions);
+            List<(ICollidable Other, CollisionDetails Details)> newCollisions = new List<(ICollidable Other, CollisionDetails Details)>(Collisions);
             Collisions.Clear();
 
-            foreach (var oldDetails in newCollisions)
+            foreach (var collision in newCollisions)
             {
-                CollisionDetails newDetails = CollidesWith(oldDetails.From == this ? oldDetails.Against : oldDetails.From);
-                InsertIntoCollisions(newDetails);
+                if (CollidesWith(collision.Other, out CollisionDetails cd))
+                    InsertIntoCollisions(collision.Other, cd);
             }
         }
 
-        protected static bool HandleCollision(CollisionDetails details)
-        {
-            return details.Type switch
-            {
-                CollisionType.None => false,                            // if there's no collision to be had, return that there's been no change
-                CollisionType.RectOnRect => HandleRectOnRect(details),
-                CollisionType.CircOnRect => HandleCircOnRect(details),
-                CollisionType.CircOnCirc => HandleCircOnCirc(details),
-                _ => true                                               // just to make sure the default is checked
-            };
-        }
-
-        protected static bool HandleRectOnRect(CollisionDetails details)
-        {
-            IRespondable responder;
-            ICollidable collider;
-
-            if (!FindRespondable(details, out responder, out collider))
-                return false;
-
-            // Hitbox.Center should be used instead of Position, as it is unknown where the Position is on the ICollidable (for a Tile: top-left, for a Mob: centre)
-            Point displacement = responder.TargetHitbox.Center - collider.Hitbox.Center;
-
-            int absDiffX = Math.Abs(displacement.X);
-            int absDiffY = Math.Abs(displacement.Y);
-
-            // if the absolute different has X > Y then that means it's an East-West-wise collision (on x-axis), and vice versa
-            float newX = absDiffX < absDiffY ? responder.TargetPos.X : responder.TargetPos.X + Sign(displacement.X) * details.Intersection.Width;
-            float newY = absDiffY < absDiffX ? responder.TargetPos.Y : responder.TargetPos.Y + Sign(displacement.Y) * details.Intersection.Height;
-
-            Vector2 newTargetPos = new Vector2(newX, newY);
-            if (responder.TargetPos == newTargetPos)
-                return false;
-
-            responder.TargetPos = newTargetPos;
-            return true;
-        }
-
-        protected static bool HandleCircOnRect(CollisionDetails details)
-        {
-            // if it's not corner collision, and just cardinal collision, then it's the same as RectOnRect collision, and vice versa with CircOnCirc
-            return details.CornerCollision ? HandleCircOnCirc(details) : HandleRectOnRect(details);
-
-            /*IRespondable responder;
-            ICollidable collider;
-
-            if (!FindRespondable(details, out responder, out collider))
-                return false;
-
-            Point displacement = responder.TargetHitbox.Center - collider.Hitbox.Center;
-
-            // push initialised as bottom-right-facing (+x, +y) version of Direction, then rotates it by the sign of the displacement.
-            // Since it's already normalised (Direction should always be normalised), multiplying by IntersectionDepth will push the
-            // IRespondable away from the ICollidable enough to escape collision
-            //Vector2 pushAway = new Vector2(Math.Abs(responder.Direction.X) * Sign(displacement.X), Math.Abs(responder.Direction.Y) * Sign(displacement.Y)) * details.IntersectionDepth;
-
-            Vector2 pushAway = Vector2.Normalize((responder.TargetHitbox.Center - collider.Hitbox.Center).ToVector2()) * details.IntersectionDepth;
-
-            Vector2 newTargetPos = responder.TargetPos + pushAway;
-            if (responder.TargetPos == newTargetPos)
-                return false;
-
-            responder.TargetPos = newTargetPos;
-            return true;*/
-        }
-
-        protected static bool HandleCircOnCirc(CollisionDetails details)
-        {
-            IRespondable responder;
-            ICollidable collider;
-
-            if (!FindRespondable(details, out responder, out collider))
-                return false;
-
-            // displacement is the direction from the collider to the responder with the length of the depth of the intersection
-            Vector2 pushAway = Vector2.Normalize((responder.TargetHitbox.Center - collider.Hitbox.Center).ToVector2()) * details.IntersectionDepth;
-
-            Vector2 newTargetPos = responder.TargetPos + pushAway;
-            if (responder.TargetPos == newTargetPos)
-                return false;
-
-            responder.TargetPos = newTargetPos;
-            return true;
-        }
+        
         #endregion
 
         // to be called once all the collision has been handled

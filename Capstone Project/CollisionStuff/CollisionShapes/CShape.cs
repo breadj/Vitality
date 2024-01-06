@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Capstone_Project.Collision.CollisionShapes
+namespace Capstone_Project.CollisionStuff.CollisionShapes
 {
     public abstract class CShape
     {

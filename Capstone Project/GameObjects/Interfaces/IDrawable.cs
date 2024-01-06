@@ -9,6 +9,7 @@ namespace Capstone_Project.GameObjects.Interfaces
     public interface IDrawable
     {
         public bool Visible { get; }
+        public float Layer { get; }
         public void Draw();
     }
 }
