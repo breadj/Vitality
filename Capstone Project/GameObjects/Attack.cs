@@ -13,9 +13,10 @@ namespace Capstone_Project.GameObjects
     {
         public bool Visible { get; private set; }
         public float Layer => 0.09f;
+        public DPolygon Polygon { get; private set; } = null;
 
         public bool Active { get; set; } = false;
-        public CShape Collider { get; init; }
+        public CShape Collider { get; private set; } = null;
 
         // all CDs in seconds
         public Timer Windup { get; private set; }            // how long until the attack actually happens (how long to wind up the attacK)
@@ -27,15 +28,11 @@ namespace Capstone_Project.GameObjects
 
         public IAttacker Attacker { get; init; }
         public Vector2 Position { get; private set; }
-        public Vector2 Direction { get; private set; }
 
-        public Attack(IAttacker attacker, Vector2 position, Vector2 direction, float cooldownTime = 0, float windupTime = 0, float lingerTime = 0)
+        public Attack(IAttacker attacker, Vector2 position, float cooldownTime = 0, float windupTime = 0, float lingerTime = 0)
         {
             Attacker = attacker;
             Position = position;
-            Direction = direction;
-
-            Collider = new CPolygon(Position, DPolygon.Rotate(DPolygon.GenerateNarrowArc(100), Utility.VectorToAngle(direction)));
 
             Windup = new Timer(windupTime);
             Linger = new Timer(lingerTime);
@@ -82,16 +79,18 @@ namespace Capstone_Project.GameObjects
 
         public void Draw()
         {
-            if (Visible)
+            if (!Visible)
+                return;
+            if (Windup.Active)
             {
-                if (Windup.Active)
-                    spriteBatch.Draw(Subsprite.SpriteSheet, Destination, null, new Color(Color.Red, 0.3f), Rotation, Origin, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, Layer);
-                else if (Linger.Active)
-                    spriteBatch.Draw(Subsprite.SpriteSheet, Destination, null, Color.Red, Rotation, Origin, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, Layer);
+                float doubleWindup = Windup.Percentage * 2f;
+                Polygon.Draw(new Color(Polygon.Colour, doubleWindup <= 1f ? 0.7f * doubleWindup : 0.7f));
             }
+            else if (Linger.Active)
+                Polygon.Draw();
         }
 
-        public void Start(Vector2 centre)
+        public void Start(Vector2 centre, Vector2 direction)
         {
             Active = true;
             if (!prevActive)
@@ -99,6 +98,9 @@ namespace Capstone_Project.GameObjects
                 Position = centre;
                 Windup.Start();
                 Visible = true;
+
+                Collider = new CPolygon(Position, DPolygon.Rotate(DPolygon.GenerateNarrowArc(100), Utility.VectorToAngle(direction)));
+                Polygon = new DPolygon(Collider as CPolygon, Color.Red, Layer, true);
             }
         }
 

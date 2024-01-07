@@ -1,4 +1,5 @@
-﻿using Capstone_Project.GameObjects.Interfaces;
+﻿using static Capstone_Project.Globals.Globals;
+using Capstone_Project.GameObjects.Interfaces;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
@@ -10,43 +11,65 @@ namespace Capstone_Project.Fundamentals.DrawableShapes
         public float Layer { get; set; } = 0.005f;
         
         public Color Colour { get; set; } = Color.White;
+        public Rectangle BoundingBox { get; set; }
         public Vector2 Centre { get; set; }
-        protected abstract List<Point> outline { get; set; }
-        protected abstract List<Rectangle> scanLines { get; set; }
-        protected abstract List<Point> pixels { get; set; }
+
+        public bool Outlined { get; set; } = false;
+        protected List<Point> Outline { get; set; }
+
+        public bool Scanned { get; init; } = true;
+        protected List<Rectangle> ScanLines { get; set; }
+        protected List<Point> Pixels { get; set; }
 
         public DShape(Vector2 centre)
         {
             Centre = centre;
         }
 
-        public DShape(Vector2 centre, Color colour, float layer = 0.005f)
+        public DShape(Vector2 centre, Color colour, float layer = 0.005f, bool scanned = true)
         {
             Centre = centre;
             Colour = colour;
             Layer = layer;
+
+            Scanned = scanned;
         }
 
-        public abstract void Draw();
-
-        public static Rectangle GenerateBoundingBox(Vector2[] vertices)
+        public void Draw()
         {
-            float minX = float.PositiveInfinity, minY = float.PositiveInfinity, maxX = float.NegativeInfinity, maxY = float.NegativeInfinity;
+            if (!Visible)
+                return;
 
-            foreach (Vector2 vertex in vertices)
-            {
-                if (vertex.X < minX)
-                    minX = vertex.X;
-                if (vertex.Y < minY)
-                    minY = vertex.Y;
+            if (Outlined)
+                foreach (var px in Outline)
+                    spriteBatch.Draw(Pixel, px.ToVector2(), null, Color.Black, 0f, Vector2.Zero, 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, Layer + 0.0001f);
 
-                if (vertex.X > maxX)
-                    maxX = vertex.X;
-                if (vertex.Y > maxY)
-                    maxY = vertex.Y;
-            }
+            if (Scanned)
+                foreach (var line in ScanLines)
+                    spriteBatch.Draw(Pixel, line, null, Colour, 0f, Vector2.Zero, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, Layer);
+            else
+                foreach (var px in Pixels)
+                    spriteBatch.Draw(Pixel, px.ToVector2(), null, Colour, 0f, Vector2.Zero, 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, Layer);
 
-            return new Rectangle((int)minX, (int)minY, (int)(maxX - minX) + 1, (int)(maxY - minY) + 1);
         }
+
+        public void Draw(Color colour)
+        {
+            if (!Visible)
+                return;
+
+            if (Outlined)
+                foreach (var px in Outline)
+                    spriteBatch.Draw(Pixel, px.ToVector2(), null, Color.Black, 0f, Vector2.Zero, 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, Layer + 0.0001f);
+
+            if (Scanned)
+                foreach (var line in ScanLines)
+                    spriteBatch.Draw(Pixel, line, null, colour, 0f, Vector2.Zero, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, Layer);
+            else
+                foreach (var px in Pixels)
+                    spriteBatch.Draw(Pixel, px.ToVector2(), null, colour, 0f, Vector2.Zero, 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, Layer);
+        }
+
+        protected abstract void GenerateFillMode(bool scanned);
     }
 }

@@ -108,7 +108,7 @@ namespace Capstone_Project
             Entities.Add(player);
             Entities.Add(new Enemy(enemySubsprite, tileMap.MapBounds.Size.ToVector2() / 2.5f));
 
-            testPoly = new DPolygon(DPolygon.Rotate(DPolygon.GenerateNarrowArc(100), MathF.PI / 2), Color.Red, new Vector2(480, 300));
+            //testPoly = new DPolygon(DPolygon.Rotate(DPolygon.GenerateNarrowArc(100), MathF.PI / 2), Color.Red, new Vector2(480, 300));
         }
 
         protected override void Update(GameTime gameTime)
