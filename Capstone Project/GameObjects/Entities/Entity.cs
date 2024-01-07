@@ -3,7 +3,6 @@ using Capstone_Project.GameObjects.Interfaces;
 using Capstone_Project.SpriteTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Capstone_Project.CollisionStuff;
 using Capstone_Project.CollisionStuff.CollisionShapes;
 
@@ -51,6 +50,9 @@ namespace Capstone_Project.GameObjects.Entities
 
             // sets lastPosition to Position before Position is changed
             lastPosition = Position;
+
+            if (Collider.Dynamic)
+                Collider.MoveTo(Position);
 
             Velocity = Direction * Speed;
             Position += Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;

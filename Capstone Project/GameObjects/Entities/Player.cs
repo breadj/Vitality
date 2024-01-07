@@ -45,8 +45,9 @@ namespace Capstone_Project.GameObjects.Entities
 
             Attack.Draw();
             if (Attack.Cooldown.Active)
-                spriteBatch.Draw(Attack.Subsprite.SpriteSheet, new Rectangle(Hitbox.Left, Hitbox.Bottom, (int)(Size * Attack.Cooldown.Percentage), 10), Attack.Subsprite.Source,
-                    new Color(Color.DarkGray, 0.9f), Attack.Rotation, Vector2.Zero, SpriteEffects.None, Attack.Layer);
+                spriteBatch.Draw(Pixel, new Rectangle(Collider.BoundingBox.Left, Collider.BoundingBox.Bottom, 
+                    (int)(Size * Attack.Cooldown.Percentage), 10), null, new Color(Color.DarkGray, 0.9f), 0f, 
+                    Vector2.Zero, SpriteEffects.None, Attack.Layer);
 
             //spriteBatch.Draw(BLANK, PathCollider, null, new Color(Color.MediumPurple, 0.5f), 0f, Vector2.Zero, SpriteEffects.None, 0.9f);
             //spriteBatch.DrawString(DebugFont, Position.ToString(), Position, Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.9f);
@@ -64,7 +65,7 @@ namespace Capstone_Project.GameObjects.Entities
 
         public void Swing()
         {
-            Attack.Start(Position + (Orientation * Range));
+            Attack.Start(Position + (Orientation * Range), Orientation);
         }
 
         private Vector2 Movement(List<Input.Action> relevantActions)

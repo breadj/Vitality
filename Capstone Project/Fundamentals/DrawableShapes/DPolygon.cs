@@ -7,49 +7,65 @@ using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using Capstone_Project.CollisionStuff;
 using Capstone_Project.Globals;
+using Capstone_Project.CollisionStuff.CollisionShapes;
 
 namespace Capstone_Project.Fundamentals.DrawableShapes
 {
     public class DPolygon : DShape
     {
         public bool Active { get; set; } = true;
-        public Rectangle Hitbox { get; init; }
 
         public Vector2[] Vertices { get; init; }
 
-        protected override List<Point> outline { get; set; }
-        protected override List<Rectangle> scanLines { get; set; }
-        protected override List<Point> pixels { get; set; }
+        public DPolygon(Vector2 centre, Vector2[] vertices, bool scanned = true) : base(centre)
+        {
+            Scanned = scanned;
+            Vertices = vertices;
 
-        public DPolygon(Vector2 centre, Vector2[] vertices, Color colour, float layer = 0.004f) : base(centre, colour, layer)
+            BoundingBox = Utility.GenerateBoundingBox(Vertices);
+
+            Outline = GraphicalMethods.GenerateOutline(Vertices);
+            GenerateFillMode(scanned);
+        }
+
+        public DPolygon(Vector2 centre, Vector2[] vertices, Color colour, float layer = 0.004f, bool scanned = true) 
+            : base(centre, colour, layer, scanned)
         {
             Vertices = vertices.Select(vertex => vertex + Centre).ToArray();
 
-            outline = GraphicalMethods.GenerateOutline(Vertices);
-            Hitbox = Utility.GenerateBoundingBox(Vertices);
-            scanLines = GraphicalMethods.GenerateLineFill(outline, Hitbox.Top, Hitbox.Bottom);
-            pixels = GraphicalMethods.GeneratePixelFill(outline, Hitbox.Top, Hitbox.Bottom);
+            BoundingBox = Utility.GenerateBoundingBox(Vertices);
+
+            Outline = GraphicalMethods.GenerateOutline(Vertices);
+            GenerateFillMode(scanned);
         }
 
-        public override void Draw()
+        public DPolygon(CPolygon poly, bool scanned = true) : base(poly.Centre)
         {
-            if (!Visible)
-                return;
+            Scanned = scanned;
+            Vertices = poly.Vertices;
 
-            // draws outline in black
-            /*foreach (Point px in outline)
-                spriteBatch.Draw(Pixel, px.ToVector2(), null, Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.005f);*/
+            BoundingBox = poly.BoundingBox;
+            
+            Outline = GraphicalMethods.GenerateOutline(Vertices);
+            GenerateFillMode(scanned);
+        }
 
-            // to draw via scanlines
-            foreach (Rectangle line in scanLines)
-                spriteBatch.Draw(Pixel, line, null, Colour, 0f, Vector2.Zero, SpriteEffects.None, 0.004f);
+        public DPolygon(CPolygon poly, Color colour, float layer = 0.004f, bool scanned = true) : base(poly.Centre, colour, layer, scanned)
+        {
+            Vertices = poly.Vertices;
 
-            // to draw via individual pixels
-            /*foreach (Point px in pixels)
-                spriteBatch.Draw(Pixel, px.ToVector2(), null, Colour, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.004f);*/
+            BoundingBox = poly.BoundingBox;
 
-            // draw hitbox (debug only)
-            //spriteBatch.Draw(BLANK, Hitbox, null, Colour, 0f, Vector2.Zero, SpriteEffects.None, 0.004f);
+            Outline = GraphicalMethods.GenerateOutline(Vertices);
+            GenerateFillMode(scanned);
+        }
+
+        protected override void GenerateFillMode(bool scanned)
+        {
+            if (scanned)
+                ScanLines = GraphicalMethods.GenerateLineFill(Outline, BoundingBox.Top, BoundingBox.Bottom);
+            else
+                Pixels = GraphicalMethods.GeneratePixelFill(Outline, BoundingBox.Top, BoundingBox.Bottom);
         }
 
         #region Pre-defined Polygons & Generators

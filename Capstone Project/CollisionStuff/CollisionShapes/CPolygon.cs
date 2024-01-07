@@ -1,4 +1,5 @@
-﻿using Capstone_Project.Globals;
+﻿using Capstone_Project.Fundamentals.DrawableShapes;
+using Capstone_Project.Globals;
 using Microsoft.Xna.Framework;
 using System.Linq;
 
@@ -16,7 +17,20 @@ namespace Capstone_Project.CollisionStuff.CollisionShapes
             Dynamic = false;
             Vertices = vertices.Select(vertex => vertex + centre).ToArray();
 
-            BoundingBox = Utility.GenerateBoundingBox(Vertices);
+            BoundingBox = GenerateBoundingBox();
+        }
+
+        public CPolygon(DPolygon poly) : base(poly.Centre)
+        {
+            Dynamic = false;
+            Vertices = poly.Vertices;
+
+            BoundingBox = poly.BoundingBox;
+        }
+
+        protected override Rectangle GenerateBoundingBox()
+        {
+            return Utility.GenerateBoundingBox(Vertices);
         }
     }
 }

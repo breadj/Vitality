@@ -61,28 +61,35 @@ namespace Capstone_Project.Fundamentals.DrawableShapes
             return outline;
         }
 
-        // AKA: Bresenham's Circle Algorithm
-        public static List<Point> GenerateOutline((Vector2 centre, float radius) circle)
+        // AKA: Jesko's Method
+        public static List<Point> GenerateOutline(Vector2 centre, float radius)
         {
             List<Point> outline = new List<Point>();
 
-            Point c = new Point(Utility.Round(circle.centre.X), Utility.Round(circle.centre.Y));
-            int r = Utility.Round(circle.radius);
+            Point c = new Point(Utility.Round(centre.X), Utility.Round(centre.Y));
+            int r = (int)radius;
 
-            int x = 0, y = r;
-            int d = 3 - (2 * r);
+            int x = r, y = 0;
+            int t1 = r >> 4;
+            int t2;
 
-            while (true)
+            while (x >= y)
             {
-                if (x >= y)
-                    break;
-
-                d += d > 0 
-                    ? 4 * (++x - --y) + 10 
-                    : 4 * ++x + 6;
-
                 PlaceInOctants(ref outline, (c.X, c.Y), (x, y));
+
+                t1 += ++y;
+                t2 = t1 - x;
+                if (t2 >= 0)
+                {
+                    t1 = t2;
+                    x--;
+                }
             }
+
+            // get rid of the duplicates (deterministically duplicates since this will always produce an odd-diameter circle)
+            outline.RemoveRange(outline.Count - 5, 4);
+            outline.RemoveRange(0, 2);
+            outline.RemoveRange(3, 2);
 
             return outline;
         }
@@ -103,6 +110,33 @@ namespace Capstone_Project.Fundamentals.DrawableShapes
 
         #region Scan Conversion
 
+        public static List<Rectangle> GenerateLineFill(Rectangle rect)
+        {
+            List<Rectangle> lines = new List<Rectangle>(rect.Height);
+
+            for (int i = rect.Top; i <= rect.Bottom; i++)
+                lines.Add(new Rectangle(rect.Left, i, rect.Width, 1));
+
+            return lines;
+        }
+
+        public static List<Rectangle> GenerateCircleLineFill(Point centre, List<Point> outline, int minY, int maxY)
+        {
+            int height = maxY - minY;
+            int[] minXs = FindSymmetricalMinXBounds(outline, minY, height);
+
+            List<Rectangle> lines = new List<Rectangle>(height);
+
+            for (int i = 0; i < minXs.Length; i++)
+            {
+                int trueY = i + minY;
+                int lineWidth = centre.X + (centre.X - minXs[trueY]);
+                lines[i] = new Rectangle(minXs[i], trueY, lineWidth, 1);
+            }
+
+            return lines;
+        }
+
         public static List<Rectangle> GenerateLineFill(List<Point> outline, int minY, int maxY)
         {
             int height = maxY - minY;
@@ -117,6 +151,35 @@ namespace Capstone_Project.Fundamentals.DrawableShapes
             }
 
             return lines;
+        }
+
+        public static List<Point> GeneratePixelFill(Rectangle rect)
+        {
+            List<Point> pixels = new List<Point>(rect.Width * rect.Height);
+
+            for (int y = rect.Top; y <= rect.Bottom; y++)
+                for (int x = rect.Left; x <= rect.Right; x++)
+                    pixels.Add(new Point(x, y));
+
+            return pixels;
+        }
+
+        public static List<Point> GenerateCirclePixelFill(Point centre, List<Point> outline, int minY, int maxY)
+        {
+            int height = maxY - minY;
+            int[] minXs = FindSymmetricalMinXBounds(outline, minY, height);
+
+            List<Point> pixels = new List<Point>();
+
+            for (int y = 0; y < minXs.Length; y++)
+            {
+                int trueY = y + minY;
+                int lineWidth = centre.X + (centre.X - minXs[trueY]);
+                for (int x = 0; x < lineWidth; x++)
+                    pixels.Add(new Point(minXs[y] + x, trueY));
+            }
+
+            return pixels;
         }
 
         public static List<Point> GeneratePixelFill(List<Point> outline, int minY, int maxY)
@@ -134,6 +197,21 @@ namespace Capstone_Project.Fundamentals.DrawableShapes
             }
 
             return pixels;
+        }
+
+        private static int[] FindSymmetricalMinXBounds(List<Point> outline, int minY, int height)
+        {
+            int[] minXs = new int[height];
+            Array.Fill(minXs, int.MaxValue);
+
+            foreach (Point p in outline)
+            {
+                int trueIndex = p.Y - minY;
+                if (p.X < minXs[trueIndex])
+                    minXs[trueIndex] = p.X;
+            }
+
+            return minXs;
         }
 
         private static (int[], int[]) FindXBounds(List<Point> outline, int minY, int height)

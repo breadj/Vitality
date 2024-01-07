@@ -100,7 +100,7 @@ namespace Capstone_Project.CollisionStuff
             switch (shapeType)
             {
                 case CShapes.Rectangle:
-                    bool collided = Polygonal(poly, new CPolygon(shape.Centre, GetRectangleVertices(shape.BoundingBox)), out cd);
+                    bool collided = Polygonal(poly, new CPolygon(shape.Centre, Utility.GenerateVertices(shape.BoundingBox)), out cd);
                     cd.BType = CShapes.Rectangle;
                     cd.B = shape as CRectangle;
                     return collided;

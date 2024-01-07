@@ -36,6 +36,7 @@ namespace Capstone_Project.GameObjects.Entities
 
             lastPosition = Position;
             TargetPos = Position;
+            TargetCollider = Collider.
 
             Velocity = Direction * Speed;
             actualVelocity = Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -61,7 +62,7 @@ namespace Capstone_Project.GameObjects.Entities
                 return false;
             }
 
-            if (base.CollidesWith(other, out cd));
+            if (base.CollidesWith(other, out cd))
                 cd.Intersection = intersection;
             return cd.Collided;
         }
