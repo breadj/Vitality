@@ -12,7 +12,7 @@ namespace Capstone_Project.GameObjects
     public class Attack : Interfaces.IDrawable, ICollidable, IUpdatable
     {
         public bool Visible { get; private set; }
-        public float Layer => 0.09f;
+        public float Layer => 0.009f;
         public DPolygon Polygon { get; private set; } = null;
 
         public bool Active { get; set; } = false;
@@ -82,15 +82,12 @@ namespace Capstone_Project.GameObjects
             if (!Visible)
                 return;
             if (Windup.Active)
-            {
-                float doubleWindup = Windup.Percentage * 2f;
-                Polygon.Draw(new Color(Polygon.Colour, doubleWindup <= 1f ? 0.7f * doubleWindup : 0.7f));
-            }
+                Polygon.Draw(new Color(Polygon.Colour, Windup.Percentage <= 0.5f ? 0.5f * Windup.Percentage * 2f : 0.5f));
             else if (Linger.Active)
                 Polygon.Draw();
         }
 
-        public void Start(Vector2 centre, Vector2 direction)
+        public void Start(Vector2 centre, Vector2 direction, float range)
         {
             Active = true;
             if (!prevActive)
@@ -99,7 +96,7 @@ namespace Capstone_Project.GameObjects
                 Windup.Start();
                 Visible = true;
 
-                Collider = new CPolygon(Position, DPolygon.Rotate(DPolygon.GenerateNarrowArc(100), Utility.VectorToAngle(direction)));
+                Collider = new CPolygon(Position, DPolygon.Rotate(DPolygon.GenerateNarrowArc(range), Utility.VectorToAngle(direction)));
                 Polygon = new DPolygon(Collider as CPolygon, Color.Red, Layer, true);
             }
         }

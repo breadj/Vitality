@@ -4,7 +4,7 @@ namespace Capstone_Project.CollisionStuff.CollisionShapes
 {
     public abstract class CShape
     {
-        public abstract bool Dynamic { get; init; }
+        public bool Dynamic { get; init; }
         public Rectangle BoundingBox { get; protected set; }
         public Vector2 Centre { get; protected set; }
 
@@ -18,6 +18,7 @@ namespace Capstone_Project.CollisionStuff.CollisionShapes
             if (!Dynamic)
                 throw new System.Exception("Cannot move a {typeof(this)} with Dynamic = false");
 
+            Centre = target;
             BoundingBox = GenerateBoundingBox();
         }
 

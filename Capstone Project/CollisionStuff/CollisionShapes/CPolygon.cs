@@ -7,7 +7,7 @@ namespace Capstone_Project.CollisionStuff.CollisionShapes
 {
     public class CPolygon : CShape
     {
-        public override bool Dynamic { get; init; }     // will ALWAYS be false
+        //public bool Dynamic { get; init; }     // will ALWAYS be false
         public new Rectangle BoundingBox { get; set; }
         public Vector2[] Vertices { get; init; }
 

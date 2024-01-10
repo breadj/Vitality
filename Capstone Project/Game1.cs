@@ -13,6 +13,7 @@ using System;
 using Capstone_Project.CollisionStuff;
 using Capstone_Project.Fundamentals.DrawableShapes;
 using Capstone_Project.GameObjects;
+using System.Diagnostics;
 
 namespace Capstone_Project
 {
@@ -41,7 +42,7 @@ namespace Capstone_Project
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            graphics.IsFullScreen = true;
+            graphics.IsFullScreen = false;
         }
 
         protected override void Initialize()
@@ -196,7 +197,6 @@ namespace Capstone_Project
             base.Update(gameTime);
         }
 
-        private float timer = 0f;
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.SetRenderTarget(renderTarget);
@@ -215,9 +215,6 @@ namespace Capstone_Project
             //spriteBatch.DrawString(DebugFont, visibleTiles.Count.ToString(), Camera.ScreenToWorld(new(0, 0)), Color.White);
             //spriteBatch.Draw(BLANK, Camera.VisibleArea, new Color(Color.DarkOliveGreen, 0.4f));
             //spriteBatch.Draw(BLANK, Camera.SimulationArea, new Color(Color.DarkOliveGreen, 0.4f));
-            if ((timer += (float)gameTime.ElapsedGameTime.TotalSeconds) >= 2f)
-                testPoly.Colour = new Color(Color.Red, 0.5f);
-            testPoly.Draw();
 
             spriteBatch.End();
 

@@ -5,7 +5,6 @@ namespace Capstone_Project.CollisionStuff.CollisionShapes
 {
     public class CCircle : CShape
     {
-        public override bool Dynamic { get; init; }
         public float Radius { get; private set; }
 
         public CCircle(Vector2 centre, float radius, bool dynamic = true) : base(centre)
