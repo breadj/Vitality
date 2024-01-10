@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
 using Capstone_Project.GameObjects.Interfaces;
+using System.Diagnostics;
+using Capstone_Project.Fundamentals.DrawableShapes;
 
 namespace Capstone_Project.CollisionStuff
 {
@@ -68,7 +70,7 @@ namespace Capstone_Project.CollisionStuff
             }
             else
             {
-                bool swapped;
+                bool swapped, collided;
                 // makes sure that a is always the Polygon
                 if (swapped = bType == CShapes.Polygon)
                 {
@@ -79,12 +81,14 @@ namespace Capstone_Project.CollisionStuff
                 switch (aType)
                 {
                     case CShapes.Polygon:
-                        bool collided = PolygonOnNonPolygon(a as CPolygon, bType, b, out cd);
+                        collided = PolygonOnNonPolygon(a as CPolygon, bType, b, out cd);
                         if (swapped)
                             cd.SwapAB();
                         return collided;
                     case CShapes.Circle:
-                        return RectangleOnCircle(b as CRectangle, a as CCircle, out cd);
+                        collided = RectangleOnCircle(b as CRectangle, a as CCircle, out cd);
+                        cd.SwapAB();
+                        return collided;
                     case CShapes.Rectangle:
                         return RectangleOnCircle(a as CRectangle, b as CCircle, out cd);
                 }
@@ -145,11 +149,17 @@ namespace Capstone_Project.CollisionStuff
             return Rectangular(a, b, out _);
         }
 
-        private static void FindRectangleCollisionDetails(CRectangle a, CRectangle b, Rectangle intersection,
+        private static void FindRectangleCollisionDetails(CRectangle a, CRectangle b, Rectangle intersection, 
+            out Vector2 aNormal, out Vector2 bNormal, out float depth)
+        {
+            FindRectangleCollisionDetails(a.BoundingBox, b.BoundingBox, intersection, out aNormal, out bNormal, out depth);
+        }
+
+        private static void FindRectangleCollisionDetails(Rectangle a, Rectangle b, Rectangle intersection,
             out Vector2 aNormal, out Vector2 bNormal, out float depth)
         {
             // calculates the normal b-to-a (aNormal)
-            Vector2 displacement = a.Centre - b.Centre;
+            Vector2 displacement = (a.Center - b.Center).ToVector2();
             float absDiffX = MathF.Abs(displacement.X);
             float absDiffY = MathF.Abs(displacement.Y);
 
@@ -157,21 +167,20 @@ namespace Capstone_Project.CollisionStuff
             // |X| == |Y| means just shove them out from the corner
             if (absDiffX > absDiffY)
             {
-                aNormal = new Vector2(displacement.X, 0);
+                aNormal = new Vector2(Utility.Sign(displacement.X), 0);
                 depth = intersection.Width;
             }
             else if (absDiffY > absDiffX)
             {
-                aNormal = new Vector2(0, displacement.Y);
+                aNormal = new Vector2(0, Utility.Sign(displacement.Y));
                 depth = intersection.Height;
             }
             else    // if absDiffX == absDiffY
             {
-                aNormal = displacement;
+                aNormal = Vector2.Normalize(displacement);
                 depth = displacement.Length();
             }
 
-            aNormal.Normalize();
             bNormal = -aNormal;
         }
 
@@ -207,23 +216,28 @@ namespace Capstone_Project.CollisionStuff
             Vector2 localCirc = new Vector2(MathF.Abs(circ.centre.X - rect.Center.X), MathF.Abs(circ.centre.Y - rect.Center.Y));
             Vector2 localCircSubLocalRect = localCirc - (rect.Size.ToVector2() / 2f);
 
-            // tests if any of the (local) circ's cardinal points aren't within the bounds of the (local) rect
-            if (localCircSubLocalRect.X > circ.radius || localCircSubLocalRect.Y > circ.radius)
-                return false;
-            /*if (!(localCircSubLocalRect.X <= circ.radius && localCircSubLocalRect.Y <= 0
-                || localCircSubLocalRect.Y <= circ.radius && localCircSubLocalRect.X <= 0))
-                return false;*/
+            // tests if any of the (local) circ's cardinal points are within the bounds of the (local) rect
+            if (localCircSubLocalRect.X < circ.radius && localCirc.Y < rect.Height / 2f
+                || localCircSubLocalRect.Y < circ.radius && localCirc.X < rect.Width / 2f)
+            {
+                Rectangle circBB = new Rectangle((int)(circ.centre.X - circ.radius), (int)(circ.centre.Y - circ.radius), (int)(circ.radius * 2), (int)(circ.radius * 2));
+                FindRectangleCollisionDetails(rect, circBB, Rectangle.Intersect(rect, circBB), out rectNormal, out circNormal, out depth);
+
+                return true;
+            }
 
             // tests if any of the corners of the (local) rect are within the radius of the (local) circle
             depth = circ.radius - localCircSubLocalRect.Length();
-            if (depth <= 0)
-                return false;
+            if (depth > 0)
+            {
+                rectNormal = rect.Center.ToVector2() - circ.centre;
+                rectNormal.Normalize();
+                circNormal = -rectNormal;
+                
+                return true;
+            }
 
-            rectNormal = rect.Center.ToVector2() - circ.centre;
-            rectNormal.Normalize();
-            circNormal = -rectNormal;
-
-            return true;
+            return false;
         }
 
         #endregion Rectangle-on-Circle

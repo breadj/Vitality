@@ -5,6 +5,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Capstone_Project.CollisionStuff;
 using Capstone_Project.CollisionStuff.CollisionShapes;
+using Capstone_Project.Fundamentals.DrawableShapes;
+using System.Diagnostics;
 
 namespace Capstone_Project.MapStuff
 {

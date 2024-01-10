@@ -140,14 +140,14 @@ namespace Capstone_Project.Fundamentals.DrawableShapes
         public static List<Rectangle> GenerateLineFill(List<Point> outline, int minY, int maxY)
         {
             int height = maxY - minY;
-            (int[] minXs, int[] maxXs) = FindXBounds(outline, minY, height);
+            (int[] minXs, int[] maxXs) = FindXBounds(outline, minY, maxY);
 
             List<Rectangle> lines = new List<Rectangle>(height);
 
             for (int i = 0; i < height; i++)
             {
                 int trueY = i + minY;
-                lines[i] = new Rectangle(minXs[i], trueY, maxXs[i] - minXs[i], 1);
+                lines.Add(new Rectangle(minXs[i], trueY, maxXs[i] - minXs[i], 1));
             }
 
             return lines;

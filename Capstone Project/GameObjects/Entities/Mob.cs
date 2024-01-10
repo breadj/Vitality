@@ -12,9 +12,9 @@ namespace Capstone_Project.GameObjects.Entities
 {
     public class Mob : Entity, IRespondable
     {
+        public Rectangle OldBoundingBox => new Rectangle((int)(Position.X - Size / 2f), (int)(Position.Y - Size / 2f), Size, Size);
         public Vector2 TargetPos { get; set; }
-        public CShape TargetCollider { get; set; }
-        public Rectangle PathCollider => Collision.GeneratePathCollider(Collider.BoundingBox, TargetCollider.BoundingBox);
+        public Rectangle PathCollider => Collision.GeneratePathCollider(OldBoundingBox, Collider.BoundingBox);
         public LinkedList<(ICollidable Other, CollisionDetails Details)> Collisions { get; protected set; }
 
         public Vector2 Orientation { get; protected set; }
@@ -32,15 +32,17 @@ namespace Capstone_Project.GameObjects.Entities
         // to move the actual Position, use Move() after using this and handling the collisions
         public override void Update(GameTime gameTime)
         {
-            if (!Active) return;
+            if (!Active) 
+                return;
 
             lastPosition = Position;
             TargetPos = Position;
-            TargetCollider = Collider.
 
             Velocity = Direction * Speed;
             actualVelocity = Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
             TargetPos += actualVelocity;
+
+            Collider.MoveTo(TargetPos);
 
             Rotation = VectorToAngle(Orientation);
         }
@@ -48,6 +50,9 @@ namespace Capstone_Project.GameObjects.Entities
         public override void Draw()
         {
             base.Draw();
+
+            /*spriteBatch.Draw(Pixel, OldBoundingBox, null, new Color(Color.Red, 0.4f), 0f, Vector2.Zero, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0.04f);
+            spriteBatch.Draw(Pixel, Collider.BoundingBox, null, new Color(Color.Yellow, 0.4f), 0f, Vector2.Zero, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0.04f);*/
         }
 
 
@@ -102,13 +107,14 @@ namespace Capstone_Project.GameObjects.Entities
                 RecalculateCollisions();
 
                 // if the first collision doesn't even BB collide with the PathCollider, then neither does the rest of them
-                if (Collisions.First.Value.Details.IntersectionArea == 0)
+                if (!Collisions.Any() || Collisions.First.Value.Details.IntersectionArea == 0)
                 {
                     Collisions.Clear();
                     break;
                 }
 
                 Collision.HandleCollision(this, Collisions.First.Value.Other, Collisions.First.Value.Details);
+                Collider.MoveTo(TargetPos);
                 Collisions.RemoveFirst();
             }
         }
@@ -125,13 +131,13 @@ namespace Capstone_Project.GameObjects.Entities
             }
         }
 
-        
         #endregion
 
         // to be called once all the collision has been handled
         public virtual void Move()
         {
             Position = TargetPos;
+            Collider.MoveTo(Position);
         }
     }
 }

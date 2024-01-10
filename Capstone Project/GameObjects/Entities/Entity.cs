@@ -36,7 +36,7 @@ namespace Capstone_Project.GameObjects.Entities
             //Origin = Subsprite.Source.Size.ToVector2() / 2f;
             Origin = subsprite.Source.Size.ToVector2() / 2f;
 
-            Collider = new CCircle(position, size, true);
+            Collider = new CCircle(position, size / 2f, true);
 
             Position = position;
             Speed = speed;

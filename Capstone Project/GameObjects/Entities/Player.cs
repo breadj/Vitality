@@ -16,7 +16,7 @@ namespace Capstone_Project.GameObjects.Entities
 
         public float Damage { get; private set; } = 10f;
         public Attack Attack { get; private set; }
-        public float Range { get; private set; } = 85f;
+        public float Range { get; private set; } = 100f;
 
         public Player(Subsprite subsprite, Vector2 position, int size = 100, int speed = 250) : base(subsprite, position, size, speed)
         {
@@ -65,7 +65,7 @@ namespace Capstone_Project.GameObjects.Entities
 
         public void Swing()
         {
-            Attack.Start(Position + (Orientation * Range), Orientation);
+            Attack.Start(Position, Orientation, Range);
         }
 
         private Vector2 Movement(List<Input.Action> relevantActions)
