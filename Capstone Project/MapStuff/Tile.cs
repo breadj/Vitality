@@ -15,6 +15,7 @@ namespace Capstone_Project.MapStuff
         public bool Visible { get; set; } = true;
         public Subsprite Subsprite { get; init; }
         public Rectangle Destination { get; init; }
+        public Color Colour { get; set; } = Color.White;
         public float Rotation => 0f;
         public Vector2 Origin { get; init; }            // Tiles have their positions as the top-left of their sprite
         public float Layer { get; set; } = 0.001f;

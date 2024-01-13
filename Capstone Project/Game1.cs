@@ -14,6 +14,7 @@ using Capstone_Project.CollisionStuff;
 using Capstone_Project.Fundamentals.DrawableShapes;
 using Capstone_Project.GameObjects;
 using System.Diagnostics;
+using Capstone_Project.CollisionStuff.CollisionShapes;
 
 namespace Capstone_Project
 {
@@ -33,9 +34,7 @@ namespace Capstone_Project
 
         private Player player;
         private List<Entity> visibleEntities;
-
-        // debug and testing:
-        private DPolygon testPoly;
+        private List<Entity> markedForDeath;
 
         public Game1()
         {
@@ -61,6 +60,7 @@ namespace Capstone_Project
             visibleTiles = new List<Tile>();
             Entities = new List<Entity>();
             visibleEntities = new List<Entity>();
+            markedForDeath = new List<Entity>();
 
             base.Initialize();
         }
@@ -102,14 +102,13 @@ namespace Capstone_Project
             }
 
             tileMap = new TileMap(15, 9, tileSize, tiles);
-            player = new Player(playerSubsprite, tileMap.MapBounds.Center.ToVector2());
+            player = new Player(playerSubsprite, tileMap.MapBounds.Center.ToVector2(), 100, 10);
+            Enemy enemy = new Enemy(enemySubsprite, tileMap.MapBounds.Center.ToVector2() + new Vector2(128, 128), 15, 0);
 
             Camera = new Camera(new(0, 0, 1920, 1080), player.Position);
 
             Entities.Add(player);
-            Entities.Add(new Enemy(enemySubsprite, tileMap.MapBounds.Size.ToVector2() / 2.5f));
-
-            //testPoly = new DPolygon(DPolygon.Rotate(DPolygon.GenerateNarrowArc(100), MathF.PI / 2), Color.Red, new Vector2(480, 300));
+            Entities.Add(enemy);
         }
 
         protected override void Update(GameTime gameTime)
@@ -142,11 +141,19 @@ namespace Capstone_Project
             #endregion
             #region Simulated (w/ Update) & Visible Entities
 
+            markedForDeath.Clear();
             visibleEntities.Clear();
             List<Entity> simulatedEntities = new List<Entity>();
 
             foreach (Entity entity in Entities)
             {
+                if (entity.Dead)
+                {
+                    Debug.WriteLine($"{entity} marked for death");
+                    markedForDeath.Add(entity);
+                    continue;
+                }
+
                 if (Collision.Rectangular(Camera.SimulationArea, entity.Collider.BoundingBox))
                 {
                     simulatedEntities.Add(entity);
@@ -156,6 +163,8 @@ namespace Capstone_Project
                         visibleEntities.Add(entity);
                 }
             }
+
+            Entities = Entities.Except(markedForDeath).ToList();
 
             #endregion
 
@@ -173,8 +182,8 @@ namespace Capstone_Project
                             responsive1.InsertIntoCollisions(simulatedEntities[j], cd);
                     }
 
-                    Attack.Swing(simulatedEntities[i] as IAttacker, simulatedEntities[j] as IHurtable);
-                    Attack.Swing(simulatedEntities[j] as IAttacker, simulatedEntities[i] as IHurtable);
+                    Attack.CheckSwing(simulatedEntities[i] as IAttacker, simulatedEntities[j] as IHurtable);
+                    Attack.CheckSwing(simulatedEntities[j] as IAttacker, simulatedEntities[i] as IHurtable);
                 }
 
                 if (simulatedEntities[i] is IRespondable responsive2)

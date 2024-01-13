@@ -5,14 +5,16 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Capstone_Project.CollisionStuff;
 using Capstone_Project.CollisionStuff.CollisionShapes;
+using System.Diagnostics;
 
 namespace Capstone_Project.GameObjects.Entities
 {
-    public abstract class Entity : ITexturable, IUpdatable, ICollidable, IMovable
+    public abstract class Entity : ITexturable, IUpdatable, ICollidable, IMovable, IKillable
     {
         public bool Visible { get; set; } = true;
         public Subsprite Subsprite { get; init; }
         public Rectangle Destination => new Rectangle((int)Position.X, (int)Position.Y, Size, Size);
+        public Color Colour { get; set; } = Color.White;
         public float Rotation { get; protected set; } = 0f;
         public Vector2 Origin { get; init; }        // Entities have their positions as the centre of the sprite
         public float Layer { get; set; } = 0.01f;
@@ -26,7 +28,7 @@ namespace Capstone_Project.GameObjects.Entities
         public int Speed { get; protected set; } = 0;
 
         public int Size { get; init; }              // since Entities are all square, only one axis of 'Size' is needed
-        public bool Dead { get; set; } = false;
+        public bool Dead { get; protected set; } = false;
 
         protected Vector2 lastPosition { get; set; } = Vector2.Zero;
 
@@ -61,7 +63,13 @@ namespace Capstone_Project.GameObjects.Entities
         public virtual void Draw()
         {
             if (Visible && !Destination.IsEmpty)
-                spriteBatch.Draw(Subsprite.SpriteSheet, Destination, Subsprite.Source, Color.White, Rotation, Origin, SpriteEffects.None, Layer);
+                spriteBatch.Draw(Subsprite.SpriteSheet, Destination, Subsprite.Source, Colour, Rotation, Origin, SpriteEffects.None, Layer);
+        }
+
+        public void Kill()
+        {
+            Dead = true;
+            Debug.WriteLine($"{this.GetType()} has died");
         }
 
         #region Collision Stuff

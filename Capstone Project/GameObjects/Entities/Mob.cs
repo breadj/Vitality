@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using Capstone_Project.CollisionStuff;
-using Capstone_Project.CollisionStuff.CollisionShapes;
 
 namespace Capstone_Project.GameObjects.Entities
 {

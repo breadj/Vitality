@@ -25,13 +25,13 @@ namespace Capstone_Project.Input
             Exit = new Action("Exit", new List<Input> { Keys.Escape }, ActionType.OnPress);
 
             // movement Actions and Keys
-            Action Up = new Action("Up", new List<Input> { Keys.W, Keys.Up }, ActionType.OnPress);
-            Action Down = new Action("Down", new List<Input> { Keys.S, Keys.Down }, ActionType.OnPress);
-            Action Left = new Action("Left", new List<Input> { Keys.A, Keys.Left }, ActionType.OnPress);
-            Action Right = new Action("Right", new List<Input> { Keys.D, Keys.Right }, ActionType.OnPress);
+            Action Up = new Action("Up", new List<Input> { Keys.W, Keys.Up }, ActionType.WhenDown);
+            Action Down = new Action("Down", new List<Input> { Keys.S, Keys.Down }, ActionType.WhenDown);
+            Action Left = new Action("Left", new List<Input> { Keys.A, Keys.Left }, ActionType.WhenDown);
+            Action Right = new Action("Right", new List<Input> { Keys.D, Keys.Right }, ActionType.WhenDown);
 
             // other Actions
-            Action Attack = new Action("Attack", new List<Input> { Button.Left }, ActionType.OnPress);        // TODO: change this for mouse input
+            Action Attack = new Action("Attack", new List<Input> { Button.Left }, ActionType.OnRelease);        // TODO: change this for mouse input
             // TODO: add interaction, attack, etc
 
             Actions = new Action[] { Exit, Up, Down, Left, Right, Attack };
@@ -40,7 +40,7 @@ namespace Capstone_Project.Input
         public void Update(GameTime gameTime)
         {
             InputState prevState = InputState;
-            InputState = new InputState();      
+            InputState = new InputState();
             // not too sure why I had to get rid of the Update() function and replace it with a new instantiation, but it works now at least
 
             // Adds all Action objects that are activated to the ActivatedActions list

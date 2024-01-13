@@ -5,7 +5,6 @@ using System;
 using System.Linq;
 using Capstone_Project.GameObjects.Interfaces;
 using System.Diagnostics;
-using Capstone_Project.Fundamentals.DrawableShapes;
 
 namespace Capstone_Project.CollisionStuff
 {
@@ -210,15 +209,14 @@ namespace Capstone_Project.CollisionStuff
         {
             rectNormal = Vector2.Zero;
             circNormal = Vector2.Zero;
-            depth = 0;
 
             // gets the absolute position of the circle translated as if the centre of the rect was (0,0)
             Vector2 localCirc = new Vector2(MathF.Abs(circ.centre.X - rect.Center.X), MathF.Abs(circ.centre.Y - rect.Center.Y));
             Vector2 localCircSubLocalRect = localCirc - (rect.Size.ToVector2() / 2f);
 
             // tests if any of the (local) circ's cardinal points are within the bounds of the (local) rect
-            if (localCircSubLocalRect.X < circ.radius && localCirc.Y < rect.Height / 2f
-                || localCircSubLocalRect.Y < circ.radius && localCirc.X < rect.Width / 2f)
+            if (localCircSubLocalRect.X < circ.radius && localCircSubLocalRect.Y < 0
+                || localCircSubLocalRect.Y < circ.radius && localCircSubLocalRect.X < 0)
             {
                 Rectangle circBB = new Rectangle((int)(circ.centre.X - circ.radius), (int)(circ.centre.Y - circ.radius), (int)(circ.radius * 2), (int)(circ.radius * 2));
                 FindRectangleCollisionDetails(rect, circBB, Rectangle.Intersect(rect, circBB), out rectNormal, out circNormal, out depth);
@@ -302,7 +300,7 @@ namespace Capstone_Project.CollisionStuff
                 ProjectCircle(axis, circ, out circMin, out circMax);
 
                 overlap = MathF.Min(circMax - polyMin, polyMax - circMin);
-                if (overlap >= 0)
+                if (overlap <= 0)
                     return false;
 
                 if (overlap < depth)
@@ -319,7 +317,7 @@ namespace Capstone_Project.CollisionStuff
             ProjectCircle(cvAxis, circ, out circMin, out circMax);
 
             overlap = MathF.Min(circMax - polyMin, polyMax - circMin);
-            if (overlap >= 0)
+            if (overlap <= 0)
                 return false;
 
             if (overlap < depth)
@@ -375,7 +373,7 @@ namespace Capstone_Project.CollisionStuff
             bNormal = Vector2.Zero;
             depth = 0;
 
-            if (TestAgainstShape(a, b, out aNormal, out float aDepth) || TestAgainstShape(b, a, out bNormal, out float bDepth))
+            if (!TestAgainstShape(a, b, out aNormal, out float aDepth) || !TestAgainstShape(b, a, out bNormal, out float bDepth))
                 return false;
 
             // if the minimum depth was found from testing a-to-b, use aNormal and the depth

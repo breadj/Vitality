@@ -8,7 +8,6 @@ namespace Capstone_Project.CollisionStuff.CollisionShapes
     public class CPolygon : CShape
     {
         //public bool Dynamic { get; init; }     // will ALWAYS be false
-        public new Rectangle BoundingBox { get; set; }
         public Vector2[] Vertices { get; init; }
 
         // removed constructor for centre = (0, 0), now vertices MUST be local

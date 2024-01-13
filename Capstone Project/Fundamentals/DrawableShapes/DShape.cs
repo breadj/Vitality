@@ -11,8 +11,8 @@ namespace Capstone_Project.Fundamentals.DrawableShapes
         public float Layer { get; set; } = 0.005f;
         
         public Color Colour { get; set; } = Color.White;
-        public Rectangle BoundingBox { get; set; }
-        public Vector2 Centre { get; set; }
+        public Rectangle BoundingBox { get; protected set; }
+        public Vector2 Centre { get; protected set; }
 
         public bool Outlined { get; set; } = false;
         protected List<Point> Outline { get; set; }
