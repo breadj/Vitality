@@ -9,18 +9,12 @@ using System.Diagnostics;
 
 namespace Capstone_Project.GameObjects.Entities
 {
-    public class Player : Mob, IHurtable, IAttacker
+    public class Player : Agent, IHurtable, IAttacker
     {
-        public int Vitality { get; private set; }
-        public float Defence { get; private set; }
-
-        public float Damage { get; private set; } = 10f;
-        public Attack Attack { get; private set; }
-        public float Range { get; private set; } = 100f;
-
-        public Player(Subsprite subsprite, Vector2 position, int size = 100, int speed = 250) : base(subsprite, position, size, speed)
+        public Player(Subsprite subsprite, Vector2 position, int vitality, int damage, float attackRange = 100f, float defence = 0f, int size = 100, int speed = 250)
+            : base(subsprite, position, vitality, damage, attackRange, defence, size, speed)
         {
-            Attack = new Attack(this, Vector2.Zero, 2.5f, 0.5f, 1f);
+            Attack.ChangeCDs(2f, 0.5f, 1f);
         }
 
         public override void Update(GameTime gameTime)
@@ -53,19 +47,6 @@ namespace Capstone_Project.GameObjects.Entities
             //spriteBatch.DrawString(DebugFont, Position.ToString(), Position, Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.9f);
             //spriteBatch.Draw(BLANK, new Rectangle(Position.ToPoint(), new Point(Size)), null, new Color(Color.Pink, 0.5f), MathHelper.PiOver4, BLANK.Bounds.Size.ToVector2() / 2f, SpriteEffects.None, 0.05f);
             //spriteBatch.Draw(BLANK, Hitbox, null, new Color(Color.Blue, 0.5f), 0f, Vector2.Zero, SpriteEffects.None, 0.04f);
-        }
-
-        public void TakeDamage(float damage)
-        {
-            float accDmg = damage;
-            // do Defence calculations later
-
-            Vitality -= (int)accDmg;
-        }
-
-        public void Swing()
-        {
-            Attack.Start(Position, Orientation, Range);
         }
 
         private Vector2 Movement(List<Input.Action> relevantActions)

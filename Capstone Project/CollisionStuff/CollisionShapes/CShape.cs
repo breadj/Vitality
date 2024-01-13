@@ -16,7 +16,7 @@ namespace Capstone_Project.CollisionStuff.CollisionShapes
         public void MoveTo(Vector2 target)
         {
             if (!Dynamic)
-                throw new System.Exception("Cannot move a {typeof(this)} with Dynamic = false");
+                throw new System.Exception($"Cannot move a {this.GetType()} with Dynamic = false");
 
             Centre = target;
             BoundingBox = GenerateBoundingBox();

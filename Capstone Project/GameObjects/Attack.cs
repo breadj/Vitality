@@ -29,10 +29,9 @@ namespace Capstone_Project.GameObjects
         public IAttacker Attacker { get; init; }
         public Vector2 Position { get; private set; }
 
-        public Attack(IAttacker attacker, Vector2 position, float cooldownTime = 0, float windupTime = 0, float lingerTime = 0)
+        public Attack(IAttacker attacker, float cooldownTime = 0, float windupTime = 0, float lingerTime = 0)
         {
             Attacker = attacker;
-            Position = position;
 
             Windup = new Timer(windupTime);
             Linger = new Timer(lingerTime);
@@ -116,6 +115,13 @@ namespace Capstone_Project.GameObjects
         {
             Cooldown.SetNewWaitTime(time);
         }
+
+        public void ChangeCDs(float windup = 0, float linger = 0, float cooldown = 0)
+        {
+            ChangeWindupCD(windup);
+            ChangeLingerCD(linger);
+            ChangeCooldownCD(cooldown);
+        }
         #endregion
 
         public bool CollidesWith(ICollidable other, out CollisionDetails cd)
@@ -127,7 +133,7 @@ namespace Capstone_Project.GameObjects
             return Collision.Colliding(this.Collider, other.Collider, out cd);
         }
 
-        public static void Swing(IAttacker attacker, IHurtable hurtable)
+        public static void CheckSwing(IAttacker attacker, IHurtable hurtable)
         {
             if (attacker == null || hurtable == null)
                 return;

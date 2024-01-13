@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Capstone_Project.Input
 {
-    public enum ActionType { OnPress, OnRelease, OnHold, OnFirstPress, OnFirstRelease }
+    public enum ActionType { WhenDown, WhenUp, OnHold, OnPress, OnRelease }
 
     public class Action
     {
@@ -27,11 +27,11 @@ namespace Capstone_Project.Input
             {
                 switch (actionType)
                 {
-                case ActionType.OnPress:
+                case ActionType.WhenDown:
                     if (curState.IsDown(input))
                         return true;
                     break;
-                case ActionType.OnRelease:
+                case ActionType.WhenUp:
                     if (curState.IsUp(input))
                         return true;
                     break;
@@ -43,11 +43,11 @@ namespace Capstone_Project.Input
                     if (holdTimer >= holdTime)
                         return true;
                     break;
-                case ActionType.OnFirstPress:
+                case ActionType.OnPress:
                     if (curState.IsDown(input) && prevState.IsUp(input))
                         return true;
                     break;
-                case ActionType.OnFirstRelease:
+                case ActionType.OnRelease:
                     if (curState.IsUp(input) && prevState.IsDown(input))
                         return true;
                     break;
