@@ -41,7 +41,7 @@ namespace Capstone_Project
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            graphics.IsFullScreen = false;
+            graphics.IsFullScreen = false;      // turn back to '= true' for non-debug
         }
 
         protected override void Initialize()
@@ -113,13 +113,11 @@ namespace Capstone_Project
 
         protected override void Update(GameTime gameTime)
         {
-            if (Controls.ActivatedActions.Any(action => action.Name == "Exit"))
-                Exit();
-
-            // TODO: Add your update logic here
-
             Camera.Update(player.Position);
+
             Controls.Update(gameTime);
+            if (Controls.ExitFlag)
+                Exit();
 
             #region Simulated & Visible Tiles
 

@@ -15,7 +15,7 @@ namespace Capstone_Project.Fundamentals.DrawableShapes
     {
         public bool Active { get; set; } = true;
 
-        public Vector2[] Vertices { get; init; }
+        public Vector2[] Vertices { get; protected set; }
 
         public DPolygon(Vector2 centre, Vector2[] vertices, bool scanned = true) : base(centre)
         {
@@ -58,6 +58,21 @@ namespace Capstone_Project.Fundamentals.DrawableShapes
 
             Outline = GraphicalMethods.GenerateOutline(Vertices);
             GenerateFillMode(scanned);
+        }
+
+        public override void MoveTo(Vector2 target, float rotation = 0f)
+        {
+            Vector2 displacement = target - Centre;
+
+            if (rotation != 0f)
+                Vertices = Rotate(Vertices, rotation, Centre);
+            if (target != Centre)
+                Vertices = Vertices.Select(vertex => vertex + displacement).ToArray();
+            Centre = target;
+            BoundingBox = Utility.GenerateBoundingBox(Vertices);
+
+            Outline = GraphicalMethods.GenerateOutline(Vertices);
+            GenerateFillMode(Scanned);
         }
 
         protected override void GenerateFillMode(bool scanned)

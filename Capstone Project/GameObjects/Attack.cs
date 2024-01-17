@@ -1,21 +1,22 @@
 ﻿using static Capstone_Project.Globals.Globals;
 using Capstone_Project.GameObjects.Interfaces;
-using Capstone_Project.SpriteTextures;
 using Microsoft.Xna.Framework;
 using Capstone_Project.CollisionStuff;
 using Capstone_Project.CollisionStuff.CollisionShapes;
 using Capstone_Project.Globals;
 using Capstone_Project.Fundamentals.DrawableShapes;
+using Capstone_Project.GameObjects.Entities;
 
 namespace Capstone_Project.GameObjects
 {
     public class Attack : Interfaces.IDrawable, ICollidable, IUpdatable
     {
-        public bool Visible { get; private set; }
+        public bool Visible => Windup.Active || Linger.Active;
         public float Layer => 0.009f;
         public DPolygon Polygon { get; private set; } = null;
 
-        public bool Active { get; set; } = false;
+        public bool Active => Windup.Active || Linger.Active;
+        public bool OnCD => Cooldown.Active;
         public CShape Collider { get; private set; } = null;
 
         // all CDs in seconds
@@ -23,11 +24,12 @@ namespace Capstone_Project.GameObjects
         public Timer Linger { get; private set; }            // how long the attack hurtbox stays there 
         public Timer Cooldown { get; private set; }          // how long until attacker can attack again
         public float Speed => Windup.WaitTime + Linger.WaitTime + Cooldown.WaitTime;
-        public bool Lock => Windup.Active || Linger.Active;
+        public bool Lock => (Windup.Active && Windup.Percentage >= 0.5f) || Linger.Active;
         public bool Attacking => Linger.Active;
 
         public IAttacker Attacker { get; init; }
-        public Vector2 Position { get; private set; }
+        public Vector2 Position { get; set; }
+        public float Rotation { get; set; } = 0f;
 
         public Attack(IAttacker attacker, float cooldownTime = 0, float windupTime = 0, float lingerTime = 0)
         {
@@ -38,48 +40,46 @@ namespace Capstone_Project.GameObjects
             Cooldown = new Timer(cooldownTime);
         }
 
-        private bool prevActive = false;
         public void Update(GameTime gameTime)
         {
-            if (!Active)
-                return;
-
-            Windup.Update(gameTime);
-            Linger.Update(gameTime);
-            Cooldown.Update(gameTime);
-
-            if (Windup.Active && Windup.Done)
+            if (Windup.Active)
             {
-                Windup.Active = false;
+                Windup.Update(gameTime);
+
+                if (Windup.Percentage <= 0.5f && Attacker is Agent a)
+                {
+                    Polygon.MoveTo(a.Position, a.Rotation - Rotation);
+                    Rotation = a.Rotation;
+                }
+            }
+            if (Windup.Done)
+            {
                 Windup.Reset();
 
                 Linger.Start();
+                Collider = new CPolygon(Polygon);
             }
 
-            if (Linger.Active && Linger.Done)
+            if (Linger.Active)
+                Linger.Update(gameTime);
+            if (Linger.Done)
             {
-                Linger.Active = false;
                 Linger.Reset();
 
                 Cooldown.Start();
-                Visible = false;
             }
 
-            if (Cooldown.Active && Cooldown.Done)
-            {
-                Cooldown.Active = false;
+            if (Cooldown.Active)
+                Cooldown.Update(gameTime);
+            if (Cooldown.Done)
                 Cooldown.Reset();
-
-                Active = false;
-            }
-
-            prevActive = Active;
         }
 
         public void Draw()
         {
             if (!Visible)
                 return;
+
             if (Windup.Active)
                 Polygon.Draw(new Color(Polygon.Colour, Windup.Percentage <= 0.5f ? 0.5f * Windup.Percentage * 2f : 0.5f));
             else if (Linger.Active)
@@ -88,15 +88,13 @@ namespace Capstone_Project.GameObjects
 
         public void Start(Vector2 centre, Vector2 direction, float range)
         {
-            Active = true;
-            if (!prevActive)
+            if (!Active && !Cooldown.Active)
             {
                 Position = centre;
+                Rotation = Utility.VectorToAngle(direction);
                 Windup.Start();
-                Visible = true;
 
-                Collider = new CPolygon(Position, DPolygon.Rotate(DPolygon.GenerateNarrowArc(range), Utility.VectorToAngle(direction)));
-                Polygon = new DPolygon(Collider as CPolygon, Color.Red, Layer, true);
+                Polygon = new DPolygon(Position, DPolygon.Rotate(DPolygon.GenerateNarrowArc(range), Rotation), Color.Red, Layer, true);
             }
         }
 
@@ -139,7 +137,7 @@ namespace Capstone_Project.GameObjects
                 return;
 
             if (attacker.Attack.Attacking && Collision.Colliding(attacker.Attack.Collider, hurtable.Collider))
-                hurtable.TakeDamage(attacker.Damage);
+                hurtable.TakeDamage(attacker.Damage, attacker.Attack.Linger.TimeRemaining);
         }
     }
 }

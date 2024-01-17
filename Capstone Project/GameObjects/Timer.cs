@@ -10,7 +10,9 @@ namespace Capstone_Project.GameObjects
         private float timer { get; set; } = 0;
 
         public void SetNewWaitTime(float waitTime) => WaitTime = waitTime;
-        public void Reset() => timer = 0;
+        public void Resume() => Active = true;
+        public void Pause() => Active = false;
+        public float TimeRemaining => WaitTime - timer;
         public float Percentage => timer / WaitTime;
         public bool Done => timer >= WaitTime;
 
@@ -28,16 +30,24 @@ namespace Capstone_Project.GameObjects
 
         public void Update(GameTime gameTime)
         {
+            if (Done)
+                Pause();
+
             if (Active)
-                timer += timer >= WaitTime ? 0 : (float)gameTime.ElapsedGameTime.TotalSeconds;
+                timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
 
         public void Start()
         {
             Reset();
-            Active = true;
+            Resume();
         }
 
-        public static implicit operator bool(Timer c) => c.Done;
+        // acts like "Stop" (square button) on a CD player
+        public void Reset()
+        {
+            timer = 0;
+            Pause();
+        }
     }
 }

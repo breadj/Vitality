@@ -25,14 +25,14 @@ namespace Capstone_Project.GameObjects.Entities
         public Vector2 Position { get; protected set; }
         public Vector2 Direction { get; protected set; } = Vector2.Zero;
         public Vector2 Velocity { get; protected set; } = Vector2.Zero;
-        public int Speed { get; protected set; } = 0;
+        public float Speed { get; protected set; } = 0;
 
         public int Size { get; init; }              // since Entities are all square, only one axis of 'Size' is needed
         public bool Dead { get; protected set; } = false;
 
         protected Vector2 lastPosition { get; set; } = Vector2.Zero;
 
-        public Entity(Subsprite subsprite, Vector2 position, int size = 0, int speed = 0)
+        public Entity(Subsprite subsprite, Vector2 position, int size = 0, float speed = 0)
         {
             Subsprite = subsprite;
             //Origin = Subsprite.Source.Size.ToVector2() / 2f;
