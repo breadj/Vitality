@@ -7,6 +7,6 @@ namespace Capstone_Project.GameObjects.Interfaces
         public Vector2 Position { get; }
         public Vector2 Direction { get; }
         public Vector2 Velocity { get; }
-        public int Speed { get; }
+        public float Speed { get; }
     }
 }

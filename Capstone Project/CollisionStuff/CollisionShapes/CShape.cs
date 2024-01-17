@@ -13,10 +13,10 @@ namespace Capstone_Project.CollisionStuff.CollisionShapes
             Centre = centre;
         }
 
-        public void MoveTo(Vector2 target)
+        public virtual void MoveTo(Vector2 target, float rotation = 0f)
         {
             if (!Dynamic)
-                throw new System.Exception($"Cannot move a {this.GetType()} with Dynamic = false");
+                throw new System.Exception($"Cannot move a {this.GetType()} with Dynamic set to false");
 
             Centre = target;
             BoundingBox = GenerateBoundingBox();

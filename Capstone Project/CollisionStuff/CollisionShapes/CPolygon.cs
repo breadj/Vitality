@@ -7,13 +7,13 @@ namespace Capstone_Project.CollisionStuff.CollisionShapes
 {
     public class CPolygon : CShape
     {
-        //public bool Dynamic { get; init; }     // will ALWAYS be false
-        public Vector2[] Vertices { get; init; }
+        //public bool Dynamic { get; init; }     // false by default
+        public Vector2[] Vertices { get; protected set; }
 
         // removed constructor for centre = (0, 0), now vertices MUST be local
-        public CPolygon(Vector2 centre, Vector2[] vertices) : base(centre)
+        public CPolygon(Vector2 centre, Vector2[] vertices, bool dynamic = false) : base(centre)
         {
-            Dynamic = false;
+            Dynamic = dynamic;
             Vertices = vertices.Select(vertex => vertex + centre).ToArray();
 
             BoundingBox = GenerateBoundingBox();
@@ -25,6 +25,18 @@ namespace Capstone_Project.CollisionStuff.CollisionShapes
             Vertices = poly.Vertices;
 
             BoundingBox = poly.BoundingBox;
+        }
+
+        public override void MoveTo(Vector2 target, float rotation = 0f)
+        {
+            Vector2 displacement = target - Centre;
+
+            if (rotation != 0f)
+                Vertices = DPolygon.Rotate(Vertices, rotation, Centre);
+            if (target != Centre)
+                Vertices = Vertices.Select(vertex => vertex + displacement).ToArray();
+
+            base.MoveTo(target);
         }
 
         protected override Rectangle GenerateBoundingBox()

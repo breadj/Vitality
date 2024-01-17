@@ -19,7 +19,7 @@ namespace Capstone_Project.GameObjects.Entities
         public Vector2 Orientation { get; protected set; }
         protected Vector2 actualVelocity { get; set; }      // how far is actually travelled in a frame (Velocity * seconds elapsed)
 
-        public Mob(Subsprite subsprite, Vector2 position, int size = 0, int speed = 1) : base(subsprite, position, size, speed)
+        public Mob(Subsprite subsprite, Vector2 position, int size = 0, float speed = 1) : base(subsprite, position, size, speed)
         {
             Collisions = new LinkedList<(ICollidable Other, CollisionDetails Details)>();
 

@@ -1,7 +1,7 @@
 ﻿using Capstone_Project.CollisionStuff.CollisionShapes;
 using Capstone_Project.Globals;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
+using Microsoft.Xna.Framework.Media;
 
 namespace Capstone_Project.Fundamentals.DrawableShapes
 {
@@ -49,6 +49,15 @@ namespace Capstone_Project.Fundamentals.DrawableShapes
 
             Outline = GraphicalMethods.GenerateOutline(circ.Centre, circ.Radius);
             GenerateFillMode(scanned);
+        }
+
+        public override void MoveTo(Vector2 target, float rotation = 0f)
+        {
+            Centre = target;
+            BoundingBox = new Rectangle((int)(Centre.X - Radius), (int)(Centre.Y - Radius), 2 * (int)Radius + 1, 2 * (int)Radius + 1);
+
+            Outline = GraphicalMethods.GenerateOutline(Centre, Radius);
+            GenerateFillMode(Scanned);
         }
 
         protected override void GenerateFillMode(bool scanned)

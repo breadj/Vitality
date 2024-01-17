@@ -70,6 +70,8 @@ namespace Capstone_Project.Fundamentals.DrawableShapes
                     spriteBatch.Draw(Pixel, px.ToVector2(), null, colour, 0f, Vector2.Zero, 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, Layer);
         }
 
+        public abstract void MoveTo(Vector2 target, float rotation = 0f);
+
         protected abstract void GenerateFillMode(bool scanned);
     }
 }

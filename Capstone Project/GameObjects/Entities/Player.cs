@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using Capstone_Project.GameObjects.Interfaces;
+using Capstone_Project.Globals;
 using System.Linq;
 using System.Diagnostics;
 
@@ -11,7 +12,7 @@ namespace Capstone_Project.GameObjects.Entities
 {
     public class Player : Agent, IHurtable, IAttacker
     {
-        public Player(Subsprite subsprite, Vector2 position, int vitality, int damage, float attackRange = 100f, float defence = 0f, int size = 100, int speed = 250)
+        public Player(Subsprite subsprite, Vector2 position, int vitality, int damage, float attackRange = 100f, float defence = 0f, int size = 100, float speed = 250)
             : base(subsprite, position, vitality, damage, attackRange, defence, size, speed)
         {
             Attack.ChangeCDs(2f, 0.5f, 1f);
@@ -19,18 +20,48 @@ namespace Capstone_Project.GameObjects.Entities
 
         public override void Update(GameTime gameTime)
         {
-            Attack.Update(gameTime);
-            if (!Attack.Lock)
+            if (!Active)
+                return;
+
+            bool bufActExists = !Game1.Controls.ActionBuffer.IsEmpty;
+
+            if (Attack.Active || Attack.OnCD)
+                Attack.Update(gameTime);
+            else if (bufActExists && !PerformingAction && Game1.Controls.ActionBuffer.Peek().Name == "attack")
             {
-                Direction = Movement(Game1.Controls.ActivatedActions);
-                Orientation = LookAt(Game1.Camera.ScreenToWorld(Game1.Controls.MousePos.ToVector2()));
+                Game1.Controls.ActionBuffer.Remove();
+                Swing();
             }
 
-            if (Game1.Controls.ActivatedActions.Any(action => action.Name.Equals("Attack", System.StringComparison.OrdinalIgnoreCase)))
-                Swing();
-
             if (!Attack.Lock)
+            {
+                Orientation = LookAt(Game1.Camera.ScreenToWorld(Game1.Controls.MousePos.ToVector2()));
+
+                bool prevDashActive = Dash.Active;
+                if (bufActExists && !PerformingAction && Direction != Vector2.Zero && Game1.Controls.ActionBuffer.Peek().Name == "dash")
+                {
+                    Game1.Controls.ActionBuffer.Remove();
+                    Dash.Start();
+                }
+
+                if (Dash.Active)
+                {
+                    Dash.Update(gameTime);
+
+                    Speed = Dash.Speed;
+                    Direction = Dash.Direction;
+                }
+
+                if (!Dash.Active)
+                {
+                    if (prevDashActive)     // if this is the first frame since ending a dash, revert speed
+                        Speed = BaseSpeed;
+
+                    Direction = Movement(Game1.Controls.ActivatedActions);
+                }
+
                 base.Update(gameTime);
+            }
         }
 
         public override void Draw()
@@ -56,16 +87,16 @@ namespace Capstone_Project.GameObjects.Entities
             {
                 switch (action.Name)
                 {
-                    case "Up":
+                    case "up":
                         tempDirection.Y -= 1;
                         break;
-                    case "Down":
+                    case "down":
                         tempDirection.Y += 1;
                         break;
-                    case "Left":
+                    case "left":
                         tempDirection.X -= 1;
                         break;
-                    case "Right":
+                    case "right":
                         tempDirection.X += 1;
                         break;
                 }

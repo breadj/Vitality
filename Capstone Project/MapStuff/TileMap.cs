@@ -15,7 +15,6 @@ namespace Capstone_Project.MapStuff
         // width and height of the Tiles (tiles are square so w and h are the same value)
         private readonly int tileSize;
 
-        // TODO: make sure the constructor takes Tiles in its constructor
         /// <param name="width">The width in number of tiles the map is</param>
         /// <param name="height">The height in number of tiles the map is</param>
         /// <param name="tileSize">Side length of the tiles</param>
