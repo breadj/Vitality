@@ -38,9 +38,11 @@ namespace Capstone_Project.GameObjects.Entities
                 Orientation = LookAt(Game1.Camera.ScreenToWorld(Game1.Controls.MousePos.ToVector2()));
 
                 bool prevDashActive = Dash.Active;
-                if (bufActExists && !PerformingAction && Direction != Vector2.Zero && Game1.Controls.ActionBuffer.Peek().Name == "dash")
+                if (bufActExists && !PerformingAction && Game1.Controls.ActionBuffer.Peek().Name == "dash")
                 {
                     Game1.Controls.ActionBuffer.Remove();
+                    if (Direction == Vector2.Zero)
+                        Direction = Orientation;
                     Dash.Start();
                 }
 

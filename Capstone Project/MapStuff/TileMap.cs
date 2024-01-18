@@ -1,11 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Capstone_Project.Fundamentals;
+using Microsoft.Xna.Framework;
 using System;
 
 namespace Capstone_Project.MapStuff
 {
     public class TileMap
     {
-        public Tile2DArray TileArray { get; init; }
+        public Array2D<Tile> TileArray { get; init; }
 
         // in px
         private readonly int width;
@@ -25,7 +26,7 @@ namespace Capstone_Project.MapStuff
             if (tiles.Length != tileWidth * tileHeight)
                 throw new Exception("Number of Tiles and size of the TileMap are different");
 
-            TileArray = new Tile2DArray(tileWidth, tileHeight, tiles);
+            TileArray = new Array2D<Tile>(tileWidth, tileHeight, tiles);
             
             width = tileWidth * tileSize;
             height = tileHeight * tileSize;
