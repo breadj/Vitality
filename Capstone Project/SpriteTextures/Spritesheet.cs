@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Capstone_Project.SpriteTextures
 {
@@ -23,6 +19,14 @@ namespace Capstone_Project.SpriteTextures
             columns = texture.Bounds.Width / tileSize;
         }
 
+        public Spritesheet(Texture2D texture, int columns, int rows)
+        {
+            Texture = texture;
+            this.columns = columns;
+            this.rows = rows;
+            tileSize = texture.Bounds.Width / columns;
+        }
+
         public Subsprite GetSubsprite(int x, int y)
         {
             if (x > columns || y > rows)
@@ -37,7 +41,8 @@ namespace Capstone_Project.SpriteTextures
         public Subsprite GetSubsprite(int index)
         {
             // converts index to coordinates in the context of a 2D array of side lengths (columns, rows)
-            return GetSubsprite(index % columns, index / rows);
+            var xy = Globals.Utility.IndexToCoord(index, columns, rows);
+            return GetSubsprite(xy.X, xy.Y);
         }
     }
 }
