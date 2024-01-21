@@ -4,9 +4,11 @@ namespace Capstone_Project.MapStuff.Parser
 {
     public struct MapDetails
     {
-        public SpritesheetMetaData SpritesheetMD;
-        public MapMetaData MapMD;
-        public Array2D<int> TileMap;
+        public SpritesheetMetaData? SpritesheetMD = null;
+        public MapMetaData? MapMD = null;
+        public Array2D<int> TileMap = null;
+
+        public MapDetails() { }
     }
 
     public struct SpritesheetMetaData

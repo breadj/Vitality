@@ -7,10 +7,11 @@ namespace Capstone_Project.MapStuff
     public class TileMap
     {
         public Array2D<Tile> TileArray { get; init; }
+        public Array2D<bool> Walls { get; init; }       // for pathfinding AI
 
         // in px
         private readonly int width;
-        public readonly int height;
+        private readonly int height;
 
         public Rectangle MapBounds => new Rectangle(0, 0, width, height);
         // width and height of the Tiles (tiles are square so w and h are the same value)
@@ -30,6 +31,20 @@ namespace Capstone_Project.MapStuff
             
             width = tileWidth * tileSize;
             height = tileHeight * tileSize;
+        }
+
+        public TileMap(int tileWidth, int tileHeight, int tileSize, Array2D<Tile> tiles, Array2D<bool> walls)
+        {
+            this.tileSize = tileSize;
+
+            if (tiles.Length != tileWidth * tileHeight)
+                throw new Exception("Number of Tiles and size of the TileMap are different");
+
+            TileArray = tiles;
+
+            width = tileWidth * tileSize;
+            height = tileHeight * tileSize;
+            Walls = walls;
         }
 
         // probably deprecated

@@ -27,3 +27,4 @@ C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-
 C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\bin\Debug\net6.0\Content\Spritesheet.xnb
 C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\bin\Debug\net6.0\Content\DebugFont.xnb
 C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\bin\Debug\net6.0\Content\Enemy.xnb
+C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\bin\Debug\net6.0\Content\testspritesheet.xnb

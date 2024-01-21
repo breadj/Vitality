@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Capstone_Project.Fundamentals;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -6,7 +7,8 @@ namespace Capstone_Project.MapStuff.Parser
 {
     public static class MapParser
     {
-        public const string LevelPath = "Levels\\";
+        public const string LevelPath = @"Levels\";
+        public static string Filepath(string filename) => Path.Combine(Directory.GetCurrentDirectory() + @"\..\..\..\", LevelPath, filename);
 
         public static MapDetails Load(string filename)
         {
@@ -15,7 +17,7 @@ namespace Capstone_Project.MapStuff.Parser
 
             MapDetails map;
 
-            using (StreamReader sr = new StreamReader(LevelPath + filename))
+            using (StreamReader sr = new StreamReader(Filepath(filename)))
             {
                 map = ParseFile(sr);
             }
@@ -27,6 +29,7 @@ namespace Capstone_Project.MapStuff.Parser
         {
             MapDetails mapDetails = new MapDetails();
 
+            bool mapMDRetrieved = false;
             string line;
             while ((line = stream.ReadLine()) != null)
             {
@@ -37,7 +40,7 @@ namespace Capstone_Project.MapStuff.Parser
                 // if the lines has a [section] header
                 if (line[0] == '[' && line[^1] == ']')
                 {
-                    string header = line.Substring(1, line.Length - 2);
+                    string header = line[1..^1];
 
                     switch (header)
                     {
@@ -45,14 +48,26 @@ namespace Capstone_Project.MapStuff.Parser
                             ParseTileset(stream, ref mapDetails);
                             break;
                         case "MapMetaData":
-                            ParseMapMeta(stream);
+                            ParseMapMetaData(stream, ref mapDetails);
+                            mapMDRetrieved = true;
                             break;
                         case "Tilemap":
-                            ParseTilemap(stream);
+                            if (!mapMDRetrieved)
+                                throw new Exception("MapMetaData must come before Tilemap");
+                            ParseTilemap(stream, ref mapDetails);
                             break;
                     }
                 }
             }
+
+            if (!mapDetails.SpritesheetMD.HasValue)
+                throw new Exception("The [Tileset] section must be included in the file");
+            if (!mapDetails.MapMD.HasValue)
+                throw new Exception("The [MapMetaData] section must be included in the file");
+            if (mapDetails.TileMap == null)
+                throw new Exception("The [Tilemap] section must be included in the file");
+
+            return mapDetails;
         }
 
         private static void ParseTileset(StreamReader stream, ref MapDetails md)
@@ -64,7 +79,7 @@ namespace Capstone_Project.MapStuff.Parser
 
             int temp;
             string line;
-            while ((line = stream.ReadLine()) != null || line != "")        // empty lines matter in a section
+            while ((line = stream.ReadLine()) != null && line != "")        // empty lines matter in a section
             {
                 // ignore lines that have nothing substantial in them
                 if (line.Length < 3)
@@ -115,7 +130,7 @@ namespace Capstone_Project.MapStuff.Parser
             int temp;
             int[] tempArr;
             string line;
-            while ((line = stream.ReadLine()) != null || line == "")
+            while ((line = stream.ReadLine()) != null && line != "")
             {
                 if (line.Length < 3)
                     continue;
@@ -136,7 +151,9 @@ namespace Capstone_Project.MapStuff.Parser
                             tileSize = temp;
                         break;
                     case "Walls":
-                        if (TryParseIntArray(value, out tempArr))
+                        if (value.Length < 2 && !(value[0] == '{' && value[^1] == '}'))
+                            throw new Exception("Walls must have an {array} assigned to it");
+                        if (TryParseIntArray(value[1..^1], out tempArr))
                             walls = tempArr;
                         break;
                 }
@@ -162,7 +179,30 @@ namespace Capstone_Project.MapStuff.Parser
 
         private static void ParseTilemap(StreamReader stream, ref MapDetails md)
         {
+            // why MapMetaData needs to be assigned beforehand
+            Array2D<int> tiles = new Array2D<int>(md.MapMD.Value.Columns, md.MapMD.Value.Rows);
 
+            int lineCount = 0;
+            string line;
+            while ((line = stream.ReadLine()) != null && line != "")
+            {
+                if (TryParseIntArray(line, out int[] arr))
+                {
+                    if (arr.Length != md.MapMD.Value.Columns)
+                        throw new Exception("Tilemap dimensions should be the same as stated in [MapMetaData]");
+
+                    for (int i = 0; i < md.MapMD.Value.Columns; i++)
+                    {
+                        tiles[i, lineCount] = arr[i];
+                    }
+                }
+                else
+                    throw new Exception("Tilemap rows must be comma-separated non-negative integers (whitespace is trimmed) with no empty values");
+
+                lineCount++;
+            }
+
+            md.TileMap = tiles;
         }
 
         private static (string field, string value) ParseField(string line)
@@ -173,36 +213,18 @@ namespace Capstone_Project.MapStuff.Parser
                 return ("", "");
 
             string field = line[..i].Trim();        // Length is >= 1 since '=' isn't the first character
-            if (!IsAlpha(field[0]))                 // if the first character isn't alphabetic
+            if (!Globals.Utility.IsAlpha(field[0])) // if the first character isn't alphabetic
                 return ("", "");
             string value = line[(i + 1)..].Trim();  // Length is >= 1 for the same reason as above
 
             return (field, value);
         }
 
-        private static bool IsAlphaNumeric(char c)
-        {
-            static bool IsNumber(char c) => c >= '0' && c <= '9';
-
-            return IsNumber(c) || IsAlpha(c);
-        }
-
-        private static bool IsAlpha(char c)
-        {
-            static bool IsCapital(char c) => c >= 'A' && c <= 'Z';
-            static bool IsLower(char c) => c >= 'a' && c <= 'z';
-
-            return IsCapital(c) || IsLower(c);
-        }
-
         private static bool TryParseIntArray(string str, out int[] arr)
         {
             arr = null;
 
-            if (!(str[0] == '{' && str[^1] == '}'))
-                return false;
-
-            string[] strArr = str[1..^2].Split(',');
+            string[] strArr = str.Split(',', StringSplitOptions.TrimEntries);
             List<int> ints = new List<int>();
 
             bool failed = false;

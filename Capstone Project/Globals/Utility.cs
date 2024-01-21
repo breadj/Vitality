@@ -16,6 +16,11 @@ namespace Capstone_Project.Globals
         public static Point IndexToCoord(int index, int width, int height) => new Point(index % width, index / width);
         public static int Sign(float x) => x < 0 ? -1 : 1;
         public static int Sign(int x) => x < 0 ? -1 : 1;
+        public static bool IsCapital(char c) => c >= 'A' && c <= 'Z';
+        public static bool IsLower(char c) => c >= 'a' && c <= 'z';
+        public static bool IsNumber(char c) => c >= '0' && c <= '9';
+        public static bool IsAlpha(char c) => IsCapital(c) || IsLower(c);
+        public static bool IsAlphaNumeric(char c) => IsAlpha(c) || IsNumber(c);
         public static Vector2 AngleToVector(float angle) => new Vector2(-MathF.Sin(angle), MathF.Cos(angle));       // 0 degrees is down
         public static Vector2 RotateVector(Vector2 vector, float angle) =>          // assumes rotation around (0,0)
             new Vector2(vector.X * MathF.Cos(angle) - vector.Y * MathF.Sin(angle), vector.X * MathF.Sin(angle) + vector.Y * MathF.Cos(angle));

@@ -15,6 +15,8 @@ using Capstone_Project.Fundamentals.DrawableShapes;
 using Capstone_Project.GameObjects;
 using System.Diagnostics;
 using Capstone_Project.CollisionStuff.CollisionShapes;
+using Capstone_Project.MapStuff.Parser;
+using Capstone_Project.Fundamentals;
 
 namespace Capstone_Project
 {
@@ -88,11 +90,9 @@ namespace Capstone_Project
             Subsprite playerSubsprite = new Subsprite(playerSprite, playerSprite.Bounds);
             Texture2D enemySprite = Content.Load<Texture2D>("Enemy");
             Subsprite enemySubsprite = new Subsprite(enemySprite, enemySprite.Bounds);
-            Texture2D spritesheet = Content.Load<Texture2D>("Spritesheet");
-            Spritesheet = new Spritesheet(spritesheet, 1);
 
             // for testing purposes
-            int tileSize = 128;
+            /*int tileSize = 128;
             Tile[] tiles = new Tile[135];
             for (int i = 0; i < tiles.Length; i++)
             {
@@ -101,7 +101,8 @@ namespace Capstone_Project
                 tiles[i] = new Tile(Spritesheet.GetSubsprite(isWater ? 1 : 0), globalPos, tileSize, isWater);
             }
 
-            tileMap = new TileMap(15, 9, tileSize, tiles);
+            tileMap = new TileMap(15, 9, tileSize, tiles);*/
+            RetrieveLevel("testmap1.txt");
             player = new Player(playerSubsprite, tileMap.MapBounds.Center.ToVector2(), 100, 10);
             Enemy enemy = new Enemy(enemySubsprite, tileMap.MapBounds.Center.ToVector2() + new Vector2(128, 128), 15, 0);
 
@@ -237,6 +238,41 @@ namespace Capstone_Project
         private void spritebatchBegin()
         {
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp, null, RasterizerState.CullCounterClockwise, null, Camera.TransformMatrix);
+        }
+
+        private void RetrieveLevel(string filename)
+        {
+            MapDetails md = MapParser.Load(filename);
+            MapMetaData mapMD = md.MapMD.Value;
+
+            // Spritesheet
+            Texture2D ssTexture = Content.Load<Texture2D>(md.SpritesheetMD.Value.Name);
+            if (md.SpritesheetMD.Value.Bounds.HasValue)
+            {
+                (int width, int height) = md.SpritesheetMD.Value.Bounds.Value;
+                Spritesheet = new Spritesheet(ssTexture, width, height);
+            }
+            else
+            {
+                Spritesheet = new Spritesheet(ssTexture, md.SpritesheetMD.Value.TileSize.Value);
+            }
+
+            // Tile array
+            Array2D<Tile> tileArray = new Array2D<Tile>(md.TileMap.Width, md.TileMap.Height);
+            Array2D<bool> walls = new Array2D<bool>(md.TileMap.Width, md.TileMap.Height);
+            for (int y = 0; y < md.TileMap.Height; y++)
+            {
+                for (int x = 0; x < md.TileMap.Width; x++)
+                {
+                    walls[x,y] = mapMD.WallTiles.Any(wall => wall == md.TileMap[x,y]);
+
+                    tileArray[x,y] = new Tile(Spritesheet.GetSubsprite(md.TileMap[x,y]), new Point(x * mapMD.TileSize, y * mapMD.TileSize), 
+                        mapMD.TileSize, walls[x,y]);
+                }
+            }
+
+            // TileMap
+            tileMap = new TileMap(mapMD.Columns, mapMD.Rows, mapMD.TileSize, tileArray, walls);
         }
     }
 }
