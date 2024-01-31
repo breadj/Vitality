@@ -222,8 +222,6 @@ namespace Capstone_Project.MapStuff.Parser
 
         private static bool TryParseIntArray(string str, out int[] arr)
         {
-            arr = null;
-
             string[] strArr = str.Split(',', StringSplitOptions.TrimEntries);
             List<int> ints = new List<int>();
 

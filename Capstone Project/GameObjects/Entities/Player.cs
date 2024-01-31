@@ -4,9 +4,6 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using Capstone_Project.GameObjects.Interfaces;
-using Capstone_Project.Globals;
-using System.Linq;
-using System.Diagnostics;
 
 namespace Capstone_Project.GameObjects.Entities
 {
