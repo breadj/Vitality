@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using Capstone_Project.CollisionStuff;
+using Capstone_Project.Fundamentals;
 
 namespace Capstone_Project.GameObjects.Entities
 {
@@ -14,14 +15,15 @@ namespace Capstone_Project.GameObjects.Entities
         public Rectangle OldBoundingBox => new Rectangle((int)(Position.X - Size / 2f), (int)(Position.Y - Size / 2f), Size, Size);
         public Vector2 TargetPos { get; set; }
         public Rectangle PathCollider => Collision.GeneratePathCollider(OldBoundingBox, Collider.BoundingBox);
-        public LinkedList<(ICollidable Other, CollisionDetails Details)> Collisions { get; protected set; }
+        public SortedLinkedList<(ICollidable Other, CollisionDetails Details)> Collisions { get; protected set; }
 
         public Vector2 Orientation { get; protected set; }
         protected Vector2 actualVelocity { get; set; }      // how far is actually travelled in a frame (Velocity * seconds elapsed)
 
         public Mob(Subsprite subsprite, Vector2 position, int size = 0, float speed = 1) : base(subsprite, position, size, speed)
         {
-            Collisions = new LinkedList<(ICollidable Other, CollisionDetails Details)>();
+            Collisions = new SortedLinkedList<(ICollidable Other, CollisionDetails Details)>(Comparer<(ICollidable, CollisionDetails d)>
+                .Create((a, b) => b.d.IntersectionArea.CompareTo(a.d.IntersectionArea)));       // b.CompareTo(a) = descending order
 
             Orientation = new Vector2(0, 1); // down
             actualVelocity = Vector2.Zero;
@@ -71,33 +73,6 @@ namespace Capstone_Project.GameObjects.Entities
             return cd.Collided;
         }
 
-        public virtual void InsertIntoCollisions(ICollidable other, CollisionDetails details)
-        {
-            // if the list is empty, just add it straight in
-            if (!Collisions.Any())
-            {
-                Collisions.AddFirst((other, details));
-                return;
-            }
-
-            bool insertion = false;
-            // inserts into the list before the first element that has a smaller IntersectionArea than it
-            // can't be a foreach loop as you can't convert Collisions.First.Value back into a LinkedListNode
-            for (var node = Collisions.First; node != null; node = node.Next)
-            {
-                if (details.IntersectionArea > node.Value.Details.IntersectionArea)
-                {
-                    Collisions.AddBefore(node, (other, details));
-                    insertion = true;
-                    break;
-                }
-            }
-            if (!insertion)
-                Collisions.AddLast((other, details));
-
-            // remember to do other.InsertIntoCollisions(details) if other is also an IRespondable
-        }
-
         public virtual void HandleCollisions()
         {
             // while there are still collisions to be handled
@@ -116,6 +91,9 @@ namespace Capstone_Project.GameObjects.Entities
                 Collider.MoveTo(TargetPos);
                 Collisions.RemoveFirst();
             }
+
+            Position = TargetPos;
+            Collider.MoveTo(Position);
         }
 
         protected virtual void RecalculateCollisions()
@@ -126,17 +104,10 @@ namespace Capstone_Project.GameObjects.Entities
             foreach (var collision in newCollisions)
             {
                 if (CollidesWith(collision.Other, out CollisionDetails cd))
-                    InsertIntoCollisions(collision.Other, cd);
+                    Collisions.Add((collision.Other, cd));
             }
         }
 
         #endregion
-
-        // to be called once all the collision has been handled
-        public virtual void Move()
-        {
-            Position = TargetPos;
-            Collider.MoveTo(Position);
-        }
     }
 }

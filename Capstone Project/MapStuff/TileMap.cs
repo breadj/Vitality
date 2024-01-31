@@ -7,7 +7,7 @@ namespace Capstone_Project.MapStuff
     public class TileMap
     {
         public Array2D<Tile> TileArray { get; init; }
-        public Array2D<bool> Walls { get; init; }       // for pathfinding AI
+        public Array2D<bool> Walls { get; init; }       // for pathfinding AI, true = wall (impassable)
 
         // in px
         private readonly int width;

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Microsoft.Xna.Framework;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Capstone_Project.Fundamentals
@@ -23,15 +24,20 @@ namespace Capstone_Project.Fundamentals
             arr = new T[Width * Height];
         }
 
+        public T this[int i]
+        {
+            get => arr[i];
+            set => arr[i] = value;
+        }
         public T this[int x, int y]
         {
             get => arr[x + (y* Width)];
             set => arr[x + (y * Width)] = value;
         }
-        public T this[int i]
+        public T this[Point p]
         {
-            get => arr[i];
-            set => arr[i] = value;
+            get => this[p.X, p.Y];
+            set => this[p.X, p.Y] = value;
         }
         public (int x, int y) FindPosition(int index) => new(index % Width, index / Width);
 
@@ -78,5 +84,7 @@ namespace Capstone_Project.Fundamentals
         public int Count => arr.Length;
 
         public bool IsReadOnly => false;
+
+        public static implicit operator System.Array(Array2D<T> arr2d) => arr2d.arr;
     }
 }

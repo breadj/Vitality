@@ -178,7 +178,7 @@ namespace Capstone_Project
                     if (simulatedEntities[i] is IRespondable responsive1)
                     {
                         if (responsive1.CollidesWith(simulatedEntities[j], out CollisionDetails cd))
-                            responsive1.InsertIntoCollisions(simulatedEntities[j], cd);
+                            responsive1.Collisions.Add((simulatedEntities[j], cd));
                     }
 
                     Attack.CheckSwing(simulatedEntities[i] as IAttacker, simulatedEntities[j] as IHurtable);
@@ -190,11 +190,10 @@ namespace Capstone_Project
                     foreach (Tile tile in simulatedTiles)
                     {
                         if (responsive2.CollidesWith(tile, out CollisionDetails cd))
-                            responsive2.InsertIntoCollisions(tile, cd);
+                            responsive2.Collisions.Add((tile, cd));
                     }
 
                     responsive2.HandleCollisions();
-                    responsive2.Move();
                 }
 
                 simulatedEntities[i].ClampToMap(tileMap.MapBounds);   // this always comes at the end
