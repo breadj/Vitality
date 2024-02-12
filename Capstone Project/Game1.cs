@@ -32,9 +32,11 @@ namespace Capstone_Project
         private RenderTarget2D renderTarget;
 
         private TileMap tileMap;
+        public static List<Tile> SimulatedTiles;
         private List<Tile> visibleTiles;
 
         private Player player;
+        public static List<Entity> SimulatedEntities;
         private List<Entity> visibleEntities;
         private List<Entity> markedForDeath;
 
@@ -114,6 +116,8 @@ namespace Capstone_Project
 
         protected override void Update(GameTime gameTime)
         {
+            Globals.Globals.gameTime = gameTime;
+
             Camera.Update(player.Position);
 
             Controls.Update(gameTime);
@@ -123,14 +127,14 @@ namespace Capstone_Project
             #region Simulated & Visible Tiles
 
             visibleTiles.Clear();
-            List<Tile> simulatedTiles = new List<Tile>();
+            SimulatedTiles = new List<Tile>();
 
             for (int i = 0; i < tileMap.TileArray.Length; i++)
             {
                 if (Collision.Rectangular(Camera.SimulationArea, tileMap.TileArray[i].Collider.BoundingBox))
                 {
                     if (tileMap.TileArray[i].Active)
-                        simulatedTiles.Add(tileMap.TileArray[i]);
+                        SimulatedTiles.Add(tileMap.TileArray[i]);
 
                     if (tileMap.TileArray[i].Visible && Collision.Rectangular(Camera.VisibleArea, tileMap.TileArray[i].Collider.BoundingBox))
                         visibleTiles.Add(tileMap.TileArray[i]);
@@ -142,7 +146,7 @@ namespace Capstone_Project
 
             markedForDeath.Clear();
             visibleEntities.Clear();
-            List<Entity> simulatedEntities = new List<Entity>();
+            SimulatedEntities = new List<Entity>();
 
             foreach (Entity entity in Entities)
             {
@@ -155,7 +159,7 @@ namespace Capstone_Project
 
                 if (Collision.Rectangular(Camera.SimulationArea, entity.Collider.BoundingBox))
                 {
-                    simulatedEntities.Add(entity);
+                    SimulatedEntities.Add(entity);
                     entity.Update(gameTime);
 
                     if (Collision.Rectangular(Camera.VisibleArea, entity.Collider.BoundingBox) && entity.Visible)
@@ -171,23 +175,23 @@ namespace Capstone_Project
             #region Collision and Logic
 
             // proper collision here
-            for (int i = 0; i < simulatedEntities.Count; i++)
+            for (int i = 0; i < SimulatedEntities.Count; i++)
             {
-                for (int j = i + 1; j < simulatedEntities.Count; j++)
+                for (int j = i + 1; j < SimulatedEntities.Count; j++)
                 {
-                    if (simulatedEntities[i] is IRespondable responsive1)
+                    if (SimulatedEntities[i] is IRespondable responsive1)
                     {
-                        if (responsive1.CollidesWith(simulatedEntities[j], out CollisionDetails cd))
-                            responsive1.Collisions.Add((simulatedEntities[j], cd));
+                        if (responsive1.CollidesWith(SimulatedEntities[j], out CollisionDetails cd))
+                            responsive1.Collisions.Add((SimulatedEntities[j], cd));
                     }
 
-                    Attack.CheckSwing(simulatedEntities[i] as IAttacker, simulatedEntities[j] as IHurtable);
-                    Attack.CheckSwing(simulatedEntities[j] as IAttacker, simulatedEntities[i] as IHurtable);
+                    Attack.CheckSwing(SimulatedEntities[i] as IAttacker, SimulatedEntities[j] as IHurtable);
+                    Attack.CheckSwing(SimulatedEntities[j] as IAttacker, SimulatedEntities[i] as IHurtable);
                 }
 
-                if (simulatedEntities[i] is IRespondable responsive2)
+                if (SimulatedEntities[i] is IRespondable responsive2)
                 {
-                    foreach (Tile tile in simulatedTiles)
+                    foreach (Tile tile in SimulatedTiles)
                     {
                         if (responsive2.CollidesWith(tile, out CollisionDetails cd))
                             responsive2.Collisions.Add((tile, cd));
@@ -196,7 +200,7 @@ namespace Capstone_Project
                     responsive2.HandleCollisions();
                 }
 
-                simulatedEntities[i].ClampToMap(tileMap.MapBounds);   // this always comes at the end
+                SimulatedEntities[i].ClampToMap(tileMap.MapBounds);   // this always comes at the end
             }
 
             #endregion

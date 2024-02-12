@@ -136,8 +136,8 @@ namespace Capstone_Project.GameObjects
             if (attacker == null || hurtable == null)
                 return;
 
-            if (attacker.Attack.Attacking && Collision.Colliding(attacker.Attack.Collider, hurtable.Collider))
-                hurtable.TakeDamage(attacker.Damage, attacker.Attack.Linger.TimeRemaining);
+            if (attacker.Strike.Attacking && Collision.Colliding(attacker.Strike.Collider, hurtable.Collider))
+                hurtable.TakeDamage(attacker.Damage, attacker.Strike.Linger.TimeRemaining);
         }
     }
 }

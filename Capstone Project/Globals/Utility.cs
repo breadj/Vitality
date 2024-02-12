@@ -28,7 +28,25 @@ namespace Capstone_Project.Globals
         public static float AngleTowards(Vector2 from, Vector2 to) => VectorToAngle(to - from);
         public static Vector2 FindNormal(Vector2 start, Vector2 end) => new Vector2(-(end.Y - start.Y), end.X - start.X);
         public static Vector2 FindNormal(Vector2 edge) => new Vector2(-edge.Y, edge.X);
+        public static Vector2 ProjectVectorOntoVector(Vector2 a, Vector2 b) => b * (Vector2.Dot(a, b) / b.LengthSquared());
+        public static float CrossProduct(Vector2 a, Vector2 b) => a.X * b.Y - a.Y * b.X;
 
+        public static bool NearlyEquals(float a, float b)
+        {
+            float diff = MathF.Abs(a - b);
+            if (a == b)
+            {
+                return true;
+            }
+            else if (a == 0 || b == 0 || diff < float.MinValue)
+            {
+                return diff < (Globals.Epsilon * float.MinValue);
+            }
+            else
+            {
+                return diff / (MathF.Abs(a) + MathF.Abs(b)) < Globals.Epsilon;
+            }
+        }
         
         public static Vector2[] GenerateVertices(Rectangle rect)    // generates vertices in a clockwise manner
         {

@@ -1,11 +1,12 @@
 ﻿using static Capstone_Project.Globals.Globals;
+using Capstone_Project.Globals;
 using Capstone_Project.GameObjects.Interfaces;
 using Capstone_Project.SpriteTextures;
 using Microsoft.Xna.Framework;
 
 namespace Capstone_Project.GameObjects.Entities
 {
-    public class Agent : Mob, IHurtable, IAttacker, IDasher
+    public class Agent : Mob, IAgent, IHurtable, IAttacker, IDasher
     {
         public int Vitality
         {
@@ -20,10 +21,10 @@ namespace Capstone_Project.GameObjects.Entities
         }                   // Can only be between 0-100
         private float def = 0;
 
-        public bool PerformingAction => Attack.Active || Dash.Active;
+        public bool PerformingAction => Strike.Active || Dash.Active;
 
         public float Damage { get; protected set; }
-        public Attack Attack { get; protected set; }
+        public Attack Strike { get; protected set; }
         public float Range { get; protected set; } = 100f;
 
         public Dash Dash { get; protected set; }
@@ -41,7 +42,7 @@ namespace Capstone_Project.GameObjects.Entities
             Defence = defence;
 
             Damage = damage;
-            Attack = new Attack(this);
+            Strike = new Attack(this);
             Range = attackRange;
 
             BaseSpeed = speed;
@@ -54,10 +55,10 @@ namespace Capstone_Project.GameObjects.Entities
 
         public override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
-
             if (!Active)
                 return;
+
+            Move();
 
             Invincibility.Update(gameTime);
         }
@@ -68,6 +69,30 @@ namespace Capstone_Project.GameObjects.Entities
 
             spriteBatch.DrawString(DebugFont, Vitality.ToString(), new Vector2(Collider.BoundingBox.Left, Collider.BoundingBox.Bottom), Color.Black, 
                 0f, Vector2.Zero, 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 1f);
+        }
+
+        public virtual void Move()
+        {
+            lastPosition = Position;
+            TargetPos = Position;
+
+            Velocity = Direction * Speed;
+            actualVelocity = Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            TargetPos += actualVelocity;
+
+            Collider.MoveTo(TargetPos);
+
+            Rotation = Utility.VectorToAngle(Orientation);
+        }
+
+        public virtual void Look()
+        {
+            return;
+        }
+
+        public virtual void Attack()
+        {
+            Swing();
         }
 
         public void TakeDamage(float damage, float invincibilityTime = 0f)
@@ -87,7 +112,7 @@ namespace Capstone_Project.GameObjects.Entities
 
         public void Swing()
         {
-            Attack.Start(Position, Orientation, Range);
+            Strike.Start(Position, Orientation, Range);
         }
     }
 }

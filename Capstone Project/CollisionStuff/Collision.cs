@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using Capstone_Project.GameObjects.Interfaces;
 using System.Diagnostics;
+using Capstone_Project.Fundamentals;
 
 namespace Capstone_Project.CollisionStuff
 {
@@ -29,6 +30,88 @@ namespace Capstone_Project.CollisionStuff
 
             return new Rectangle(x, y, width, height);
         }
+
+        #region Raycasting
+
+        public static bool RayIntersectsCollider(Ray2D ray, CShape shape) => shape switch
+        {
+            CCircle => RayIntersectsCircle(ray, shape as CCircle),
+            CRectangle => RayIntersectsRectangle(ray, shape as CRectangle),
+            CPolygon => RayIntersectsPolygon(ray, shape as CPolygon),
+            _ => false
+        };
+
+        public static bool RayIntersectsCircle(Ray2D ray, CCircle circle)
+        {
+            Vector2 rayStartToCirc = circle.Centre - ray.Start;
+            Vector2 projectedPoint = ray.Start + Utility.ProjectVectorOntoVector(rayStartToCirc, ray.Ray);
+
+            float r2 = circle.Radius * circle.Radius;
+            bool rayEndInCircle = (circle.Centre - ray.End).LengthSquared() < r2;
+            bool pointInCircle = (circle.Centre - projectedPoint).LengthSquared() < r2;
+
+            return pointInCircle || (rayEndInCircle && ray.IsPointOnRay(projectedPoint));
+        }
+
+        public static bool RayIntersectsRectangle(Ray2D ray, CRectangle rectangle)
+        {
+            Vector2[] rectAsVertices = Utility.GenerateVertices(rectangle.BoundingBox);
+
+            return RayIntersectsVertices(ray, rectAsVertices);
+        }
+
+        public static bool RayIntersectsPolygon(Ray2D ray, CPolygon polygon)
+        {
+            return RayIntersectsVertices(ray, polygon.Vertices);
+        }
+
+        public static bool RayIntersectsVertices(Ray2D ray, Vector2[] vertices)
+        {
+            Vector2 prev = vertices[^1];
+
+            foreach (Vector2 cur in vertices)
+            {
+                if (LineIntersectsLine((ray.Start, ray.End), (prev, cur)))
+                    return true;
+                prev = cur;
+            }
+
+            return false;
+        }
+
+        // big courtesy of Gareth Rees on Stack Overflow
+        public static bool LineIntersectsLine((Vector2 start, Vector2 end) lineA, (Vector2 start, Vector2 end) lineB)
+        {
+            Vector2 aToEnd = lineA.end - lineA.start;
+            Vector2 bToEnd = lineB.end - lineB.start;
+
+            float denominator = Utility.CrossProduct(aToEnd, bToEnd);
+
+            // assuming that lineA intersects lineB at (lineA.start + t * aToEnd) and lineB intersects lineA at (lineB.start + u * bToEnd)
+            float tNumerator = Utility.CrossProduct(lineB.start - lineA.start, bToEnd);
+            float uNumerator = Utility.CrossProduct(lineB.start - lineA.start, aToEnd);
+
+            if (denominator == 0)       // if collinear
+            {
+                if (uNumerator == 0)
+                {
+                    // and any of the points overlap
+                    if (lineA.start == lineB.start || lineA.start == lineB.end || lineA.end == lineB.start || lineA.end == lineB.end)
+                        return true;
+
+                    float intervalP = Vector2.Dot(lineB.start - lineA.start, aToEnd);
+                    float intervalQ = Vector2.Dot(lineA.start - lineB.start, bToEnd);
+                    return (0 <= intervalP && intervalP <= aToEnd.LengthSquared()) || (0 <= intervalQ && intervalQ <= bToEnd.LengthSquared());
+                }
+                return false;
+            }
+
+            float t = tNumerator / denominator;
+            float u = uNumerator / denominator;
+            return 0 <= t && t <= 1 && 0 <= u && u <= 1;    // Vector2 intersection = lineA.start + aToEnd * t;
+        }
+
+        #endregion Raycasting
 
         #region Collision Detection
 
