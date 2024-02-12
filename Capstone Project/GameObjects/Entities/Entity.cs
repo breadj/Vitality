@@ -69,7 +69,6 @@ namespace Capstone_Project.GameObjects.Entities
         public void Kill()
         {
             Dead = true;
-            Debug.WriteLine($"{this.GetType()} has died");
         }
 
         #region Collision Stuff
