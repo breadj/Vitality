@@ -1,5 +1,7 @@
+using Capstone_Project.SpriteTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 namespace Capstone_Project.Globals
 {
@@ -12,5 +14,7 @@ namespace Capstone_Project.Globals
         public static GraphicsDevice GraphicsDevice = null;
         public static SpriteBatch spriteBatch = null;
         public static readonly float Epsilon = 0.000001f;
+
+        public static Dictionary<string, Subsprite> DefaultSprites = new Dictionary<string, Subsprite>();
     }
 }

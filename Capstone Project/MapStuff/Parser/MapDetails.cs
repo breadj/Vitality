@@ -1,4 +1,8 @@
 ﻿using Capstone_Project.Fundamentals;
+using Capstone_Project.GameObjects.Entities;
+using Capstone_Project.GameObjects.Interfaces;
+using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace Capstone_Project.MapStuff.Parser
 {
@@ -7,6 +11,7 @@ namespace Capstone_Project.MapStuff.Parser
         public SpritesheetMetaData? SpritesheetMD = null;
         public MapMetaData? MapMD = null;
         public Array2D<int> TileMap = null;
+        public List<EnemyData> EnemyData = new List<EnemyData>();
 
         public MapDetails() { }
     }
@@ -24,5 +29,17 @@ namespace Capstone_Project.MapStuff.Parser
         public int Rows;
         public int TileSize;
         public int[] WallTiles;
+    }
+
+    public struct EnemyData
+    {
+        public string SpriteName;
+        public Vector2 Position;
+        public int Vitality;
+        public float Damage;
+        public LinkedList<Vector2> PatrolPoints;
+        public int? StartIndexOfPatrolPoints;
+        public AIState AIType;
+        public PatrolType PatrolType;
     }
 }

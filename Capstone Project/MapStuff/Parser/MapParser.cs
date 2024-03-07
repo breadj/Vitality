@@ -1,7 +1,12 @@
 ﻿using Capstone_Project.Fundamentals;
+using Capstone_Project.GameObjects.Entities;
+using Capstone_Project.GameObjects.Interfaces;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace Capstone_Project.MapStuff.Parser
 {
@@ -56,6 +61,9 @@ namespace Capstone_Project.MapStuff.Parser
                                 throw new Exception("MapMetaData must come before Tilemap");
                             ParseTilemap(stream, ref mapDetails);
                             break;
+                        case "Enemy":
+                            ParseEnemy(stream, ref mapDetails); // adds an enemy to the list
+                            break;
                     }
                 }
             }
@@ -66,6 +74,7 @@ namespace Capstone_Project.MapStuff.Parser
                 throw new Exception("The [MapMetaData] section must be included in the file");
             if (mapDetails.TileMap == null)
                 throw new Exception("The [Tilemap] section must be included in the file");
+            // mapDetails.EnemyData can be empty - there doesn't need to be any enemies in the level
 
             return mapDetails;
         }
@@ -205,6 +214,115 @@ namespace Capstone_Project.MapStuff.Parser
             md.TileMap = tiles;
         }
 
+        private static void ParseEnemy(StreamReader stream, ref MapDetails md)
+        {
+            string spriteName = null;
+            Point? position = null;
+            int? vitality = null;
+            int? damage = null;
+            List<Point> patrolPoints = null;
+            int? patrolStartIndex = null;
+
+            AIState aiType = AIState.None;
+            PatrolType patrolType = PatrolType.None;
+
+            int temp;
+            Point tempPoint;
+            string line;
+            while ((line = stream.ReadLine()) != null && line != "")
+            {
+                if (line.Length < 3)
+                    continue;
+
+                (string field, string value) = ParseField(line);
+                switch (field)
+                {
+                    case "Sprite":
+                        spriteName = value;
+                        break;
+                    case "Position":
+                        if (!TryParsePoint(value, out tempPoint))
+                            throw new Exception("Invalid point");
+                        position = tempPoint;
+                        break;
+                    case "Vitality":
+                        vitality = ParseIntWithDefault(value, field, 100);
+                        break;
+                    case "Damage":
+                        damage = ParseIntWithDefault(value, field, 10);
+                        break;
+                    case "PatrolPoints":
+                        if (!TryParseEmbeddedArray(value, out string[] tempPP))
+                            throw new Exception("PatrolPoints should be an embedded array e.g.: {{A,B},{C,D}} or {{X,Y}}");
+
+                        patrolPoints = new List<Point>();
+                        foreach (string strPoint in tempPP)
+                        {
+                            if (!TryParsePoint(strPoint, out tempPoint))
+                            {
+                                Debug.WriteLine($"Point '{strPoint}' is invalid, ignoring Point");
+                                continue;
+                            }
+
+                            patrolPoints.Add(tempPoint);
+                        }
+                        break;
+                    case "PatrolStartIndex":
+                        patrolStartIndex = ParseIntWithDefault(value, field, 0);
+                        break;
+                    case "AIType":
+                        if (!TryParseEnum(value, out AIState tempAIState))
+                        {
+                            Debug.WriteLine($"Defaulting {field} to 'AIState.None'");
+                            tempAIState = AIState.None;
+                        }
+                        aiType = tempAIState;
+                        break;
+                    case "PatrolType":
+                        if (!TryParseEnum(value, out PatrolType tempPatrolType))
+                        {
+                            Debug.WriteLine($"Defaulting {field} to 'PatrolType.None'");
+                            tempPatrolType = PatrolType.None;
+                        }
+                        patrolType = tempPatrolType;
+                        break;
+                }
+            }
+
+            if (spriteName == null)
+                throw new Exception("Sprite name required");
+            if (position == null && patrolPoints == null)
+                throw new Exception("Position, or at least one PatrolPoints Point is required");
+
+            Vector2 actualPosition;
+            LinkedList<Vector2> actualPatrolPoints;
+
+            int tileSize = md.MapMD.Value.TileSize;
+            Vector2 halfTileSizeVector = new Vector2(tileSize / 2);
+
+            actualPosition = (Vector2)(position != null ? position?.ToVector2() : patrolPoints[patrolStartIndex.Value].ToVector2()) * tileSize + halfTileSizeVector;
+
+            if (patrolPoints != null)
+                actualPatrolPoints = new LinkedList<Vector2>(patrolPoints.Select(point => point.ToVector2() * tileSize + halfTileSizeVector));
+            else
+            {
+                actualPatrolPoints = new LinkedList<Vector2>();
+                actualPatrolPoints.AddFirst(actualPosition);
+            }
+
+            md.EnemyData.Add(new EnemyData()
+            {
+                SpriteName = spriteName,
+                Position = actualPosition,
+                Vitality = vitality.Value,
+                Damage = damage.Value,
+                PatrolPoints = actualPatrolPoints,
+                StartIndexOfPatrolPoints = patrolStartIndex.Value,
+                AIType = aiType,
+                PatrolType = patrolType
+            });
+        }
+
         private static (string field, string value) ParseField(string line)
         {
             int i = line.IndexOf('=');
@@ -236,6 +354,64 @@ namespace Capstone_Project.MapStuff.Parser
 
             arr = ints.ToArray();
             return !failed;
+        }
+
+        private static bool TryParseBracketedIntArray(string str, out int[] arr)
+        {
+            if (str.Length < 2 && !(str[0] == '{' && str[^1] == '}'))
+                throw new Exception("Array must be surrounded by {}");
+
+            return TryParseIntArray(str[1..^1], out arr);
+        }
+
+        private static bool TryParseEmbeddedArray(string str, out string[] arr)
+        {
+            if (str.Length < 2 && !(str[0] == '{' && str[^1] == '}'))
+                throw new Exception("Embedded array must be surrounded by {}");
+
+            arr = str.Split(',', StringSplitOptions.TrimEntries);
+            return arr.Length > 0;
+        }
+
+        private static bool TryParsePoint(string str, out Point point)
+        {
+            point = new Point();
+            if (!TryParseBracketedIntArray(str, out int[] arr))
+            {
+                Debug.WriteLine("Invalid point " + str);
+                return false;
+            }
+
+            if (arr.Length != 2)
+            {
+                Debug.WriteLine("Points must have 2 values {X,Y}");
+                return false;
+            }
+
+            point = new Point(arr[0], arr[1]);
+            return true;
+        }
+
+        private static int ParseIntWithDefault(string str, string field, int defaultVal)
+        {
+            if (!int.TryParse(str, out int val))
+            {
+                Debug.WriteLine($"{field} '{str}' is invalid, defaulting to {defaultVal}");
+                val = defaultVal;
+            }
+
+            return val;
+        }
+
+        private static bool TryParseEnum<T>(string str, out T enumVal) where T : struct, Enum
+        {
+            if (!Enum.TryParse(str, out enumVal))
+            {
+                Debug.WriteLine($"{str} is not a valid enum value");
+                return false;
+            }
+
+            return true;
         }
     }
 }

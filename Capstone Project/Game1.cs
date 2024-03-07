@@ -31,7 +31,7 @@ namespace Capstone_Project
         private GraphicsDeviceManager graphics;
         private RenderTarget2D renderTarget;
 
-        private TileMap tileMap;
+        public static TileMap TileMap;
         public static List<Tile> SimulatedTiles;
         private List<Tile> visibleTiles;
 
@@ -93,6 +93,9 @@ namespace Capstone_Project
             Texture2D enemySprite = Content.Load<Texture2D>("Enemy");
             Subsprite enemySubsprite = new Subsprite(enemySprite, enemySprite.Bounds);
 
+            DefaultSprites.Add("Player", playerSubsprite);
+            DefaultSprites.Add("Enemy", enemySubsprite);
+
             // for testing purposes
             /*int tileSize = 128;
             Tile[] tiles = new Tile[135];
@@ -105,8 +108,8 @@ namespace Capstone_Project
 
             tileMap = new TileMap(15, 9, tileSize, tiles);*/
             RetrieveLevel("testmap1.txt");
-            player = new Player(playerSubsprite, tileMap.MapBounds.Center.ToVector2(), 100, 10);
-            Enemy enemy = new Enemy(enemySubsprite, tileMap.MapBounds.Center.ToVector2() + new Vector2(128, 128), 15, 0);
+            player = new Player(playerSubsprite, TileMap.MapBounds.Center.ToVector2(), 100, 10);
+            Enemy enemy = new Enemy(enemySubsprite, TileMap.MapBounds.Center.ToVector2() + new Vector2(128, 128), 15, 0);
 
             Camera = new Camera(new(0, 0, 1920, 1080), player.Position);
 
@@ -129,15 +132,15 @@ namespace Capstone_Project
             visibleTiles.Clear();
             SimulatedTiles = new List<Tile>();
 
-            for (int i = 0; i < tileMap.TileArray.Length; i++)
+            for (int i = 0; i < TileMap.TileArray.Length; i++)
             {
-                if (Collision.Rectangular(Camera.SimulationArea, tileMap.TileArray[i].Collider.BoundingBox))
+                if (Collision.Rectangular(Camera.SimulationArea, TileMap.TileArray[i].Collider.BoundingBox))
                 {
-                    if (tileMap.TileArray[i].Active)
-                        SimulatedTiles.Add(tileMap.TileArray[i]);
+                    if (TileMap.TileArray[i].Active)
+                        SimulatedTiles.Add(TileMap.TileArray[i]);
 
-                    if (tileMap.TileArray[i].Visible && Collision.Rectangular(Camera.VisibleArea, tileMap.TileArray[i].Collider.BoundingBox))
-                        visibleTiles.Add(tileMap.TileArray[i]);
+                    if (TileMap.TileArray[i].Visible && Collision.Rectangular(Camera.VisibleArea, TileMap.TileArray[i].Collider.BoundingBox))
+                        visibleTiles.Add(TileMap.TileArray[i]);
                 }
             }
 
@@ -171,7 +174,6 @@ namespace Capstone_Project
 
             #endregion
 
-
             #region Collision and Logic
 
             // proper collision here
@@ -200,7 +202,7 @@ namespace Capstone_Project
                     responsive2.HandleCollisions();
                 }
 
-                SimulatedEntities[i].ClampToMap(tileMap.MapBounds);   // this always comes at the end
+                SimulatedEntities[i].ClampToMap(TileMap.MapBounds);   // this always comes at the end
             }
 
             #endregion
@@ -275,7 +277,13 @@ namespace Capstone_Project
             }
 
             // TileMap
-            tileMap = new TileMap(mapMD.Columns, mapMD.Rows, mapMD.TileSize, tileArray, walls);
+            TileMap = new TileMap(mapMD.Columns, mapMD.Rows, mapMD.TileSize, tileArray, walls);
+
+            // Enemies
+            foreach (EnemyData enemyData in md.EnemyData)
+            {
+
+            }
         }
     }
 }
