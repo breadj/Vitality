@@ -8,6 +8,18 @@ namespace Capstone_Project.GameObjects.Entities
 {
     public class Agent : Mob, IAgent, IHurtable, IAttacker, IDasher
     {
+        #region Default Attributes
+        public static Subsprite DefaultSprite { get; } = DefaultSprites["Enemy"];
+        public static Vector2 DefaultPosition { get; } = Vector2.Zero;
+        public static int DefaultVitality { get; } = 100;
+        public static float DefaultDamage { get; } = 10f;
+        public static float DefaultRange { get; } = 100f;
+        public static float DefaultDefence { get; } = 0f;
+        public static int DefaultSize { get; } = 100;
+        public static float DefaultSpeed { get; } = 250f;
+        #endregion Default Attributes
+
+
         public int Vitality
         {
             get => vit;

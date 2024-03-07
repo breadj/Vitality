@@ -1,11 +1,10 @@
 ﻿using Capstone_Project.Globals;
 using Capstone_Project.CollisionStuff.CollisionShapes;
+using Capstone_Project.GameObjects.Interfaces;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
-using Capstone_Project.GameObjects.Interfaces;
-using System.Diagnostics;
-using Capstone_Project.Fundamentals;
+using System.Collections.Generic;
 
 namespace Capstone_Project.CollisionStuff
 {
@@ -32,6 +31,11 @@ namespace Capstone_Project.CollisionStuff
         }
 
         #region Raycasting
+
+        public static bool CastRay(Ray2D ray, List<ICollidable> collidables)
+        {
+            return collidables.Any(collider => RayIntersectsCollider(ray, collider.Collider));
+        }
 
         public static bool RayIntersectsCollider(Ray2D ray, CShape shape) => shape switch
         {

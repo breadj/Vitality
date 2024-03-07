@@ -21,3 +21,13 @@ Walls={5,10}
  5, 5, 0, 4, 0, 0,10,10,10,10,10,10,10, 0,11, 9, 9, 9, 3
  5, 0, 1,13,10,10,10,10,10,10,10,10,10,10,10,10, 0, 0,11
  9, 9,13,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10, 0
+
+[Enemy]
+Sprite=Enemy
+Position={6,4}
+Vitality=100
+Damage=10
+PatrolPoints={{6,4},{10,4},{10,1},{4,1}}
+PatrolStartIndex=0
+AIType=Patrol
+PatrolType=Circular

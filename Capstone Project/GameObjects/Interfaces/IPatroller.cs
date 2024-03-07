@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Capstone_Project.GameObjects.Interfaces
 {
     public enum PatrolType { None, Circular, Boomerang }
-    public interface IPatroller
+    public interface IPatroller : IMovable
     {
         public PatrolType PatrolType { get; }
         public LinkedList<Vector2> PatrolPoints { get; }

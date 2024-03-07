@@ -47,17 +47,14 @@ namespace Capstone_Project.Globals
                 return diff / (MathF.Abs(a) + MathF.Abs(b)) < Globals.Epsilon;
             }
         }
-        
-        public static Vector2[] GenerateVertices(Rectangle rect)    // generates vertices in a clockwise manner
+
+        public static Vector2[] GenerateVertices(Rectangle rect) => new Vector2[]
         {
-            return new Vector2[]
-            {
-                new Vector2(rect.Left, rect.Top),
-                new Vector2(rect.Right, rect.Top),
-                new Vector2(rect.Right, rect.Bottom),
-                new Vector2(rect.Left, rect.Bottom)
-            };
-        }
+            new Vector2(rect.Left, rect.Top),
+            new Vector2(rect.Right, rect.Top),
+            new Vector2(rect.Right, rect.Bottom),
+            new Vector2(rect.Left, rect.Bottom)
+        };
 
         public static Rectangle GenerateBoundingBox(Vector2[] vertices)
         {
