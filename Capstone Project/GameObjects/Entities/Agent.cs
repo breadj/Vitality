@@ -9,14 +9,15 @@ namespace Capstone_Project.GameObjects.Entities
     public class Agent : Mob, IAgent, IHurtable, IAttacker, IDasher
     {
         #region Default Attributes
-        public static Subsprite DefaultSprite { get; } = DefaultSprites["Enemy"];
+        public static string DefaultSpriteName { get; } = "Enemy";
+        public static Subsprite DefaultSprite { get; } = DefaultSprites[DefaultSpriteName];
         public static Vector2 DefaultPosition { get; } = Vector2.Zero;
-        public static int DefaultVitality { get; } = 100;
+        public static int DefaultVitality { get; } = 50;
         public static float DefaultDamage { get; } = 10f;
-        public static float DefaultRange { get; } = 100f;
-        public static float DefaultDefence { get; } = 0f;
+        public static float DefaultAttackRange { get; } = 100f;
+        public static float DefaultDefence { get; } = 5f;
         public static int DefaultSize { get; } = 100;
-        public static float DefaultSpeed { get; } = 250f;
+        public static float DefaultSpeed { get; } = 150f;
         #endregion Default Attributes
 
 
@@ -47,8 +48,8 @@ namespace Capstone_Project.GameObjects.Entities
         public bool Invincible => !Invincibility.Done;
         public Timer Invincibility { get; protected set; }
 
-        public Agent(Subsprite subsprite, Vector2 position, int vitality, float damage, float attackRange = 100f, float defence = 0, int size = 0, float speed = 1)
-            : base(subsprite, position, size, speed)
+        public Agent(string spriteName, Subsprite subsprite, Vector2 position, int vitality, float damage, float attackRange = 100f, float defence = 0, int size = 0, float speed = 1)
+            : base(spriteName, subsprite, position, size, speed)
         {
             Vitality = vitality;
             Defence = defence;
@@ -71,6 +72,7 @@ namespace Capstone_Project.GameObjects.Entities
                 return;
 
             Move();
+            Look();
 
             Invincibility.Update(gameTime);
         }
@@ -80,6 +82,9 @@ namespace Capstone_Project.GameObjects.Entities
             base.Draw();
 
             spriteBatch.DrawString(DebugFont, Vitality.ToString(), new Vector2(Collider.BoundingBox.Left, Collider.BoundingBox.Bottom), Color.Black, 
+                0f, Vector2.Zero, 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 1f);
+            // shows Position
+            spriteBatch.DrawString(DebugFont, Position.ToString(), Position, Color.Black,
                 0f, Vector2.Zero, 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 1f);
         }
 
@@ -93,13 +98,11 @@ namespace Capstone_Project.GameObjects.Entities
             TargetPos += actualVelocity;
 
             Collider.MoveTo(TargetPos);
-
-            Rotation = Utility.VectorToAngle(Orientation);
         }
 
         public virtual void Look()
         {
-            return;
+            Rotation = Utility.VectorToAngle(Orientation);
         }
 
         public virtual void Attack()

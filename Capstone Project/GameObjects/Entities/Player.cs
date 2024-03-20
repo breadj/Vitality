@@ -9,8 +9,8 @@ namespace Capstone_Project.GameObjects.Entities
 {
     public class Player : Agent, IHurtable, IAttacker
     {
-        public Player(Subsprite subsprite, Vector2 position, int vitality, int damage, float attackRange = 100f, float defence = 0f, int size = 100, float speed = 250)
-            : base(subsprite, position, vitality, damage, attackRange, defence, size, speed)
+        public Player(string spriteName, Subsprite subsprite, Vector2 position, int vitality, int damage, float attackRange = 100f, float defence = 0f, int size = 100, float speed = 250)
+            : base(spriteName, subsprite, position, vitality, damage, attackRange, defence, size, speed)
         {
             Strike.ChangeCDs(2f, 0.5f, 1f);
         }
@@ -77,8 +77,10 @@ namespace Capstone_Project.GameObjects.Entities
 
         public override void Look()
         {
-            if (!Strike.Lock || !Dash.Active)
+            if (!(Strike.Lock || Dash.Active))
                 Orientation = LookAt(Game1.Camera.ScreenToWorld(Game1.Controls.MousePos.ToVector2()));
+
+            base.Look();
         }
 
         public override void Attack()

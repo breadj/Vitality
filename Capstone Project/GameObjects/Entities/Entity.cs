@@ -12,6 +12,7 @@ namespace Capstone_Project.GameObjects.Entities
     public abstract class Entity : ITexturable, IUpdatable, ICollidable, IMovable, IKillable
     {
         public bool Visible { get; set; } = true;
+        public string SpriteName { get; init; }
         public Subsprite Subsprite { get; init; }
         public Rectangle Destination => new Rectangle((int)Position.X, (int)Position.Y, Size, Size);
         public Color Colour { get; set; } = Color.White;
@@ -32,8 +33,9 @@ namespace Capstone_Project.GameObjects.Entities
 
         protected Vector2 lastPosition { get; set; } = Vector2.Zero;
 
-        public Entity(Subsprite subsprite, Vector2 position, int size = 0, float speed = 0)
+        public Entity(string spriteName, Subsprite subsprite, Vector2 position, int size = 0, float speed = 0)
         {
+            SpriteName = spriteName;
             Subsprite = subsprite;
             //Origin = Subsprite.Source.Size.ToVector2() / 2f;
             Origin = subsprite.Source.Size.ToVector2() / 2f;

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Capstone_Project.MapStuff.Parser
 {
@@ -289,8 +290,8 @@ namespace Capstone_Project.MapStuff.Parser
                 }
             }
 
-            if (spriteName == null)
-                throw new Exception("Sprite name required");
+            /*if (spriteName == null)
+                throw new Exception("Sprite name required");*/
             if (position == null && patrolPoints == null)
                 throw new Exception("Position, or at least one PatrolPoints Point is required");
 
@@ -310,17 +311,8 @@ namespace Capstone_Project.MapStuff.Parser
                 actualPatrolPoints.AddFirst(actualPosition);
             }
 
-            md.EnemyData.Add(new EnemyData()
-            {
-                SpriteName = spriteName,
-                Position = actualPosition,
-                Vitality = vitality.Value,
-                Damage = damage.Value,
-                PatrolPoints = actualPatrolPoints,
-                StartIndexOfPatrolPoints = patrolStartIndex.Value,
-                AIType = aiType,
-                PatrolType = patrolType
-            });
+            md.Enemies.Add(AIAgent.Create(spriteName: spriteName, position: actualPosition, vitality: vitality, damage: damage, patrolPoints: actualPatrolPoints, 
+                firstPatrolPointIndex: patrolStartIndex, initialState: aiType, patrolType: patrolType));
         }
 
         private static (string field, string value) ParseField(string line)
@@ -358,7 +350,7 @@ namespace Capstone_Project.MapStuff.Parser
 
         private static bool TryParseBracketedIntArray(string str, out int[] arr)
         {
-            if (str.Length < 2 && !(str[0] == '{' && str[^1] == '}'))
+            if (str.Length < 2 || !(str[0] == '{' && str[^1] == '}'))
                 throw new Exception("Array must be surrounded by {}");
 
             return TryParseIntArray(str[1..^1], out arr);
@@ -369,7 +361,28 @@ namespace Capstone_Project.MapStuff.Parser
             if (str.Length < 2 && !(str[0] == '{' && str[^1] == '}'))
                 throw new Exception("Embedded array must be surrounded by {}");
 
-            arr = str.Split(',', StringSplitOptions.TrimEntries);
+            bool inBrackets = false;
+            List<StringBuilder> strList = new List<StringBuilder> { new StringBuilder() };
+            for (int i = 1; i < str.Length - 1; i++)
+            {
+                if (!inBrackets && str[i] == ',')
+                {
+                    strList.Add(new StringBuilder());
+                    continue;
+                }
+
+                if (str[i] == '{')
+                {
+                    inBrackets = true;
+                }
+                else if (str[i] == '}')
+                {
+                    inBrackets = false;
+                }
+                strList.Last().Append(str[i]);
+            }
+
+            arr = strList.Select(s => s.ToString()).ToArray();
             return arr.Length > 0;
         }
 

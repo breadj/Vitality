@@ -31,3 +31,7 @@ PatrolPoints={{6,4},{10,4},{10,1},{4,1}}
 PatrolStartIndex=0
 AIType=Patrol
 PatrolType=Circular
+
+[Enemy]
+Position = { 16, 8 }
+AIType = Guard

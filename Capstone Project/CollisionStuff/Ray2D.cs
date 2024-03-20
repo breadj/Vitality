@@ -28,7 +28,7 @@ namespace Capstone_Project.CollisionStuff
 
             Direction = direction;
             Length = length;
-            End = start * length;
+            End = start + direction * length;
 
             Ray = End - start;
         }
@@ -40,17 +40,19 @@ namespace Capstone_Project.CollisionStuff
         /// <param name="end">Point from which the Ray2D ends</param>
         public Ray2D(Vector2 start, Vector2 end)
         {
+            if (end == start)
+                throw new ArgumentException("Start cannot be the same as End");
+
             Start = start;
             End = end;
 
-            Vector2 tempDir = end - Start;
-            Length = tempDir.Length();
-            Direction = tempDir * (1f / Length);        // normalising
-
             Ray = end - start;
+
+            Length = Ray.Length();
+            Direction = Ray / Length;        // normalising
         }
 
-        public bool IsPointOnRay(Vector2 point)
+        public readonly bool IsPointOnRay(Vector2 point)
         {
             return new LinearEquation(this).IsPointOnLine(point);
         }

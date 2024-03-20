@@ -37,6 +37,11 @@ namespace Capstone_Project.CollisionStuff
             return collidables.Any(collider => RayIntersectsCollider(ray, collider.Collider));
         }
 
+        public static bool CastRay(Ray2D ray, ICollidable collidable)
+        {
+            return RayIntersectsCollider(ray, collidable.Collider);
+        }
+
         public static bool RayIntersectsCollider(Ray2D ray, CShape shape) => shape switch
         {
             CCircle => RayIntersectsCircle(ray, shape as CCircle),

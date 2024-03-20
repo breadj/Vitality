@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace Capstone_Project.Globals
 {
@@ -74,6 +75,14 @@ namespace Capstone_Project.Globals
             }
 
             return new Rectangle((int)minX, (int)minY, (int)(maxX - minX) + 1, (int)(maxY - minY) + 1);
+        }
+
+        public static void AppendLinkedList<T>(this LinkedList<T> source, LinkedList<T> items)
+        {
+            foreach (T item in items)
+            {
+                source.AddLast(item);
+            }
         }
     }
 }
