@@ -11,7 +11,7 @@ namespace Capstone_Project.MapStuff.Parser
         public SpritesheetMetaData? SpritesheetMD = null;
         public MapMetaData? MapMD = null;
         public Array2D<int> TileMap = null;
-        public List<EnemyData> EnemyData = new List<EnemyData>();
+        public List<AIAgent> Enemies = new List<AIAgent>();
 
         public MapDetails() { }
     }
@@ -29,17 +29,5 @@ namespace Capstone_Project.MapStuff.Parser
         public int Rows;
         public int TileSize;
         public int[] WallTiles;
-    }
-
-    public struct EnemyData
-    {
-        public string SpriteName;
-        public Vector2 Position;
-        public int Vitality;
-        public float Damage;
-        public LinkedList<Vector2> PatrolPoints;
-        public int? StartIndexOfPatrolPoints;
-        public AIState AIType;
-        public PatrolType PatrolType;
     }
 }

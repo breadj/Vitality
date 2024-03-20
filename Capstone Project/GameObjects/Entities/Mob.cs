@@ -20,7 +20,7 @@ namespace Capstone_Project.GameObjects.Entities
         public Vector2 Orientation { get; protected set; }
         protected Vector2 actualVelocity { get; set; }      // how far is actually travelled in a frame (Velocity * seconds elapsed)
 
-        public Mob(Subsprite subsprite, Vector2 position, int size = 0, float speed = 1) : base(subsprite, position, size, speed)
+        public Mob(string spriteName, Subsprite subsprite, Vector2 position, int size = 0, float speed = 1) : base(spriteName, subsprite, position, size, speed)
         {
             Collisions = new SortedLinkedList<(ICollidable Other, CollisionDetails Details)>(Comparer<(ICollidable, CollisionDetails d)>
                 .Create((a, b) => b.d.IntersectionArea.CompareTo(a.d.IntersectionArea)));       // b.CompareTo(a) = descending order

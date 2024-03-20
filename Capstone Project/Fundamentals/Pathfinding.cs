@@ -8,7 +8,12 @@ namespace Capstone_Project.Fundamentals
     {
         public static Point FindTile(Vector2 position, int tileSize)
         {
-            return new Point((int)position.X / tileSize, (int)position.Y / tileSize);
+            return new Point((int)(position.X / tileSize), (int)(position.Y / tileSize));
+        }
+
+        public static List<Vector2> FindPath(Array2D<bool> tileMap, Vector2 position, Vector2 targetPosition, int tileSize = 128)
+        {
+            return FindPath(tileMap, position, new Vector2[]{targetPosition}, tileSize);
         }
 
         public static List<Vector2> FindPath(Array2D<bool> tileMap, Vector2 position, Vector2[] targetPositions, int tileSize = 128)

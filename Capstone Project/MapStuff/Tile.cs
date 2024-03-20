@@ -13,6 +13,7 @@ namespace Capstone_Project.MapStuff
     public class Tile : ITexturable, ICollidable
     {
         public bool Visible { get; set; } = true;
+        public string SpriteName { get; } = string.Empty;
         public Subsprite Subsprite { get; init; }
         public Rectangle Destination { get; init; }
         public Color Colour { get; set; } = Color.White;

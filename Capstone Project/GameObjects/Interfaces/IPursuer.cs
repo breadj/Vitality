@@ -11,6 +11,6 @@ namespace Capstone_Project.GameObjects.Interfaces
         public Vector2 TargetLastSeen { get; }
         public LinkedList<Vector2> PursuitPath { get; }
         public void Pursue();
-        public bool TargetInLineOfSight();
+        public bool TargetInLineOfSight(Vector2 target);
     }
 }
