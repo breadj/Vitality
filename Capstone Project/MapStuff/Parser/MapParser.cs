@@ -219,8 +219,14 @@ namespace Capstone_Project.MapStuff.Parser
         {
             string spriteName = null;
             Point? position = null;
+            
             int? vitality = null;
+            
             int? damage = null;
+            float? windup = null;
+            float? linger = null;
+            float? cooldown = null;
+
             List<Point> patrolPoints = null;
             int? patrolStartIndex = null;
 
@@ -229,7 +235,10 @@ namespace Capstone_Project.MapStuff.Parser
 
             int? aggroRange = null;
 
-            int temp;
+            float? rotationSpeed = null;
+
+            int tempInt;
+            float tempFloat;
             Point tempPoint;
             string line;
             while ((line = stream.ReadLine()) != null && line != "")
@@ -253,6 +262,15 @@ namespace Capstone_Project.MapStuff.Parser
                         break;
                     case "Damage":
                         damage = ParseIntWithDefault(value, field, 10);
+                        break;
+                    case "AttackWindup":
+                        windup = float.TryParse(value, out tempFloat) ? tempFloat : null;
+                        break;
+                    case "AttackLinger":
+                        linger = float.TryParse(value, out tempFloat) ? tempFloat : null;
+                        break;
+                    case "AttackCooldown":
+                        cooldown = float.TryParse(value, out tempFloat) ? tempFloat : null;
                         break;
                     case "PatrolPoints":
                         if (!TryParseEmbeddedArray(value, out string[] tempPP))
@@ -290,7 +308,10 @@ namespace Capstone_Project.MapStuff.Parser
                         patrolType = tempPatrolType;
                         break;
                     case "AggroRange":
-                        aggroRange = int.TryParse(value, out temp) ? temp : null;
+                        aggroRange = int.TryParse(value, out tempInt) ? tempInt : null;
+                        break;
+                    case "RotationSpeed":
+                        rotationSpeed = float.TryParse(value, out tempFloat) ? tempFloat : null;
                         break;
                 }
             }
@@ -316,8 +337,9 @@ namespace Capstone_Project.MapStuff.Parser
                 actualPatrolPoints.AddFirst(actualPosition);
             }
 
-            md.Enemies.Add(new AIAgent(spriteName: spriteName, position: actualPosition, vitality: vitality, damage: damage, patrolPoints: actualPatrolPoints, 
-                firstPatrolPointIndex: patrolStartIndex, initialAIState: aiType, patrolType: patrolType, aggroRange: aggroRange));
+            md.Enemies.Add(new AIAgent(spriteName: spriteName, position: actualPosition, vitality: vitality, damage: damage, windupTime: windup, 
+                lingerTime: linger, cooldownTime: cooldown, patrolPoints: actualPatrolPoints, firstPatrolPointIndex: patrolStartIndex, 
+                initialAIState: aiType, patrolType: patrolType, aggroRange: aggroRange, rotationSpeed: rotationSpeed));
         }
 
         private static (string field, string value) ParseField(string line)

@@ -3,32 +3,40 @@
   "WorkspaceRootPath": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\levels\\testmap1.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:levels\\testmap1.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\gameobjects\\entities\\aiagent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:gameobjects\\entities\\aiagent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\gameobjects\\entities\\agent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:gameobjects\\entities\\agent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\globals\\utility.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:globals\\utility.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\gameobjects\\entities\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:gameobjects\\entities\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\gameobjects\\entities\\agent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:gameobjects\\entities\\agent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\mapstuff\\parser\\mapparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:mapstuff\\parser\\mapparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\gameobjects\\attack.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:gameobjects\\attack.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\game1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:game1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\gameobjects\\interfaces\\iattacker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:gameobjects\\interfaces\\iattacker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\levels\\testmap1.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:levels\\testmap1.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\game1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:game1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\gameobjects\\interfaces\\ihurtable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -42,11 +50,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 268,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 12,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 8,
               "Title": "Game1.cs",
               "DocumentMoniker": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Game1.cs",
               "RelativeDocumentMoniker": "Game1.cs",
@@ -55,8 +63,7 @@
               "ViewState": "AQIAAF8AAAAAAAAAAAAgwHsAAAAbAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-02-20T22:23:27.797Z",
-              "IsPinned": true,
-              "EditorCaption": ""
+              "IsPinned": true
             },
             {
               "$type": "Bookmark",
@@ -76,20 +83,32 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "testmap1.txt",
-              "DocumentMoniker": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Levels\\testmap1.txt",
-              "RelativeDocumentMoniker": "Levels\\testmap1.txt",
-              "ToolTip": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Levels\\testmap1.txt",
-              "RelativeToolTip": "Levels\\testmap1.txt",
-              "ViewState": "AQIAABIAAAAAAAAAAAAAACAAAAAUAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
-              "WhenOpened": "2024-04-13T16:46:36.915Z",
+              "DocumentIndex": 1,
+              "Title": "Utility.cs",
+              "DocumentMoniker": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Globals\\Utility.cs",
+              "RelativeDocumentMoniker": "Globals\\Utility.cs",
+              "ToolTip": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Globals\\Utility.cs",
+              "RelativeToolTip": "Globals\\Utility.cs",
+              "ViewState": "AQIAABwAAAAAAAAAAAAgwCQAAABEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-13T22:14:13.78Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
+              "Title": "testmap1.txt",
+              "DocumentMoniker": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Levels\\testmap1.txt",
+              "RelativeDocumentMoniker": "Levels\\testmap1.txt",
+              "ToolTip": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Levels\\testmap1.txt",
+              "RelativeToolTip": "Levels\\testmap1.txt",
+              "ViewState": "AQIAABIAAAAAAAAAAAAAACAAAAATAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2024-04-13T16:46:36.915Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
               "Title": "IHurtable.cs",
               "DocumentMoniker": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\GameObjects\\Interfaces\\IHurtable.cs",
               "RelativeDocumentMoniker": "GameObjects\\Interfaces\\IHurtable.cs",
@@ -109,59 +128,71 @@
               "RelativeToolTip": "GameObjects\\Interfaces\\IAttacker.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-12T22:15:09.545Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-12T22:15:09.545Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "Attack.cs",
               "DocumentMoniker": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\GameObjects\\Attack.cs",
               "RelativeDocumentMoniker": "GameObjects\\Attack.cs",
               "ToolTip": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\GameObjects\\Attack.cs",
               "RelativeToolTip": "GameObjects\\Attack.cs",
-              "ViewState": "AQIAABoAAAAAAAAAAAAUwIwAAABlAAAA",
+              "ViewState": "AQIAABEAAAAAAAAAAAAgwIwAAABlAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-04-12T21:13:40.757Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Agent.cs",
               "DocumentMoniker": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\GameObjects\\Entities\\Agent.cs",
               "RelativeDocumentMoniker": "GameObjects\\Entities\\Agent.cs",
               "ToolTip": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\GameObjects\\Entities\\Agent.cs",
               "RelativeToolTip": "GameObjects\\Entities\\Agent.cs",
-              "ViewState": "AQIAAEEAAAAAAAAAAAAIwFQAAAAnAAAA",
+              "ViewState": "AQIAAIYAAAAAAAAAAAAjwJYAAAAgAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-04-12T21:53:56.659Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "Player.cs",
               "DocumentMoniker": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\GameObjects\\Entities\\Player.cs",
               "RelativeDocumentMoniker": "GameObjects\\Entities\\Player.cs",
               "ToolTip": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\GameObjects\\Entities\\Player.cs",
               "RelativeToolTip": "GameObjects\\Entities\\Player.cs",
-              "ViewState": "AQIAABQAAAAAAAAAAAA3wHEAAAA6AAAA",
+              "ViewState": "AQIAADIAAAAAAAAAAAAgwD4AAAAOAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-04-09T13:15:27.471Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "AIAgent.cs",
               "DocumentMoniker": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\GameObjects\\Entities\\AIAgent.cs",
               "RelativeDocumentMoniker": "GameObjects\\Entities\\AIAgent.cs",
-              "ToolTip": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\GameObjects\\Entities\\AIAgent.cs",
-              "RelativeToolTip": "GameObjects\\Entities\\AIAgent.cs",
-              "ViewState": "AQIAAAwAAAAAAAAAAAAAAA0AAABvAAAA",
+              "ToolTip": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\GameObjects\\Entities\\AIAgent.cs*",
+              "RelativeToolTip": "GameObjects\\Entities\\AIAgent.cs*",
+              "ViewState": "AQIAAMcAAAAAAAAAAAAIwNMAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-01-28T16:44:34.207Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "MapParser.cs",
+              "DocumentMoniker": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\MapStuff\\Parser\\MapParser.cs",
+              "RelativeDocumentMoniker": "MapStuff\\Parser\\MapParser.cs",
+              "ToolTip": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\MapStuff\\Parser\\MapParser.cs",
+              "RelativeToolTip": "MapStuff\\Parser\\MapParser.cs",
+              "ViewState": "AQIAAEABAAAAAAAAAAAAAFUBAAB3AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-13T20:52:20.187Z",
               "EditorCaption": ""
             }
           ]

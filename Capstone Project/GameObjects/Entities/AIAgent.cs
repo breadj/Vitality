@@ -23,6 +23,8 @@ namespace Capstone_Project.GameObjects.Entities
 
         public static readonly int DefaultAggoRange = 300;
         public static readonly float DefaultLoseAggroTime = 5f;
+
+        public static readonly float DefaultRotationSpeed = 1.5f;       // radians turned per second
         #endregion Default Attributes
 
 
@@ -45,14 +47,17 @@ namespace Capstone_Project.GameObjects.Entities
         public bool TargetInView { get; protected set; }
         protected LinkedList<Vector2> returnToGuardPosition = new LinkedList<Vector2>();
 
+        public float RotationSpeed { get; protected set; }
+
         public AIAgent(bool? visible = null, string spriteName = null, Color? colour = null, float? rotation = null, float? layer = null,
             bool? active = null, Vector2? position = null, Vector2? direction = null, Vector2? velocity = null, float? speed = null,
             int? size = null, bool? dead = null, Comparer<(ICollidable, CollisionDetails)> collisionsComparer = null, Vector2? orientation = null,
             float? leakPercentage = null, int? maxVitality = null, int? vitality = null, float? defence = null, float? damage = null,
-            float? windupTime = null, float? lingerTime = null, float? cooldownTime = null, float? attackRange = null, 
+            float? windupTime = null, float? lingerTime = null, float? cooldownTime = null, float? attackRange = null,
             float? dashTime = null, float? dashSpeedModifier = null, float? invincibilityTime = null,
             AIState? initialAIState = null, PatrolType? patrolType = null, bool? patrolDirectionIsForward = null,
-            LinkedList<Vector2> patrolPoints = null, int? firstPatrolPointIndex = null, int? aggroRange = null, float? loseAggroTime = null)
+            LinkedList<Vector2> patrolPoints = null, int? firstPatrolPointIndex = null, int? aggroRange = null, float? loseAggroTime = null,
+            float? rotationSpeed = null)
             : base(visible, spriteName, colour, rotation, layer, active, position, direction, velocity, speed, size, dead,
                   collisionsComparer, orientation, leakPercentage, maxVitality, vitality, defence, damage, windupTime, lingerTime, 
                   cooldownTime, attackRange, dashTime, dashSpeedModifier, invincibilityTime)
@@ -61,6 +66,8 @@ namespace Capstone_Project.GameObjects.Entities
 
             this.patrolDirectionIsForward = patrolDirectionIsForward ?? DefaultPatrolDirectionIsForward;
             AggroRange = aggroRange ?? DefaultAggoRange;
+
+            RotationSpeed = rotationSpeed ?? DefaultRotationSpeed;
 
             // special stuff
             CurrentState.Push(initialAIState ?? DefaultInitialAIState);
@@ -132,6 +139,8 @@ namespace Capstone_Project.GameObjects.Entities
         {
             base.Draw();
 
+            Globals.Globals.spriteBatch.DrawString(Globals.Globals.DebugFont, $"Rotation: {Rotation}", Position, Color.White, 0f, Vector2.Zero,
+                1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0.5f);
             /*Globals.Globals.spriteBatch.DrawString(Globals.Globals.DebugFont, $"Speed: {Speed}", Position, Color.Black, 0f, 
                 Vector2.Zero, 2f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0.9f);*/
             /*Globals.Globals.spriteBatch.DrawString(Globals.Globals.DebugFont, $"Attack Timer: {attackTimer.Percentage}", Position,
@@ -168,6 +177,9 @@ namespace Capstone_Project.GameObjects.Entities
                 PursuitTarget = null;
             }
 
+            if (Strike.Lock)
+                return;
+
             Vector2 newOrientation = Orientation;
             switch (CurrentState.Peek())
             {
@@ -195,10 +207,12 @@ namespace Capstone_Project.GameObjects.Entities
                     break;
             }
 
-            // TOTO: add rotation speed
-            Orientation = newOrientation;
+            float unboundRotation = Utility.VectorToAngle(newOrientation);
+            Rotation += Utility.Sign(Utility.NormaliseRotation(unboundRotation - Rotation)) * RotationSpeed * (float)Globals.Globals.gameTime.ElapsedGameTime.TotalSeconds;
+            Orientation = Utility.AngleToVector(Rotation);
+            /*Orientation = newOrientation;
 
-            base.Look();
+            base.Look();*/
         }
 
         private readonly Timer attackTimer = new Timer(3f, startImmediately: true);

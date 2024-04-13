@@ -31,6 +31,12 @@ namespace Capstone_Project.Globals
         public static Vector2 FindNormal(Vector2 edge) => new Vector2(-edge.Y, edge.X);
         public static Vector2 ProjectVectorOntoVector(Vector2 a, Vector2 b) => b * (Vector2.Dot(a, b) / b.LengthSquared());
         public static float CrossProduct(Vector2 a, Vector2 b) => a.X * b.Y - a.Y * b.X;
+        public static float NormaliseRotation(float angle)
+        {
+            while (angle < -MathHelper.Pi) angle += MathHelper.TwoPi;
+            while (angle > MathHelper.Pi) angle -= MathHelper.TwoPi;
+            return angle;
+        }
 
         public static bool NearlyEquals(float a, float b)
         {
