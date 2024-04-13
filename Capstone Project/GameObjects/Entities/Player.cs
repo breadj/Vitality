@@ -60,7 +60,7 @@ namespace Capstone_Project.GameObjects.Entities
 
             LockOnHighlight?.DrawOutline();
 
-            spriteBatch.DrawString(DebugFont, $"MV: {MaxVitality}\nV: {Vitality}", Position, Color.White, 0f, Vector2.Zero, 1.5f, SpriteEffects.None, 0.6f);
+            //spriteBatch.DrawString(DebugFont, $"MV: {MaxVitality}\nV: {Vitality}", Position, Color.White, 0f, Vector2.Zero, 1.5f, SpriteEffects.None, 0.6f);
             //spriteBatch.Draw(BLANK, PathCollider, null, new Color(Color.MediumPurple, 0.5f), 0f, Vector2.Zero, SpriteEffects.None, 0.9f);
             //spriteBatch.DrawString(DebugFont, Position.ToString(), Position, Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.9f);
             //spriteBatch.Draw(BLANK, new Rectangle(Position.ToPoint(), new Point(Size)), null, new Color(Color.Pink, 0.5f), MathHelper.PiOver4, BLANK.Bounds.Size.ToVector2() / 2f, SpriteEffects.None, 0.05f);
