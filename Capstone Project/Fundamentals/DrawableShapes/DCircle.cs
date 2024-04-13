@@ -64,9 +64,9 @@ namespace Capstone_Project.Fundamentals.DrawableShapes
         {
             Point roundedCentre = new Point(Utility.Round(Centre.X), Utility.Round(Centre.Y));
             if (scanned)
-                ScanLines = GraphicalMethods.GenerateCircleLineFill(roundedCentre, Outline, BoundingBox.Top, BoundingBox.Bottom);
+                ScanLines = GraphicalMethods.GenerateCircleLineFill(roundedCentre, Outline, Utility.Round(Radius));
             else
-                Pixels = GraphicalMethods.GenerateCirclePixelFill(roundedCentre, Outline, BoundingBox.Top, BoundingBox.Bottom);
+                Pixels = GraphicalMethods.GenerateCirclePixelFill(roundedCentre, Outline, Utility.Round(Radius));
         }
     }
 }

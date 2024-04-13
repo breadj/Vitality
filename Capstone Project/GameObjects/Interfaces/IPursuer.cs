@@ -7,6 +7,7 @@ namespace Capstone_Project.GameObjects.Interfaces
     public interface IPursuer : IMovable
     {
         public bool Aggroed { get; }
+        public int AggroRange { get; }
         public Entity PursuitTarget { get; }
         public Vector2 TargetLastSeen { get; }
         public LinkedList<Vector2> PursuitPath { get; }

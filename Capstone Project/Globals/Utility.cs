@@ -34,6 +34,11 @@ namespace Capstone_Project.Globals
 
         public static bool NearlyEquals(float a, float b)
         {
+            return NearlyEquals(a, b, Globals.Epsilon);
+        }
+
+        public static bool NearlyEquals(float a, float b, float epsilon)
+        {
             float diff = MathF.Abs(a - b);
             if (a == b)
             {
@@ -41,11 +46,11 @@ namespace Capstone_Project.Globals
             }
             else if (a == 0 || b == 0 || diff < float.MinValue)
             {
-                return diff < (Globals.Epsilon * float.MinValue);
+                return diff < epsilon * float.MinValue;
             }
             else
             {
-                return diff / (MathF.Abs(a) + MathF.Abs(b)) < Globals.Epsilon;
+                return diff / (MathF.Abs(a) + MathF.Abs(b)) < epsilon;
             }
         }
 
