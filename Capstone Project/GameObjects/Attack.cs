@@ -31,7 +31,7 @@ namespace Capstone_Project.GameObjects
         public Vector2 Position { get; set; }
         public float Rotation { get; set; } = 0f;
 
-        public Attack(IAttacker attacker, float cooldownTime = 0, float windupTime = 0, float lingerTime = 0)
+        public Attack(IAttacker attacker, float windupTime = 0, float lingerTime = 0, float cooldownTime = 0)
         {
             Attacker = attacker;
 
@@ -46,10 +46,10 @@ namespace Capstone_Project.GameObjects
             {
                 Windup.Update(gameTime);
 
-                if (Windup.Percentage <= 0.5f && Attacker is Agent a)
+                if (Attacker is Entity e)
                 {
-                    Polygon.MoveTo(a.Position, a.Rotation - Rotation);
-                    Rotation = a.Rotation;
+                    Polygon.MoveTo(e.Position, e.Rotation - Rotation);
+                    Rotation = e.Rotation;
                 }
             }
             if (Windup.Done)
@@ -137,7 +137,9 @@ namespace Capstone_Project.GameObjects
                 return;
 
             if (attacker.Strike.Attacking && Collision.Colliding(attacker.Strike.Collider, hurtable.Collider))
-                hurtable.TakeDamage(attacker.Damage, attacker.Strike.Linger.TimeRemaining);
+            {
+                hurtable.TakeDamage(attacker.Damage, attacker, attacker.Strike.Linger.TimeRemaining);
+            }
         }
     }
 }

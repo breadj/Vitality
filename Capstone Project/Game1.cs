@@ -35,7 +35,7 @@ namespace Capstone_Project
         public static List<Tile> SimulatedTiles;
         private List<Tile> visibleTiles;
 
-        private Player player;
+        public static Player Player;
         public static List<Entity> SimulatedEntities;
         private List<Entity> visibleEntities;
         private List<Entity> markedForDeath;
@@ -93,8 +93,8 @@ namespace Capstone_Project
             Texture2D enemySprite = Content.Load<Texture2D>("Enemy");
             Subsprite enemySubsprite = new Subsprite(enemySprite, enemySprite.Bounds);
 
-            DefaultSprites.Add("Player", playerSubsprite);
-            DefaultSprites.Add("Enemy", enemySubsprite);
+            LoadedSprites.Add("Player", playerSubsprite);
+            LoadedSprites.Add("Enemy", enemySubsprite);
 
             // for testing purposes
             /*int tileSize = 128;
@@ -108,12 +108,12 @@ namespace Capstone_Project
 
             tileMap = new TileMap(15, 9, tileSize, tiles);*/
             RetrieveLevel("testmap1.txt");
-            player = new Player("Player", playerSubsprite, TileMap.MapBounds.Center.ToVector2(), 100, 10);
+            Player = new Player(spriteName: "Player", position: TileMap.MapBounds.Center.ToVector2());
             //Enemy enemy = new Enemy(enemySubsprite, TileMap.MapBounds.Center.ToVector2() + new Vector2(128, 128), 15, 0);
 
-            Camera = new Camera(new(0, 0, 1920, 1080), player.Position);
+            Camera = new Camera(new(0, 0, 1920, 1080), Player.Position);
 
-            Entities.Add(player);
+            Entities.Add(Player);
             //Entities.Add(enemy);
         }
 
@@ -121,7 +121,7 @@ namespace Capstone_Project
         {
             Globals.Globals.gameTime = gameTime;
 
-            Camera.Update(player.Position);
+            Camera.Update(Player.Position);
 
             Controls.Update(gameTime);
             if (Controls.ExitFlag)

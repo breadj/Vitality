@@ -15,6 +15,6 @@ namespace Capstone_Project.Globals
         public static SpriteBatch spriteBatch = null;
         public static readonly float Epsilon = 0.000001f;
 
-        public static Dictionary<string, Subsprite> DefaultSprites = new Dictionary<string, Subsprite>();
+        public static readonly Dictionary<string, Subsprite> LoadedSprites = new Dictionary<string, Subsprite>();
     }
 }

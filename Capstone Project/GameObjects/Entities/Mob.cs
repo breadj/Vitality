@@ -12,22 +12,46 @@ namespace Capstone_Project.GameObjects.Entities
 {
     public class Mob : Entity, IRespondable
     {
+        #region Default Attributes
+        public static readonly new float DefaultSpeed = 100f;
+        public static readonly new int DefaultSize = 70;
+
+        public static readonly Comparer<(ICollidable, CollisionDetails)> DefaultCollisionsComparer = Comparer<(ICollidable, CollisionDetails d)>
+            .Create((a, b) => b.d.IntersectionArea.CompareTo(a.d.IntersectionArea));
+
+        public static readonly Vector2 DefaultOrientation = new Vector2(0, 1);      // down
+        #endregion Default Attributes
+
+
         public Rectangle OldBoundingBox => new Rectangle((int)(Position.X - Size / 2f), (int)(Position.Y - Size / 2f), Size, Size);
         public Vector2 TargetPos { get; set; }
         public Rectangle PathCollider => Collision.GeneratePathCollider(OldBoundingBox, Collider.BoundingBox);
-        public SortedLinkedList<(ICollidable Other, CollisionDetails Details)> Collisions { get; protected set; }
+        public SortedLinkedList<(ICollidable Other, CollisionDetails Details)> Collisions { get; init; }
 
         public Vector2 Orientation { get; protected set; }
-        protected Vector2 actualVelocity { get; set; }      // how far is actually travelled in a frame (Velocity * seconds elapsed)
+        protected Vector2 actualVelocity { get; set; } = Vector2.Zero;      // how far is actually travelled in a frame (Velocity * seconds elapsed)
 
-        public Mob(string spriteName, Subsprite subsprite, Vector2 position, int size = 0, float speed = 1) : base(spriteName, subsprite, position, size, speed)
+        public Mob(bool? visible = null, string spriteName = null, Color? colour = null, float? rotation = null, float? layer = null, 
+            bool? active = null, Vector2? position = null, Vector2? direction = null, Vector2? velocity = null, float? speed = null,
+            int? size = null, bool? dead = null,
+            Comparer<(ICollidable, CollisionDetails)> collisionsComparer = null, Vector2? orientation = null)
+            : base(visible, spriteName, colour, rotation, layer, active, position, direction, velocity, speed ?? DefaultSpeed, size ?? DefaultSize, 
+                  dead)
+        {
+            Collisions = new SortedLinkedList<(ICollidable Other, CollisionDetails Details)>(collisionsComparer ?? DefaultCollisionsComparer);
+
+            Orientation = orientation ?? DefaultOrientation;
+        }
+
+        /*public Mob(string spriteName, Subsprite subsprite, Vector2 position, int size = 0, float speed = 1) 
+            : base(spriteName, subsprite, position, size, speed)
         {
             Collisions = new SortedLinkedList<(ICollidable Other, CollisionDetails Details)>(Comparer<(ICollidable, CollisionDetails d)>
                 .Create((a, b) => b.d.IntersectionArea.CompareTo(a.d.IntersectionArea)));       // b.CompareTo(a) = descending order
 
             Orientation = new Vector2(0, 1); // down
             actualVelocity = Vector2.Zero;
-        }
+        }*/
 
         // only moves the TargetPos, not actual Position
         // to move the actual Position, use Move() after using this and handling the collisions

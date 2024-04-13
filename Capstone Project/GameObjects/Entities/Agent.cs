@@ -1,44 +1,55 @@
 ﻿using static Capstone_Project.Globals.Globals;
 using Capstone_Project.Globals;
 using Capstone_Project.GameObjects.Interfaces;
-using Capstone_Project.SpriteTextures;
 using Microsoft.Xna.Framework;
+using Capstone_Project.CollisionStuff;
+using System.Collections.Generic;
 
 namespace Capstone_Project.GameObjects.Entities
 {
-    public class Agent : Mob, IAgent, IHurtable, IAttacker, IDasher
+    public class Agent : Mob, IAgent, IHurtable, IAttacker, IDasher, IVitalised
     {
         #region Default Attributes
-        public static string DefaultSpriteName { get; } = "Enemy";
-        public static Subsprite DefaultSprite { get; } = DefaultSprites[DefaultSpriteName];
-        public static Vector2 DefaultPosition { get; } = Vector2.Zero;
-        public static int DefaultVitality { get; } = 50;
-        public static float DefaultDamage { get; } = 10f;
-        public static float DefaultAttackRange { get; } = 100f;
-        public static float DefaultDefence { get; } = 5f;
-        public static int DefaultSize { get; } = 100;
-        public static float DefaultSpeed { get; } = 150f;
+        public static readonly new string DefaultSpriteName = "Enemy";
+
+        public static readonly float DefaultLeakPercentage = 0.7f;
+        public static readonly int DefaultMaxVitality = DefaultVitality;
+        public static readonly int DefaultVitality = 50;
+        public static readonly float DefaultDefence = 5f;
+
+        public static readonly float DefaultDamage = 10f;
+        public static readonly float DefaultWindupTime = 2f;
+        public static readonly float DefaultLingerTime = 0.5f;
+        public static readonly float DefaultCooldownTime = 1f;
+        public static readonly float DefaultAttackRange = 100f;
+
+        public static readonly float DefaultDashTime = 0.5f;
+        public static readonly float DefaultDashSpeedModifier = 1.6f;
+
+        public static readonly float DefaultInvincibilityTime = 0f;
         #endregion Default Attributes
 
 
+        public float LeakPercentage { get; init; }
+        public int MaxVitality { get; protected set; }
         public int Vitality
         {
-            get => vit;
-            protected set => vit = value < 0 ? 0 : value;
+            get => vitality;
+            protected set => vitality = value < 0 ? 0 : value;
         }                   // Can only be positive (or 0)
-        private int vit = 1;
+        private int vitality = 1;
         public float Defence
         { 
-            get => def; 
-            protected set => def = value > 0 ? value <= 100 ? value : 100 : 0; 
+            get => defence; 
+            protected set => defence = value > 0 ? value <= 100 ? value : 100 : 0; 
         }                   // Can only be between 0-100
-        private float def = 0;
+        private float defence = 0;
 
         public bool PerformingAction => Strike.Active || Dash.Active;
 
         public float Damage { get; protected set; }
         public Attack Strike { get; protected set; }
-        public float Range { get; protected set; } = 100f;
+        public float AttackRange { get; protected set; } = 100f;
 
         public Dash Dash { get; protected set; }
         public float BaseSpeed { get; protected set; }
@@ -48,7 +59,41 @@ namespace Capstone_Project.GameObjects.Entities
         public bool Invincible => !Invincibility.Done;
         public Timer Invincibility { get; protected set; }
 
-        public Agent(string spriteName, Subsprite subsprite, Vector2 position, int vitality, float damage, float attackRange = 100f, float defence = 0, int size = 0, float speed = 1)
+        public Agent(bool? visible = null, string spriteName = null, Color? colour = null, float? rotation = null, float? layer = null,
+            bool? active = null, Vector2? position = null, Vector2? direction = null, Vector2? velocity = null, float? speed = null,
+            int? size = null, bool? dead = null, Comparer<(ICollidable, CollisionDetails)> collisionsComparer = null,
+            Vector2? orientation = null,
+            float? leakPercentage = null, int? maxVitality = null, int? vitality = null, float? defence = null, float? damage = null, 
+            float? windupTime = null, float? lingerTime = null, float? cooldownTime = null, float? attackRange = null, float? dashTime = null, float? dashSpeedModifier = null, 
+            float? invincibilityTime = null)
+            : base(visible, spriteName ?? DefaultSpriteName, colour, rotation, layer, active, position, direction, velocity, speed, size, dead, collisionsComparer, 
+                  orientation)
+        {
+            LeakPercentage = leakPercentage ?? DefaultLeakPercentage;
+            MaxVitality = maxVitality ?? DefaultMaxVitality;
+            Vitality = vitality ?? DefaultVitality;
+            Defence = defence ?? DefaultDefence;
+
+            Damage = damage ?? DefaultDamage;
+            Strike = new Attack(this, windupTime ?? DefaultWindupTime, lingerTime ?? DefaultLingerTime, cooldownTime ?? DefaultCooldownTime);
+            AttackRange = attackRange ?? DefaultAttackRange;
+
+            DashTime = dashTime ?? DefaultDashTime;
+            DashSpeedModifier = dashSpeedModifier ?? DefaultDashSpeedModifier;
+
+            // special stuff
+            if (MaxVitality < Vitality)
+            {
+                MaxVitality = Vitality;
+            }
+
+            BaseSpeed = Speed;
+            Dash = new Dash(this, DashSpeedModifier, DashTime);
+
+            Invincibility = new Timer(invincibilityTime ?? DefaultInvincibilityTime);
+        }
+
+        /*public Agent(string spriteName, Subsprite subsprite, Vector2 position, int vitality, float damage, float attackRange = 100f, float defence = 0, int size = 0, float speed = 1)
             : base(spriteName, subsprite, position, size, speed)
         {
             Vitality = vitality;
@@ -56,7 +101,7 @@ namespace Capstone_Project.GameObjects.Entities
 
             Damage = damage;
             Strike = new Attack(this);
-            Range = attackRange;
+            AttackRange = attackRange;
 
             BaseSpeed = speed;
             DashTime = 0.5f;
@@ -64,7 +109,7 @@ namespace Capstone_Project.GameObjects.Entities
             Dash = new Dash(this, DashSpeedModifier, DashTime);
 
             Invincibility = new Timer(0f);
-        }
+        }*/
 
         public override void Update(GameTime gameTime)
         {
@@ -73,6 +118,7 @@ namespace Capstone_Project.GameObjects.Entities
 
             Move();
             Look();
+            //Attack();
 
             Invincibility.Update(gameTime);
         }
@@ -81,11 +127,13 @@ namespace Capstone_Project.GameObjects.Entities
         {
             base.Draw();
 
+            Strike.Draw();
+
             spriteBatch.DrawString(DebugFont, Vitality.ToString(), new Vector2(Collider.BoundingBox.Left, Collider.BoundingBox.Bottom), Color.Black, 
                 0f, Vector2.Zero, 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 1f);
             // shows Position
-            spriteBatch.DrawString(DebugFont, Position.ToString(), Position, Color.Black,
-                0f, Vector2.Zero, 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 1f);
+            /*spriteBatch.DrawString(DebugFont, Position.ToString(), Position, Color.Black,
+                0f, Vector2.Zero, 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 1f);*/
         }
 
         public virtual void Move()
@@ -110,16 +158,19 @@ namespace Capstone_Project.GameObjects.Entities
             Swing();
         }
 
-        public void TakeDamage(float damage, float invincibilityTime = 0f)
+        public void TakeDamage(float damage, IAttacker attacker, float invincibilityTime = 0f)
         {
             if (Invincible)
                 return;
 
-            damage *= (100f - def) / 100f;      // def is just the % damage reduction
+            damage *= (100f - defence) / 100f;      // def is just the % damage reduction
 
             Vitality -= (int)damage;
             if (Vitality == 0)
+            {
+                Killer = attacker;
                 Kill();
+            }
 
             Invincibility.SetNewWaitTime(invincibilityTime);
             Invincibility.Start();
@@ -127,7 +178,35 @@ namespace Capstone_Project.GameObjects.Entities
 
         public void Swing()
         {
-            Strike.Start(Position, Orientation, Range);
+            Strike.Start(Position, Orientation, AttackRange);
+        }
+
+        public void AbsorbVitality(IVitalised vitalised)
+        {
+            int leakAmount = vitalised.LeakVitality();
+
+            MaxVitality += leakAmount;
+            Vitality += leakAmount;
+        }
+
+        public int LeakVitality()
+        {
+            return (int)(MaxVitality * LeakPercentage);
+        }
+
+        public int LetVitality()
+        {
+            return MaxVitality;
+        }
+
+        public override void Kill()
+        {
+            if (Killer is IVitalised v)
+            {
+                v.AbsorbVitality(this);
+            }
+
+            Dead = true;
         }
     }
 }

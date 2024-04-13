@@ -13,6 +13,7 @@ namespace Capstone_Project.Input
     {
         private InputState InputState { get; set; }
         private Action[] MovementActions { get; set; }
+        private Action[] NonBufferedActions { get; set; }
         private Action[] BufferedActions { get; set; }
 
         public Point MousePos => InputState.MouseState.Position;    // remember that this is screen position, not world position
@@ -29,7 +30,7 @@ namespace Capstone_Project.Input
             ActivatedActions = new List<Action>();
             Exit = new Action("exit", new List<Input> { Keys.Escape }, ActionType.OnPress);
 
-            // movement Actions and Keys
+            // movement Actions
             Action Up = new Action("up", new List<Input> { Keys.W, Keys.Up }, ActionType.WhenDown);
             Action Down = new Action("down", new List<Input> { Keys.S, Keys.Down }, ActionType.WhenDown);
             Action Left = new Action("left", new List<Input> { Keys.A, Keys.Left }, ActionType.WhenDown);
@@ -37,7 +38,12 @@ namespace Capstone_Project.Input
 
             MovementActions = new Action[] { Up, Down, Left, Right };
 
-            // other Actions
+            // non-buffered Actions
+            Action LockOn = new Action("lock-on", new List<Input> { Button.Middle }, ActionType.OnPress);
+
+            NonBufferedActions = new Action[] { LockOn };
+
+            // buffered Actions
             Action Attack = new Action("attack", new List<Input> { Button.Left }, ActionType.OnRelease);
             Action Dash = new Action("dash", new List<Input> { Keys.LeftShift }, ActionType.OnPress);
 
@@ -53,8 +59,11 @@ namespace Capstone_Project.Input
             if (ExitFlag = Exit.Activated((float)gameTime.ElapsedGameTime.TotalSeconds, prevState, InputState))
                 return;
 
+            ActivatedActions.Clear();
+
             // Adds all Action objects that are activated to the ActivatedActions list
-            ActivatedActions = MovementActions.Where(action => action.Activated((float)gameTime.ElapsedGameTime.TotalSeconds, prevState, InputState)).ToList();
+            ActivatedActions.AddRange(MovementActions.Where(action => action.Activated((float)gameTime.ElapsedGameTime.TotalSeconds, prevState, InputState)));
+            ActivatedActions.AddRange(NonBufferedActions.Where(action => action.Activated((float)gameTime.ElapsedGameTime.TotalSeconds, prevState, InputState)));
 
             // Adds all Action objects that are bufferable and are activated to the ActionBuffer
             foreach (Action action in BufferedActions.Where(action => action.Activated((float)gameTime.ElapsedGameTime.TotalSeconds, prevState, InputState)))

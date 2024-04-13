@@ -35,22 +35,25 @@ namespace Capstone_Project.Fundamentals.DrawableShapes
             Scanned = scanned;
         }
 
-        public void Draw()
+        public void DrawOutline()
+        {
+            DrawOutline(Color.White);
+        }
+
+        public void DrawOutline(Color colour)
         {
             if (!Visible)
                 return;
 
-            if (Outlined)
-                foreach (var px in Outline)
-                    spriteBatch.Draw(Pixel, px.ToVector2(), null, Color.Black, 0f, Vector2.Zero, 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, Layer + 0.0001f);
+            foreach (var px in Outline)
+            {
+                spriteBatch.Draw(Pixel, px.ToVector2(), null, colour, 0f, Vector2.Zero, 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, Layer);
+            }
+        }
 
-            if (Scanned)
-                foreach (var line in ScanLines)
-                    spriteBatch.Draw(Pixel, line, null, Colour, 0f, Vector2.Zero, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, Layer);
-            else
-                foreach (var px in Pixels)
-                    spriteBatch.Draw(Pixel, px.ToVector2(), null, Colour, 0f, Vector2.Zero, 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, Layer);
-
+        public void Draw()
+        {
+            Draw(Colour);
         }
 
         public void Draw(Color colour)

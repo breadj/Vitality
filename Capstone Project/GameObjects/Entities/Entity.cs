@@ -11,6 +11,25 @@ namespace Capstone_Project.GameObjects.Entities
 {
     public abstract class Entity : ITexturable, IUpdatable, ICollidable, IMovable, IKillable
     {
+        #region Default Attributes
+        public static readonly bool DefaultVisibility = true;
+        public static readonly string DefaultSpriteName = "MissingTexture";
+        public static readonly Color DefaultColour = Color.White;
+        public static readonly float DefaultRotation = 0f;                  // facing downwards
+        public static readonly float DefaultLayer = 0.01f;
+
+        public static readonly bool DefaultActivity = true;
+
+        public static readonly Vector2 DefaultPosition = Vector2.One;       // default position is (1, 1) - shouldn't be used
+        public static readonly Vector2 DefaultDirection = Vector2.Zero;
+        public static readonly Vector2 DefaultVelocity = Vector2.Zero;
+        public static readonly float DefaultSpeed = 0f;
+
+        public static readonly int DefaultSize = 100;
+        public static readonly bool DefaultDeathFlag = false;
+        #endregion Default Attributes
+
+
         public bool Visible { get; set; } = true;
         public string SpriteName { get; init; }
         public Subsprite Subsprite { get; init; }
@@ -30,10 +49,38 @@ namespace Capstone_Project.GameObjects.Entities
 
         public int Size { get; init; }              // since Entities are all square, only one axis of 'Size' is needed
         public bool Dead { get; protected set; } = false;
+        public IAttacker Killer { get; protected set; } = null;
 
         protected Vector2 lastPosition { get; set; } = Vector2.Zero;
 
-        public Entity(string spriteName, Subsprite subsprite, Vector2 position, int size = 0, float speed = 0)
+        public Entity(bool? visible = null, string spriteName = null, Color? colour = null, float? rotation = null, float? layer = null, 
+            bool? active = null, Vector2? position = null, Vector2? direction = null, Vector2? velocity = null, float? speed = null, 
+            int? size = null, bool? dead = null)
+        {
+            Visible = visible ?? DefaultVisibility;
+            SpriteName = spriteName ?? DefaultSpriteName;
+            Colour = colour ?? DefaultColour;
+            Rotation = rotation ?? DefaultRotation;
+            Layer = layer ?? DefaultLayer;
+
+            Active = active ?? DefaultActivity;
+
+            Position = position ?? DefaultPosition;
+            Direction = direction ?? DefaultDirection;
+            Velocity = velocity ?? DefaultVelocity;
+            Speed = speed ?? DefaultSpeed;
+            
+            Size = size ?? DefaultSize;
+            Dead = dead ?? DefaultDeathFlag;
+
+            // special things
+            Subsprite = LoadedSprites[SpriteName];
+            Origin = Subsprite.Source.Size.ToVector2() / 2f;
+
+            Collider = new CCircle(Position, Size / 2f, true);
+        }
+
+        /*public Entity(string spriteName, Subsprite subsprite, Vector2 position, int size = 1, float speed = 0)
         {
             SpriteName = spriteName;
             Subsprite = subsprite;
@@ -46,7 +93,7 @@ namespace Capstone_Project.GameObjects.Entities
             Speed = speed;
 
             Size = size;
-        }
+        }*/
 
         public virtual void Update(GameTime gameTime)
         {
@@ -68,7 +115,7 @@ namespace Capstone_Project.GameObjects.Entities
                 spriteBatch.Draw(Subsprite.SpriteSheet, Destination, Subsprite.Source, Colour, Rotation, Origin, SpriteEffects.None, Layer);
         }
 
-        public void Kill()
+        public virtual void Kill()
         {
             Dead = true;
         }

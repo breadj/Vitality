@@ -227,6 +227,8 @@ namespace Capstone_Project.MapStuff.Parser
             AIState aiType = AIState.None;
             PatrolType patrolType = PatrolType.None;
 
+            int? aggroRange = null;
+
             int temp;
             Point tempPoint;
             string line;
@@ -287,6 +289,9 @@ namespace Capstone_Project.MapStuff.Parser
                         }
                         patrolType = tempPatrolType;
                         break;
+                    case "AggroRange":
+                        aggroRange = int.TryParse(value, out temp) ? temp : null;
+                        break;
                 }
             }
 
@@ -311,8 +316,8 @@ namespace Capstone_Project.MapStuff.Parser
                 actualPatrolPoints.AddFirst(actualPosition);
             }
 
-            md.Enemies.Add(AIAgent.Create(spriteName: spriteName, position: actualPosition, vitality: vitality, damage: damage, patrolPoints: actualPatrolPoints, 
-                firstPatrolPointIndex: patrolStartIndex, initialState: aiType, patrolType: patrolType));
+            md.Enemies.Add(new AIAgent(spriteName: spriteName, position: actualPosition, vitality: vitality, damage: damage, patrolPoints: actualPatrolPoints, 
+                firstPatrolPointIndex: patrolStartIndex, initialAIState: aiType, patrolType: patrolType, aggroRange: aggroRange));
         }
 
         private static (string field, string value) ParseField(string line)

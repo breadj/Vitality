@@ -21,11 +21,12 @@ namespace Capstone_Project.GameObjects
         /// </summary>
         /// <param name="waitTime">How long (in seconds) until the Cooldown returns .Done as true</param>
         /// <param name="initialTime">Optional initial value for how long has already been waited</param>
-        public Timer(float waitTime, float initialTime = 0) 
+        /// <param name="startImmediately">Optional value to set the timer to start counting as soon as initialised</param>
+        public Timer(float waitTime, float initialTime = 0, bool startImmediately = false)
         {
-            Active = false;
             WaitTime = waitTime;
             timer = initialTime;
+            Active = startImmediately;
         }
 
         public void Update(GameTime gameTime)

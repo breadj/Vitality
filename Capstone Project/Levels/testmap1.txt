@@ -25,7 +25,7 @@ Walls={5,10}
 [Enemy]
 Sprite=Enemy
 Position={6,4}
-Vitality=100
+Vitality=20
 Damage=10
 PatrolPoints={{6,4},{10,4},{10,1},{4,1}}
 PatrolStartIndex=0
