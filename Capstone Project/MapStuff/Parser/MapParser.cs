@@ -13,6 +13,7 @@ namespace Capstone_Project.MapStuff.Parser
 {
     public static class MapParser
     {
+        private static uint killableID;
         public const string LevelPath = @"Levels\";
         public static string Filepath(string filename) => Path.Combine(Directory.GetCurrentDirectory() + @"\..\..\..\", LevelPath, filename);
 
@@ -35,10 +36,13 @@ namespace Capstone_Project.MapStuff.Parser
         {
             MapDetails mapDetails = new MapDetails();
 
+            killableID = 1;     // starts at 1 because Player is always ID = 0
+
             bool mapMDRetrieved = false;
             string line;
             while ((line = stream.ReadLine()) != null)
             {
+                line = line.Trim();
                 // ignores lines that are empty/have nothing substantial in them
                 if (line.Length < 3)
                     continue;
@@ -64,6 +68,9 @@ namespace Capstone_Project.MapStuff.Parser
                             break;
                         case "Enemy":
                             ParseEnemy(stream, ref mapDetails); // adds an enemy to the list
+                            break;
+                        case "Exit":
+                            ParseExit(stream, ref mapDetails);  // adds an exit to the list
                             break;
                     }
                 }
@@ -136,9 +143,11 @@ namespace Capstone_Project.MapStuff.Parser
             int? height = null;
             int? tileSize = null;
             int[] walls = null;
+            Point? spawn = null;
             
             int temp;
             int[] tempArr;
+            Point tempPoint;
             string line;
             while ((line = stream.ReadLine()) != null && line != "")
             {
@@ -149,22 +158,22 @@ namespace Capstone_Project.MapStuff.Parser
                 switch (field)
                 {
                     case "Width":
-                        if (int.TryParse(value, out temp))
-                            width = temp;
+                        width = int.TryParse(value, out temp) ? temp : null;
                         break;
                     case "Height":
-                        if (int.TryParse(value, out temp)) 
-                            height = temp;
+                        height = int.TryParse(value, out temp) ? temp : null;
                         break;
                     case "TileSize":
-                        if (int.TryParse(value, out temp))
-                            tileSize = temp;
+                        tileSize = int.TryParse(value, out temp) ? temp : null;
                         break;
                     case "Walls":
-                        if (value.Length < 2 && !(value[0] == '{' && value[^1] == '}'))
+                        if (value.Length < 2 || !(value[0] == '{' && value[^1] == '}'))
                             throw new Exception("Walls must have an {array} assigned to it");
                         if (TryParseIntArray(value[1..^1], out tempArr))
                             walls = tempArr;
+                        break;
+                    case "Spawn":
+                        spawn = TryParsePoint(value, out tempPoint) ? tempPoint : null;
                         break;
                 }
             }
@@ -177,13 +186,16 @@ namespace Capstone_Project.MapStuff.Parser
                 throw new Exception("MapMetaData must have an assigned TileSize field");
             if (walls == null)
                 throw new Exception("MapMetaData must have an assigned Walls array field");
+            if (spawn == null)
+                throw new Exception("MapMetaData must have an assigned Spawn");
 
             md.MapMD = new()
             {
                 Columns = width.Value,
                 Rows = height.Value,
                 TileSize = tileSize.Value,
-                WallTiles = walls
+                WallTiles = walls,
+                Spawn = spawn.Value
             };
         }
 
@@ -327,7 +339,7 @@ namespace Capstone_Project.MapStuff.Parser
             int tileSize = md.MapMD.Value.TileSize;
             Vector2 halfTileSizeVector = new Vector2(tileSize / 2);
 
-            actualPosition = (Vector2)(position != null ? position?.ToVector2() : patrolPoints[patrolStartIndex.Value].ToVector2()) * tileSize + halfTileSizeVector;
+            actualPosition = (position != null ? position.Value.ToVector2() : patrolPoints[patrolStartIndex.Value].ToVector2()) * tileSize + halfTileSizeVector;
 
             if (patrolPoints != null)
                 actualPatrolPoints = new LinkedList<Vector2>(patrolPoints.Select(point => point.ToVector2() * tileSize + halfTileSizeVector));
@@ -337,9 +349,50 @@ namespace Capstone_Project.MapStuff.Parser
                 actualPatrolPoints.AddFirst(actualPosition);
             }
 
-            md.Enemies.Add(new AIAgent(spriteName: spriteName, position: actualPosition, vitality: vitality, damage: damage, windupTime: windup, 
+            md.Enemies.Add(new AIAgent(killableID++, spriteName: spriteName, position: actualPosition, vitality: vitality, damage: damage, windupTime: windup, 
                 lingerTime: linger, cooldownTime: cooldown, patrolPoints: actualPatrolPoints, firstPatrolPointIndex: patrolStartIndex, 
                 initialAIState: aiType, patrolType: patrolType, aggroRange: aggroRange, rotationSpeed: rotationSpeed));
+        }
+
+        private static void ParseExit(StreamReader stream, ref MapDetails md)
+        {
+            Point? tile = null;
+            string destinationLevel = null;
+            Point? destinationTile = null;
+
+            Point tempPoint;
+            string line;
+            while ((line = stream.ReadLine()) != null && line != "")
+            {
+                if (line.Length < 3)
+                    continue;
+
+                (string field, string value) = ParseField(line);
+                switch (field)
+                {
+                    case "Tile":
+                        tile = TryParsePoint(value, out tempPoint) ? tempPoint : null;
+                        break;
+                    case "Level":
+                        destinationLevel = value;
+                        break;
+                    case "Destination":
+                        destinationTile = TryParsePoint(value, out tempPoint) ? tempPoint : null;
+                        break;
+                }
+            }
+
+            if (tile == null)
+                throw new Exception("An Exit requires a Tile Point");
+            if (destinationLevel == null)
+                throw new Exception("An Exit requires a Level to enter");
+
+            md.Exits.Add(new Exit()
+            {
+                Tile = tile.Value,
+                DestinationLevel = destinationLevel,
+                DistinationTile = destinationTile
+            });
         }
 
         private static (string field, string value) ParseField(string line)
@@ -365,7 +418,7 @@ namespace Capstone_Project.MapStuff.Parser
             bool failed = false;
             for (int i = 0; i < strArr.Length; i++)
             {
-                if (int.TryParse(strArr[i], out int x))
+                if (int.TryParse(strArr[i].Trim(), out int x))
                     ints.Add(x);
                 else
                     failed = true;
@@ -377,6 +430,7 @@ namespace Capstone_Project.MapStuff.Parser
 
         private static bool TryParseBracketedIntArray(string str, out int[] arr)
         {
+            str = str.Trim();
             if (str.Length < 2 || !(str[0] == '{' && str[^1] == '}'))
                 throw new Exception("Array must be surrounded by {}");
 
@@ -392,6 +446,8 @@ namespace Capstone_Project.MapStuff.Parser
             List<StringBuilder> strList = new List<StringBuilder> { new StringBuilder() };
             for (int i = 1; i < str.Length - 1; i++)
             {
+                if (str[i] == ' ')
+                    continue;
                 if (!inBrackets && str[i] == ',')
                 {
                     strList.Add(new StringBuilder());
@@ -434,6 +490,7 @@ namespace Capstone_Project.MapStuff.Parser
 
         private static int ParseIntWithDefault(string str, string field, int defaultVal)
         {
+            str = str.Trim();
             if (!int.TryParse(str, out int val))
             {
                 Debug.WriteLine($"{field} '{str}' is invalid, defaulting to {defaultVal}");

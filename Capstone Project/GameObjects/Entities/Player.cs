@@ -24,7 +24,7 @@ namespace Capstone_Project.GameObjects.Entities
             Vector2? orientation = null, float? leakPercentage = null, int? maxVitality = null, int? vitality = null, float? defence = null,
             float? damage = null, float? windupTime = null, float? lingerTime = null, float? cooldownTime = null, float? attackRange = null,
             float? dashTime = null, float? dashSpeedModifier = null, float? invincibilityTime = null)
-            : base(visible, spriteName ?? DefaultSpriteName, colour, rotation, layer, active, position, direction, velocity, speed,
+            : base(0, visible, spriteName ?? DefaultSpriteName, colour, rotation, layer, active, position, direction, velocity, speed,
                   size, dead, collisionsComparer, orientation, leakPercentage, maxVitality, vitality, defence, damage, windupTime, 
                   lingerTime, cooldownTime, attackRange, dashTime, dashSpeedModifier, invincibilityTime)
         {
@@ -64,7 +64,7 @@ namespace Capstone_Project.GameObjects.Entities
             //spriteBatch.Draw(BLANK, PathCollider, null, new Color(Color.MediumPurple, 0.5f), 0f, Vector2.Zero, SpriteEffects.None, 0.9f);
             //spriteBatch.DrawString(DebugFont, Position.ToString(), Position, Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.9f);
             //spriteBatch.Draw(BLANK, new Rectangle(Position.ToPoint(), new Point(Size)), null, new Color(Color.Pink, 0.5f), MathHelper.PiOver4, BLANK.Bounds.Size.ToVector2() / 2f, SpriteEffects.None, 0.05f);
-            //spriteBatch.Draw(BLANK, Hitbox, null, new Color(Color.Blue, 0.5f), 0f, Vector2.Zero, SpriteEffects.None, 0.04f);
+            //spriteBatch.Draw(BLANK, Collider.BoundingBox, null, new Color(Color.Blue, 0.5f), 0f, Vector2.Zero, SpriteEffects.None, 0.9f);
         }
 
         public override void Move()
@@ -146,7 +146,7 @@ namespace Capstone_Project.GameObjects.Entities
                 Agent closestAgent = (Agent)Game1.SimulatedEntities.Where(entity => entity is Agent && entity is not Player).MinBy(agent => (agent.Position - worldMousePos).LengthSquared());
 
                 // lock-on target needs to be at least 200px away from the mouse pos
-                if ((worldMousePos - closestAgent.Position).LengthSquared() <= 200 * 200)
+                if (closestAgent != null && (worldMousePos - closestAgent.Position).LengthSquared() <= 200 * 200)
                 {
                     LockOnTarget = closestAgent;
                     LockOnHighlight = new DCircle(closestAgent.Position, closestAgent.Size / 2f * 1.2f, Color.White, 0.02f);

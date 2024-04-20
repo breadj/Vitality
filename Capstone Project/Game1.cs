@@ -25,8 +25,10 @@ namespace Capstone_Project
         public static Controls Controls = new();
         public static Camera Camera;
 
+        public string LevelName = "";
         public Spritesheet Spritesheet;
         public List<Entity> Entities;
+        public Dictionary<string, List<uint>> Killed;       // contains IDs (uint) for every killed entity (List<>) for every level (string)
 
         private GraphicsDeviceManager graphics;
         private RenderTarget2D renderTarget;
@@ -45,7 +47,11 @@ namespace Capstone_Project
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+#if DEBUG
             graphics.IsFullScreen = false;      // turn back to '= true' for non-debug
+#else
+            graphics.IsFullScreen = true;
+#endif
         }
 
         protected override void Initialize()
@@ -53,16 +59,18 @@ namespace Capstone_Project
             // TODO: Add your initialization logic here
 
             // sets the window to 1920x1080
-            graphics.PreferredBackBufferWidth = 1920;
-            graphics.PreferredBackBufferHeight = 1080;
+            graphics.PreferredBackBufferWidth = ScreenBounds.X;
+            graphics.PreferredBackBufferHeight = ScreenBounds.Y;
 
             graphics.ApplyChanges();
 
             // initialises renderTarget for drawing to
-            renderTarget = new RenderTarget2D(graphics.GraphicsDevice, 1920, 1080);
+            renderTarget = new RenderTarget2D(graphics.GraphicsDevice, ScreenBounds.X, ScreenBounds.Y);
 
             visibleTiles = new List<Tile>();
             Entities = new List<Entity>();
+            Killed = new Dictionary<string, List<uint>>();
+
             visibleEntities = new List<Entity>();
             markedForDeath = new List<Entity>();
 
@@ -79,6 +87,8 @@ namespace Capstone_Project
 
             // TODO: use this.Content to load your game content here
 
+            Camera = new Camera(new(0, 0, ScreenBounds.X, ScreenBounds.Y));
+            
             BLANK = new Texture2D(graphics.GraphicsDevice, 1, 1);
             BLANK.SetData(new Color[] { Color.White });
 
@@ -89,12 +99,19 @@ namespace Capstone_Project
             DebugFont = Content.Load<SpriteFont>("DebugFont");
 
             Texture2D playerSprite = Content.Load<Texture2D>("Player");
-            Subsprite playerSubsprite = new Subsprite(playerSprite, playerSprite.Bounds);
             Texture2D enemySprite = Content.Load<Texture2D>("Enemy");
+            Texture2D defaultExit = Content.Load<Texture2D>("default_exit");
+            Texture2D directionalExit = Content.Load<Texture2D>("directional_exit");
+
+            Subsprite playerSubsprite = new Subsprite(playerSprite, playerSprite.Bounds);
             Subsprite enemySubsprite = new Subsprite(enemySprite, enemySprite.Bounds);
+            Subsprite defaultExitSubsprite = new Subsprite(defaultExit, defaultExit.Bounds);
+            Subsprite directionalExitSubsprite = new Subsprite(directionalExit, directionalExit.Bounds);
 
             LoadedSprites.Add("Player", playerSubsprite);
             LoadedSprites.Add("Enemy", enemySubsprite);
+            LoadedSprites.Add("Default_Exit", defaultExitSubsprite);
+            LoadedSprites.Add("Directional_Exit", directionalExitSubsprite);
 
             // for testing purposes
             /*int tileSize = 128;
@@ -107,11 +124,10 @@ namespace Capstone_Project
             }
 
             tileMap = new TileMap(15, 9, tileSize, tiles);*/
-            RetrieveLevel("testmap1.txt");
-            Player = new Player(spriteName: "Player", position: TileMap.MapBounds.Center.ToVector2());
+            //Player = new Player(spriteName: "Player");
+            Player = new Player(spriteName: "Player", speed: 500);      // fast player for debugging
+            RetrieveLevel("testmap2", new Point(4, 4));
             //Enemy enemy = new Enemy(enemySubsprite, TileMap.MapBounds.Center.ToVector2() + new Vector2(128, 128), 15, 0);
-
-            Camera = new Camera(new(0, 0, 1920, 1080), Player.Position);
 
             Entities.Add(Player);
             //Entities.Add(enemy);
@@ -126,6 +142,22 @@ namespace Capstone_Project
             Controls.Update(gameTime);
             if (Controls.ExitFlag)
                 Exit();
+
+            #region Player-on-Exit
+            
+            foreach (LevelExit exit in TileMap.Exits)
+            {
+                if (!exit.SpawnBlocked && Player.CollidesWith(exit, out _))
+                {
+                    ExitLevel(exit);
+                }
+                else
+                {
+                    exit.SpawnBlocked = false;
+                }
+            }
+
+            #endregion
 
             #region Simulated & Visible Tiles
 
@@ -170,7 +202,11 @@ namespace Capstone_Project
                 }
             }
 
-            Entities = Entities.Except(markedForDeath).ToList();
+            if (markedForDeath.Count > 0)
+            {
+                Entities = Entities.Except(markedForDeath).ToList();
+                Killed[LevelName].AddRange(markedForDeath.Select(dead => dead.ID));
+            }
 
             #endregion
 
@@ -217,9 +253,12 @@ namespace Capstone_Project
             // draws only the visible Tiles & Entities
             foreach (Tile tile in visibleTiles)
                 tile.Draw();
+            foreach (LevelExit exit in TileMap.Exits)
+                exit.Draw();
             foreach (Entity entity in visibleEntities)
                 entity.Draw();
 
+            spriteBatch.DrawString(DebugFont, $"PP={Player.Position}", Camera.ScreenToWorld(ScreenBounds.ToVector2() / 2f), Color.Black, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0.9f);
             //Point dev = new Point(220, 150);
             //spriteBatch.Draw(BLANK, new Rectangle((int)Camera.Position.X - dev.X, (int)Camera.Position.Y - dev.Y, dev.X * 2, dev.Y * 2), null, new Color(Color.Black, 0.2f), 0f, Vector2.Zero, SpriteEffects.None, 0.99f);
             //spriteBatch.Draw(BLANK, tileMap.MapBounds, null, new Color(Color.Purple, 0.5f), 0f, Vector2.Zero, SpriteEffects.None, 0.999f);
@@ -243,10 +282,17 @@ namespace Capstone_Project
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp, null, RasterizerState.CullCounterClockwise, null, Camera.TransformMatrix);
         }
 
-        private void RetrieveLevel(string filename)
+        private void RetrieveLevel(string levelName, Point? destinationTile = null)
         {
-            MapDetails md = MapParser.Load(filename);
+            MapDetails md = MapParser.Load(levelName);
             MapMetaData mapMD = md.MapMD.Value;
+
+            LevelName = levelName;
+
+            if (!Killed.ContainsKey(levelName))
+            {
+                Killed.Add(levelName, new List<uint>());
+            }
 
             // Spritesheet
             Texture2D ssTexture = Content.Load<Texture2D>(md.SpritesheetMD.Value.Name);
@@ -275,10 +321,108 @@ namespace Capstone_Project
             }
 
             // TileMap
-            TileMap = new TileMap(mapMD.Columns, mapMD.Rows, mapMD.TileSize, tileArray, walls);
+            Vector2 spawn = mapMD.Spawn.ToVector2() * mapMD.TileSize + new Vector2(mapMD.TileSize / 2f);
+            List<LevelExit> exits = new List<LevelExit>(md.Exits.Count);
+            foreach (Exit exit in md.Exits)
+            {
+                Vector2 position = exit.Tile.ToVector2() * mapMD.TileSize + new Vector2(mapMD.TileSize / 2);
+                string level = exit.DestinationLevel;
+                Point? destination = exit.DistinationTile;
+                Rectangle destRect = new Rectangle((int)position.X, (int)position.Y, mapMD.TileSize, mapMD.TileSize);
+
+                string spriteName;
+                float rotation;
+                CShape collider;
+
+                // helper vars for directional exits that use CRectangle
+                Vector2 colliderPos;
+                (int width, int height) colliderBounds;
+
+                float fifthTileSize = mapMD.TileSize / 5f;
+                float tenthTileSize = fifthTileSize / 2f;
+                switch (IsEdgeTile(exit.Tile, (mapMD.Columns, mapMD.Rows)))
+                {
+                    default:
+                    case Edginess.Centre:
+                        spriteName = "Default_Exit";
+                        rotation = 0;
+                        collider = new CCircle(position, tenthTileSize, false);
+                        break;
+                    case Edginess.North:
+                        spriteName = "Directional_Exit";
+                        rotation = 0;
+                        colliderPos = new Vector2(position.X, exit.Tile.Y * mapMD.TileSize + tenthTileSize);
+                        colliderBounds = (mapMD.TileSize, (int)fifthTileSize);
+                        collider = new CRectangle(colliderPos, colliderBounds, false);
+                        break;
+                    case Edginess.South:
+                        spriteName = "Directional_Exit";
+                        rotation = MathHelper.Pi;
+                        colliderPos = new Vector2(position.X, (exit.Tile.Y + 1) * mapMD.TileSize - tenthTileSize + 1);
+                        colliderBounds = (mapMD.TileSize, (int)fifthTileSize);
+                        collider = new CRectangle(colliderPos, colliderBounds, false);
+                        break;
+                    case Edginess.East:
+                        spriteName = "Directional_Exit";
+                        rotation = MathHelper.PiOver2;
+                        colliderPos = new Vector2((exit.Tile.X + 1) * mapMD.TileSize - tenthTileSize + 1, position.Y);
+                        colliderBounds = ((int)fifthTileSize, mapMD.TileSize);
+                        collider = new CRectangle(colliderPos, colliderBounds, false);
+                        break;
+                    case Edginess.West:
+                        spriteName = "Directional_Exit";
+                        rotation = 3 * MathHelper.PiOver2;
+                        colliderPos = new Vector2(exit.Tile.X * mapMD.TileSize + tenthTileSize, position.Y);
+                        colliderBounds = ((int)fifthTileSize, mapMD.TileSize);
+                        collider = new CRectangle(colliderPos, colliderBounds, false);
+                        break;
+                }
+
+                exits.Add(new LevelExit(position, level, destination, spriteName, LoadedSprites[spriteName], destRect, collider, rotation) 
+                        { SpawnBlocked = destinationTile != null && destinationTile.Value == exit.Tile });
+            }
+
+            TileMap = new TileMap(mapMD.Columns, mapMD.Rows, mapMD.TileSize, tileArray, walls, spawn, exits);
+
+            // Entities + Player
+            if (destinationTile != null && destinationTile.Value.X >= 0 && destinationTile.Value.Y >= 0 &&
+                destinationTile.Value.X < mapMD.Columns && destinationTile.Value.Y < mapMD.Rows)
+            {
+                Player.ManualPositionMove(destinationTile.Value.ToVector2() * mapMD.TileSize + new Vector2(mapMD.TileSize / 2f));
+            }
+            else
+            {
+                Player.ManualPositionMove(TileMap.Spawn);
+            }
 
             // Enemies
-            Entities.AddRange(md.Enemies);
+            Entities.AddRange(md.Enemies.Where(enemy => !Killed[levelName].Contains(enemy.ID)));
+        }
+
+        private enum Edginess { North, East, South, West, Centre }
+
+        private static Edginess IsEdgeTile(Point tile, (int width, int height) bounds)
+        {
+            if (tile.X == 0)
+                return Edginess.West;
+            if (tile.Y == 0)
+                return Edginess.North;
+            if (tile.X + 1 == bounds.width)
+                return Edginess.East;
+            if (tile.Y + 1 == bounds.height)
+                return Edginess.South;
+
+            return Edginess.Centre;
+        }
+
+        private void ExitLevel(LevelExit exit)
+        {
+            Entities.Clear();
+            Debug.WriteLine($"Entering {exit.DestinationLevel}");
+            RetrieveLevel(exit.DestinationLevel, exit.DestinationTile);
+
+            Camera.Update(Player.Position);
+            Entities.Add(Player);
         }
     }
 }
