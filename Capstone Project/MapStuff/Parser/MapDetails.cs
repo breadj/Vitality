@@ -12,6 +12,7 @@ namespace Capstone_Project.MapStuff.Parser
         public MapMetaData? MapMD = null;
         public Array2D<int> TileMap = null;
         public List<AIAgent> Enemies = new List<AIAgent>();
+        public List<Exit> Exits = new List<Exit>();
 
         public MapDetails() { }
     }
@@ -29,5 +30,13 @@ namespace Capstone_Project.MapStuff.Parser
         public int Rows;
         public int TileSize;
         public int[] WallTiles;
+        public Point Spawn;
+    }
+
+    public struct Exit
+    {
+        public Point Tile;
+        public string DestinationLevel;
+        public Point? DistinationTile;
     }
 }

@@ -7,6 +7,7 @@ namespace Capstone_Project.Globals
 {
     public static class Globals
     {
+        public static Point ScreenBounds = new Point(1920, 1080);
         public static GameTime gameTime = null;
         public static Texture2D BLANK = null;
         public static Texture2D Pixel = null;

@@ -49,20 +49,20 @@ namespace Capstone_Project.GameObjects.Entities
 
         public float RotationSpeed { get; protected set; }
 
-        public AIAgent(bool? visible = null, string spriteName = null, Color? colour = null, float? rotation = null, float? layer = null,
+        public AIAgent(uint id, bool? visible = null, string spriteName = null, Color? colour = null, float? rotation = null, float? layer = null,
             bool? active = null, Vector2? position = null, Vector2? direction = null, Vector2? velocity = null, float? speed = null,
             int? size = null, bool? dead = null, Comparer<(ICollidable, CollisionDetails)> collisionsComparer = null, Vector2? orientation = null,
             float? leakPercentage = null, int? maxVitality = null, int? vitality = null, float? defence = null, float? damage = null,
             float? windupTime = null, float? lingerTime = null, float? cooldownTime = null, float? attackRange = null,
             float? dashTime = null, float? dashSpeedModifier = null, float? invincibilityTime = null,
-            AIState? initialAIState = null, PatrolType? patrolType = null, bool? patrolDirectionIsForward = null,
+            AIState initialAIState = AIState.None, PatrolType patrolType = PatrolType.None, bool? patrolDirectionIsForward = null,
             LinkedList<Vector2> patrolPoints = null, int? firstPatrolPointIndex = null, int? aggroRange = null, float? loseAggroTime = null,
             float? rotationSpeed = null)
-            : base(visible, spriteName, colour, rotation, layer, active, position, direction, velocity, speed, size, dead,
+            : base(id, visible, spriteName, colour, rotation, layer, active, position, direction, velocity, speed, size, dead,
                   collisionsComparer, orientation, leakPercentage, maxVitality, vitality, defence, damage, windupTime, lingerTime, 
                   cooldownTime, attackRange, dashTime, dashSpeedModifier, invincibilityTime)
         {
-            PatrolType = patrolType ?? DefaultPatrolType;
+            PatrolType = patrolType == PatrolType.None ? DefaultPatrolType : patrolType;
 
             this.patrolDirectionIsForward = patrolDirectionIsForward ?? DefaultPatrolDirectionIsForward;
             AggroRange = aggroRange ?? DefaultAggoRange;
@@ -70,8 +70,6 @@ namespace Capstone_Project.GameObjects.Entities
             RotationSpeed = rotationSpeed ?? DefaultRotationSpeed;
 
             // special stuff
-            CurrentState.Push(initialAIState ?? DefaultInitialAIState);
-
             if (patrolPoints != null && patrolPoints.Count > 0)
             {
                 PatrolPoints = patrolPoints;
@@ -92,6 +90,8 @@ namespace Capstone_Project.GameObjects.Entities
                 PatrolPoints = new LinkedList<Vector2>();
                 CurrentPatrolPoint = PatrolPoints.AddFirst(Position);
             }
+
+            CurrentState.Push(initialAIState == AIState.None ? (PatrolPoints.Count > 1 ? AIState.Patrol : DefaultInitialAIState) : initialAIState);
 
             LoseAggroTimer = new Timer(loseAggroTime ?? DefaultLoseAggroTime);
         }
@@ -139,8 +139,8 @@ namespace Capstone_Project.GameObjects.Entities
         {
             base.Draw();
 
-            Globals.Globals.spriteBatch.DrawString(Globals.Globals.DebugFont, $"Rotation: {Rotation}", Position, Color.White, 0f, Vector2.Zero,
-                1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0.5f);
+            /*Globals.Globals.spriteBatch.DrawString(Globals.Globals.DebugFont, $"Rotation: {Rotation}", Position, Color.White, 0f, Vector2.Zero,
+                1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0.5f);*/
             /*Globals.Globals.spriteBatch.DrawString(Globals.Globals.DebugFont, $"Speed: {Speed}", Position, Color.Black, 0f, 
                 Vector2.Zero, 2f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0.9f);*/
             /*Globals.Globals.spriteBatch.DrawString(Globals.Globals.DebugFont, $"Attack Timer: {attackTimer.Percentage}", Position,
@@ -427,37 +427,5 @@ namespace Capstone_Project.GameObjects.Entities
 
             base.Move();
         }
-
-        /*public static AIAgent Create(string spriteName = null, Subsprite subsprite = null, Vector2? position = null, int? vitality = null, float? damage = null, LinkedList<Vector2> patrolPoints = null, 
-            int? firstPatrolPointIndex = 0, AIState? initialState = null, PatrolType? patrolType = null, float? attackRange = null, float? defence = null, int? size = null, float? speed = null)
-        {
-            firstPatrolPointIndex ??= 0;
-
-            if (position == null && patrolPoints != null)
-            {
-                position = patrolPoints.ElementAt(firstPatrolPointIndex.Value);
-            }
-            else if (position != null && patrolPoints == null)
-            {
-                patrolPoints = new LinkedList<Vector2>();
-                patrolPoints.AddFirst(position.Value);
-            }
-
-            return new AIAgent(
-                spriteName ?? DefaultSpriteName,
-                subsprite ?? DefaultSprite,
-                position ?? DefaultPosition,
-                vitality ?? DefaultVitality,
-                damage ?? DefaultDamage,
-                patrolPoints ?? DefaultPatrolPoints,
-                firstPatrolPointIndex.Value,
-                initialState ?? DefaultAIState,
-                patrolType ?? DefaultPatrolType,
-                attackRange ?? DefaultAttackRange,
-                defence ?? DefaultDefence,
-                size ?? DefaultSize,
-                speed ?? DefaultSpeed
-                );
-        }*/
     }
 }
