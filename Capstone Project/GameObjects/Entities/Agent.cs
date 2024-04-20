@@ -59,15 +59,15 @@ namespace Capstone_Project.GameObjects.Entities
         public bool Invincible => !Invincibility.Done;
         public Timer Invincibility { get; protected set; }
 
-        public Agent(bool? visible = null, string spriteName = null, Color? colour = null, float? rotation = null, float? layer = null,
+        public Agent(uint id, bool? visible = null, string spriteName = null, Color? colour = null, float? rotation = null, float? layer = null,
             bool? active = null, Vector2? position = null, Vector2? direction = null, Vector2? velocity = null, float? speed = null,
             int? size = null, bool? dead = null, Comparer<(ICollidable, CollisionDetails)> collisionsComparer = null,
             Vector2? orientation = null,
             float? leakPercentage = null, int? maxVitality = null, int? vitality = null, float? defence = null, float? damage = null, 
             float? windupTime = null, float? lingerTime = null, float? cooldownTime = null, float? attackRange = null, float? dashTime = null, float? dashSpeedModifier = null, 
             float? invincibilityTime = null)
-            : base(visible, spriteName ?? DefaultSpriteName, colour, rotation, layer, active, position, direction, velocity, speed, size, dead, collisionsComparer, 
-                  orientation)
+            : base(id, visible, spriteName ?? DefaultSpriteName, colour, rotation, layer, active, position, direction, velocity, speed, size,
+                  dead, collisionsComparer, orientation)
         {
             LeakPercentage = leakPercentage ?? DefaultLeakPercentage;
             MaxVitality = maxVitality ?? DefaultMaxVitality;

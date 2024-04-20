@@ -22,7 +22,6 @@ namespace Capstone_Project.GameObjects.Entities
         public static readonly Vector2 DefaultOrientation = new Vector2(0, 1);      // down
         #endregion Default Attributes
 
-
         public Rectangle OldBoundingBox => new Rectangle((int)(Position.X - Size / 2f), (int)(Position.Y - Size / 2f), Size, Size);
         public Vector2 TargetPos { get; set; }
         public Rectangle PathCollider => Collision.GeneratePathCollider(OldBoundingBox, Collider.BoundingBox);
@@ -31,12 +30,12 @@ namespace Capstone_Project.GameObjects.Entities
         public Vector2 Orientation { get; protected set; }
         protected Vector2 actualVelocity { get; set; } = Vector2.Zero;      // how far is actually travelled in a frame (Velocity * seconds elapsed)
 
-        public Mob(bool? visible = null, string spriteName = null, Color? colour = null, float? rotation = null, float? layer = null, 
+        public Mob(uint id, bool? visible = null, string spriteName = null, Color? colour = null, float? rotation = null, float? layer = null, 
             bool? active = null, Vector2? position = null, Vector2? direction = null, Vector2? velocity = null, float? speed = null,
             int? size = null, bool? dead = null,
             Comparer<(ICollidable, CollisionDetails)> collisionsComparer = null, Vector2? orientation = null)
-            : base(visible, spriteName, colour, rotation, layer, active, position, direction, velocity, speed ?? DefaultSpeed, size ?? DefaultSize, 
-                  dead)
+            : base(id, visible, spriteName, colour, rotation, layer, active, position, direction, velocity, speed ?? DefaultSpeed,
+                  size ?? DefaultSize, dead)
         {
             Collisions = new SortedLinkedList<(ICollidable Other, CollisionDetails Details)>(collisionsComparer ?? DefaultCollisionsComparer);
 
@@ -80,6 +79,11 @@ namespace Capstone_Project.GameObjects.Entities
             spriteBatch.Draw(Pixel, Collider.BoundingBox, null, new Color(Color.Yellow, 0.4f), 0f, Vector2.Zero, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0.04f);*/
         }
 
+        public void ManualPositionMove(Vector2 newPos)
+        {
+            Position = newPos;
+            Collider.MoveTo(newPos);
+        }
 
         #region Collision Handling
 

@@ -29,6 +29,7 @@ namespace Capstone_Project.GameObjects.Entities
         public static readonly bool DefaultDeathFlag = false;
         #endregion Default Attributes
 
+        public uint ID { get; init; }
 
         public bool Visible { get; set; } = true;
         public string SpriteName { get; init; }
@@ -53,10 +54,12 @@ namespace Capstone_Project.GameObjects.Entities
 
         protected Vector2 lastPosition { get; set; } = Vector2.Zero;
 
-        public Entity(bool? visible = null, string spriteName = null, Color? colour = null, float? rotation = null, float? layer = null, 
+        public Entity(uint id, bool? visible = null, string spriteName = null, Color? colour = null, float? rotation = null, float? layer = null, 
             bool? active = null, Vector2? position = null, Vector2? direction = null, Vector2? velocity = null, float? speed = null, 
             int? size = null, bool? dead = null)
         {
+            ID = id;
+
             Visible = visible ?? DefaultVisibility;
             SpriteName = spriteName ?? DefaultSpriteName;
             Colour = colour ?? DefaultColour;
