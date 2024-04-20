@@ -4,8 +4,9 @@ namespace Capstone_Project.GameObjects.Interfaces
     public interface IAttacker
     {
         public float Damage { get; }
-        public Attack Attack { get; }
-        public float Range { get; }
+        public Attack Strike { get; }
+        public bool Attacking => Strike.Attacking;
+        public float AttackRange { get; }
         public void Swing();
     }
 }

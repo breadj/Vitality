@@ -10,7 +10,9 @@ namespace Capstone_Project.GameObjects
         private float timer { get; set; } = 0;
 
         public void SetNewWaitTime(float waitTime) => WaitTime = waitTime;
-        public void Reset() => timer = 0;
+        public void Resume() => Active = true;
+        public void Pause() => Active = false;
+        public float TimeRemaining => WaitTime - timer;
         public float Percentage => timer / WaitTime;
         public bool Done => timer >= WaitTime;
 
@@ -19,25 +21,34 @@ namespace Capstone_Project.GameObjects
         /// </summary>
         /// <param name="waitTime">How long (in seconds) until the Cooldown returns .Done as true</param>
         /// <param name="initialTime">Optional initial value for how long has already been waited</param>
-        public Timer(float waitTime, float initialTime = 0) 
+        /// <param name="startImmediately">Optional value to set the timer to start counting as soon as initialised</param>
+        public Timer(float waitTime, float initialTime = 0, bool startImmediately = false)
         {
-            Active = false;
             WaitTime = waitTime;
             timer = initialTime;
+            Active = startImmediately;
         }
 
         public void Update(GameTime gameTime)
         {
+            if (Done)
+                Pause();
+
             if (Active)
-                timer += timer >= WaitTime ? 0 : (float)gameTime.ElapsedGameTime.TotalSeconds;
+                timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
 
         public void Start()
         {
             Reset();
-            Active = true;
+            Resume();
         }
 
-        public static implicit operator bool(Timer c) => c.Done;
+        // acts like "Stop" (square button) on a CD player
+        public void Reset()
+        {
+            timer = 0;
+            Pause();
+        }
     }
 }

@@ -1,6 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Capstone_Project.CollisionStuff;
+using Capstone_Project.Fundamentals;
+using Microsoft.Xna.Framework;
 
 namespace Capstone_Project.GameObjects.Interfaces
 {
@@ -10,12 +10,11 @@ namespace Capstone_Project.GameObjects.Interfaces
     /// </summary>
     public interface IRespondable : IMovable, ICollidable
     {
-        public Vector2 TargetPos { get; set; }                      // where the implementer wants to move, regardless of collision status 
-        public Rectangle TargetHitbox { get; }
-        public Rectangle PathCollider { get; }                      // the large Rectangle that encapsulates both the current Position and TargetPos Hitboxes
-        public LinkedList<CollisionDetails> Collisions { get; }     // this should be ordered by Rectangle intersection area ([0] = largest intersection, [n] = smallest intersection) 
-        public void InsertIntoCollisions(CollisionDetails details); // this method should ensure the above ^ to be true
-        public void HandleCollisions();
-        public void Move();                                         // should be called after collision is dealt with
+        public Rectangle OldBoundingBox { get; }
+        public Vector2 TargetPos { get; set; }                      // where the implementer wants to move, regardless of collision status
+        public Rectangle PathCollider => Collision.GeneratePathCollider(OldBoundingBox, Collider.BoundingBox);  // the large Rectangle that encapsulates both the current Position and TargetPos Hitboxes
+        public SortedLinkedList<(ICollidable Other, CollisionDetails Details)> Collisions { get; }    // this should be ordered by Rectangle intersection area ([0] = largest intersection, [n-1] = smallest intersection) 
+        //public void InsertIntoCollisions(ICollidable other, CollisionDetails details);          // this method should ensure the above ^ to be true
+        public void HandleCollisions();                             // also moves the actual responder position to the target position after all collisions accounted for
     }
 }

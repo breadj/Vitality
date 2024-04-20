@@ -1,35 +1,41 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Capstone_Project.Fundamentals;
+using Capstone_Project.GameObjects;
+using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace Capstone_Project.MapStuff
 {
     public class TileMap
     {
-        public Tile2DArray TileArray { get; init; }
+        public Array2D<Tile> TileArray { get; init; }
+        public Array2D<bool> Walls { get; init; }       // for pathfinding AI, true = wall (impassable)
+        public Vector2 Spawn { get; init; }
+        public List<LevelExit> Exits { get; init; }
 
         // in px
         private readonly int width;
-        public readonly int height;
+        private readonly int height;
 
         public Rectangle MapBounds => new Rectangle(0, 0, width, height);
         // width and height of the Tiles (tiles are square so w and h are the same value)
         private readonly int tileSize;
 
-        // TODO: make sure the constructor takes Tiles in its constructor
-        /// <param name="width">The width in number of tiles the map is</param>
-        /// <param name="height">The height in number of tiles the map is</param>
-        /// <param name="tileSize">Side length of the tiles</param>
-        public TileMap(int tileWidth, int tileHeight, int tileSize, Tile[] tiles)
+        public TileMap(int tileWidth, int tileHeight, int tileSize, Array2D<Tile> tiles, Array2D<bool> walls, Vector2 spawn, List<LevelExit> exits = null)
         {
             this.tileSize = tileSize;
 
             if (tiles.Length != tileWidth * tileHeight)
                 throw new Exception("Number of Tiles and size of the TileMap are different");
 
-            TileArray = new Tile2DArray(tileWidth, tileHeight, tiles);
-            
+            TileArray = tiles;
+
             width = tileWidth * tileSize;
             height = tileHeight * tileSize;
+            Walls = walls;
+
+            Spawn = spawn;
+            Exits = exits ?? new List<LevelExit>();
         }
 
         // probably deprecated

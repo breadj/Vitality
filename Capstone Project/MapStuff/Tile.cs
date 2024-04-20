@@ -3,23 +3,26 @@ using Capstone_Project.GameObjects.Interfaces;
 using Capstone_Project.SpriteTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Capstone_Project.GameObjects;
+using Capstone_Project.CollisionStuff;
+using Capstone_Project.CollisionStuff.CollisionShapes;
+using Capstone_Project.Fundamentals.DrawableShapes;
+using System.Diagnostics;
 
 namespace Capstone_Project.MapStuff
 {
     public class Tile : ITexturable, ICollidable
     {
         public bool Visible { get; set; } = true;
+        public string SpriteName { get; } = string.Empty;
         public Subsprite Subsprite { get; init; }
         public Rectangle Destination { get; init; }
+        public Color Colour { get; set; } = Color.White;
         public float Rotation => 0f;
         public Vector2 Origin { get; init; }            // Tiles have their positions as the top-left of their sprite
         public float Layer { get; set; } = 0.001f;
 
         public bool Active { get; set; } = false;
-        public Rectangle Hitbox { get; init; }
-        public bool IsCircle { get; } = false;          // always a square
-        public float Radius => size / 2f;
+        public CShape Collider { get; init; }
 
         public Point Position { get; init; }
         private int size { get; init; }
@@ -32,7 +35,7 @@ namespace Capstone_Project.MapStuff
             Origin = Vector2.Zero;
 
             Active = isWall;
-            Hitbox = Destination;
+            Collider = new CRectangle(Destination.Center.ToVector2(), (size, size), false);
 
             Position = position;
             this.size = size;
@@ -50,7 +53,7 @@ namespace Capstone_Project.MapStuff
         }
 
         // this shouldn't actually ever have to be called, since it will always be 'other' that checks and handles collision with a Tile
-        public CollisionDetails CollidesWith(ICollidable other)
+        public bool CollidesWith(ICollidable other, out CollisionDetails cd)
         {
             throw new System.NotImplementedException();
         }

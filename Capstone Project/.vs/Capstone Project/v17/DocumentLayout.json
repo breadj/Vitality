@@ -5,6 +5,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\game1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:game1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\gameobjects\\entities\\aiagent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:gameobjects\\entities\\aiagent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -24,7 +28,7 @@
               "RelativeDocumentMoniker": "Game1.cs",
               "ToolTip": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Game1.cs",
               "RelativeToolTip": "Game1.cs",
-              "ViewState": "AQIAAA0AAAAAAAAAAAAAAOsAAAAAAAAA",
+              "ViewState": "AQIAABIAAAAAAAAAAAAAAEYBAAANAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-02-20T22:23:27.797Z",
               "IsPinned": true,
@@ -45,6 +49,18 @@
             {
               "$type": "Bookmark",
               "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AIAgent.cs",
+              "DocumentMoniker": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\GameObjects\\Entities\\AIAgent.cs",
+              "RelativeDocumentMoniker": "GameObjects\\Entities\\AIAgent.cs",
+              "ToolTip": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\GameObjects\\Entities\\AIAgent.cs",
+              "RelativeToolTip": "GameObjects\\Entities\\AIAgent.cs",
+              "ViewState": "AQIAAPQAAAAAAAAAAAA7wCsBAAAcAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-20T01:11:46.464Z"
             },
             {
               "$type": "Bookmark",

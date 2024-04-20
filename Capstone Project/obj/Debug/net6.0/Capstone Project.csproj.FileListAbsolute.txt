@@ -17,7 +17,6 @@ C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-
 C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\obj\Debug\net6.0\Capstone Project.AssemblyInfoInputs.cache
 C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\obj\Debug\net6.0\Capstone Project.AssemblyInfo.cs
 C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\obj\Debug\net6.0\Capstone Project.csproj.CoreCompileInputs.cache
-C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\obj\Debug\net6.0\Capstone Project.csproj.CopyComplete
 C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\obj\Debug\net6.0\Capstone Project.dll
 C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\obj\Debug\net6.0\refint\Capstone Project.dll
 C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\obj\Debug\net6.0\Capstone Project.pdb
@@ -27,3 +26,8 @@ C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-
 C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\bin\Debug\net6.0\Content\Spritesheet.xnb
 C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\bin\Debug\net6.0\Content\DebugFont.xnb
 C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\bin\Debug\net6.0\Content\Enemy.xnb
+C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\bin\Debug\net6.0\Content\testspritesheet.xnb
+C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\obj\Debug\net6.0\Capstone.D64A05AD.Up2Date
+C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\bin\Debug\net6.0\Content\default_exit.xnb
+C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\bin\Debug\net6.0\Content\directional_exit.xnb
+C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\bin\Debug\net6.0\Content\mountain_range_tileset.xnb

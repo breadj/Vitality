@@ -1,9 +1,8 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Capstone_Project.Input
 {
-    public enum ActionType { OnPress, OnRelease, OnHold, OnFirstPress, OnFirstRelease }
+    public enum ActionType { WhenDown, WhenUp, Hold, OnPress, OnRelease }
 
     public class Action
     {
@@ -27,27 +26,27 @@ namespace Capstone_Project.Input
             {
                 switch (actionType)
                 {
-                case ActionType.OnPress:
+                case ActionType.WhenDown:
                     if (curState.IsDown(input))
                         return true;
                     break;
-                case ActionType.OnRelease:
+                case ActionType.WhenUp:
                     if (curState.IsUp(input))
                         return true;
                     break;
-                case ActionType.OnHold:
-                    if (prevState.IsUp(input) && curState.IsDown(input))      // if the player has only just started holding, start the timer from 0
-                        holdTimer = 0;
+                case ActionType.Hold:
                     if (curState.IsDown(input))
                         holdTimer += deltaTime;
+                    if (prevState.IsUp(input) && curState.IsDown(input))      // if the player has only just started holding, start the timer from 0
+                        holdTimer = 0;
                     if (holdTimer >= holdTime)
                         return true;
                     break;
-                case ActionType.OnFirstPress:
+                case ActionType.OnPress:
                     if (curState.IsDown(input) && prevState.IsUp(input))
                         return true;
                     break;
-                case ActionType.OnFirstRelease:
+                case ActionType.OnRelease:
                     if (curState.IsUp(input) && prevState.IsDown(input))
                         return true;
                     break;

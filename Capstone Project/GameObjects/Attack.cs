@@ -1,109 +1,100 @@
 ﻿using static Capstone_Project.Globals.Globals;
 using Capstone_Project.GameObjects.Interfaces;
-using Capstone_Project.SpriteTextures;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Capstone_Project.CollisionStuff;
+using Capstone_Project.CollisionStuff.CollisionShapes;
+using Capstone_Project.Globals;
+using Capstone_Project.Fundamentals.DrawableShapes;
+using Capstone_Project.GameObjects.Entities;
 
 namespace Capstone_Project.GameObjects
 {
-    public class Attack : Interfaces.ITexturable, ICollidable, IUpdatable
+    public class Attack : Interfaces.IDrawable, ICollidable, IUpdatable
     {
-        public bool Visible { get; private set; }
-        public Subsprite Subsprite { get; init; }
-        public Rectangle Destination => new Rectangle(Position.ToPoint(), new Point((int)attacker.Range));
-        public float Rotation => 0f;
-        public Vector2 Origin { get; init; }
-        public float Layer => 0.09f;
+        public bool Visible => Windup.Active || Linger.Active;
+        public float Layer => 0.009f;
+        public DPolygon Polygon { get; private set; } = null;
 
-        public bool Active { get; set; } = false;
-        public Rectangle Hitbox => new Rectangle(Position.ToPoint() - new Point((int)(attacker.Range / 2f)), new Point((int)attacker.Range));
-        public bool IsCircle { get; } = false;  // will probably never use this
-        public float Radius { get; init; }      // nor this
+        public bool Active => Windup.Active || Linger.Active;
+        public bool OnCD => Cooldown.Active;
+        public CShape Collider { get; private set; } = null;
 
         // all CDs in seconds
         public Timer Windup { get; private set; }            // how long until the attack actually happens (how long to wind up the attacK)
         public Timer Linger { get; private set; }            // how long the attack hurtbox stays there 
         public Timer Cooldown { get; private set; }          // how long until attacker can attack again
         public float Speed => Windup.WaitTime + Linger.WaitTime + Cooldown.WaitTime;
-        public bool Lock => Windup.Active || Linger.Active;
+        public bool Lock => (Windup.Active && Windup.Percentage >= 0.5f) || Linger.Active;
+        public bool Attacking => Linger.Active;
 
-        public IAttacker attacker { get; private set; }
-        public Vector2 Position { get; private set; }
+        public IAttacker Attacker { get; init; }
+        public Vector2 Position { get; set; }
+        public float Rotation { get; set; } = 0f;
 
-        public Attack(IAttacker attacker, Vector2 position, float cooldownTime = 0, float windupTime = 0, float lingerTime = 0)
+        public Attack(IAttacker attacker, float windupTime = 0, float lingerTime = 0, float cooldownTime = 0)
         {
-            this.attacker = attacker;
-            Position = position;
-
-            Subsprite = new Subsprite(BLANK, BLANK.Bounds);
-            Origin = Subsprite.Source.Size.ToVector2() / 2f;
+            Attacker = attacker;
 
             Windup = new Timer(windupTime);
             Linger = new Timer(lingerTime);
             Cooldown = new Timer(cooldownTime);
         }
 
-        private bool prevActive = false;
         public void Update(GameTime gameTime)
         {
-            if (!Active)
-                return;
-
-            Windup.Update(gameTime);
-            Linger.Update(gameTime);
-            Cooldown.Update(gameTime);
-
-            if (Windup.Active && Windup.Done)
+            if (Windup.Active)
             {
-                Windup.Active = false;
+                Windup.Update(gameTime);
+
+                if (Attacker is Entity e)
+                {
+                    Polygon.MoveTo(e.Position, e.Rotation - Rotation);
+                    Rotation = e.Rotation;
+                }
+            }
+            if (Windup.Done)
+            {
                 Windup.Reset();
 
                 Linger.Start();
+                Collider = new CPolygon(Polygon);
             }
 
-            if (Linger.Active && Linger.Done)
+            if (Linger.Active)
+                Linger.Update(gameTime);
+            if (Linger.Done)
             {
-                Linger.Active = false;
                 Linger.Reset();
 
                 Cooldown.Start();
-                Visible = false;
             }
 
-            if (Cooldown.Active && Cooldown.Done)
-            {
-                Cooldown.Active = false;
+            if (Cooldown.Active)
+                Cooldown.Update(gameTime);
+            if (Cooldown.Done)
                 Cooldown.Reset();
-
-                Active = false;
-            }
-
-            prevActive = Active;
         }
 
         public void Draw()
         {
-            if (Visible)
-            {
-                if (Windup.Active)
-                    spriteBatch.Draw(Subsprite.SpriteSheet, Destination, null, new Color(Color.Red, 0.3f), Rotation, Origin, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, Layer);
-                else if (Linger.Active)
-                    spriteBatch.Draw(Subsprite.SpriteSheet, Destination, null, Color.Red, Rotation, Origin, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, Layer);
-            }
+            if (!Visible)
+                return;
+
+            if (Windup.Active)
+                Polygon.Draw(new Color(Polygon.Colour, Windup.Percentage <= 0.5f ? 0.5f * Windup.Percentage * 2f : 0.5f));
+            else if (Linger.Active)
+                Polygon.Draw();
         }
 
-        public void Start(Vector2 centre)
+        public void Start(Vector2 centre, Vector2 direction, float range)
         {
-            Active = true;
-            if (!prevActive)
+            if (!Active && !Cooldown.Active)
             {
                 Position = centre;
+                Rotation = Utility.VectorToAngle(direction);
                 Windup.Start();
-                Visible = true;
+
+                Polygon = new DPolygon(Position, DPolygon.Rotate(DPolygon.GenerateNarrowArc(range), Rotation), Color.Red, Layer, true);
             }
         }
 
@@ -122,22 +113,33 @@ namespace Capstone_Project.GameObjects
         {
             Cooldown.SetNewWaitTime(time);
         }
+
+        public void ChangeCDs(float windup = 0, float linger = 0, float cooldown = 0)
+        {
+            ChangeWindupCD(windup);
+            ChangeLingerCD(linger);
+            ChangeCooldownCD(cooldown);
+        }
         #endregion
 
-        public CollisionDetails CollidesWith(ICollidable other)
+        public bool CollidesWith(ICollidable other, out CollisionDetails cd)
         {
-            CollisionDetails cd = new CollisionDetails();
-            if (!Active)
-                return cd;
+            cd = new CollisionDetails();
+            if (!Active || !other.Active)
+                return false;
 
-            cd.Intersection = Rectangle.Intersect(Hitbox, other.Hitbox);
+            return Collision.Colliding(this.Collider, other.Collider, out cd);
+        }
 
-            if (!cd.Intersection.IsEmpty)
+        public static void CheckSwing(IAttacker attacker, IHurtable hurtable)
+        {
+            if (attacker == null || hurtable == null)
+                return;
+
+            if (attacker.Strike.Attacking && Collision.Colliding(attacker.Strike.Collider, hurtable.Collider))
             {
-                cd.Type = CollisionType.RectOnRect;
+                hurtable.TakeDamage(attacker.Damage, attacker, attacker.Strike.Linger.TimeRemaining);
             }
-
-            return cd;
         }
     }
 }
