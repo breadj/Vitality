@@ -31,8 +31,8 @@ namespace Capstone_Project.GameObjects.Entities
 
 
         public float LeakPercentage { get; init; }
-        public int MaxVitality { get; protected set; }
-        public int Vitality
+        public virtual int MaxVitality { get; protected set; }
+        public virtual int Vitality
         {
             get => vitality;
             protected set => vitality = value < 0 ? 0 : value <= MaxVitality ? value : MaxVitality;
@@ -144,8 +144,8 @@ namespace Capstone_Project.GameObjects.Entities
 
             Strike.Draw();
 
-            spriteBatch.DrawString(DebugFont, Vitality.ToString(), new Vector2(Collider.BoundingBox.Left, Collider.BoundingBox.Bottom), Color.Black, 
-                0f, Vector2.Zero, 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 1f);
+            /*spriteBatch.DrawString(DebugFont, Vitality.ToString(), new Vector2(Collider.BoundingBox.Left, Collider.BoundingBox.Bottom), Color.Black, 
+                0f, Vector2.Zero, 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 1f);*/
             // shows Position
             /*spriteBatch.DrawString(DebugFont, Position.ToString(), Position, Color.Black,
                 0f, Vector2.Zero, 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 1f);*/
@@ -199,7 +199,7 @@ namespace Capstone_Project.GameObjects.Entities
             Strike.Start(Position, Orientation, AttackRange);
         }
 
-        public void AbsorbVitality(IVitalised vitalised)
+        public virtual void AbsorbVitality(IVitalised vitalised)
         {
             int leakAmount = vitalised.LeakVitality();
 

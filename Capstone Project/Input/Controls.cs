@@ -40,8 +40,9 @@ namespace Capstone_Project.Input
 
             // non-buffered Actions
             Action LockOn = new Action("lock-on", new List<Input> { Button.Middle }, ActionType.OnPress);
+            Action LevelUp = new Action("level-up", new List<Input> { Keys.L }, ActionType.OnPress);
 
-            NonBufferedActions = new Action[] { LockOn };
+            NonBufferedActions = new Action[] { LockOn, LevelUp };
 
             // buffered Actions
             Action Attack = new Action("attack", new List<Input> { Button.Left }, ActionType.OnRelease);

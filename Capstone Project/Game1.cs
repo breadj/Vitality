@@ -182,7 +182,7 @@ namespace Capstone_Project
             {
                 if (entity.Dead)
                 {
-                    Debug.WriteLine($"{entity} marked for death");
+                    Debug.WriteLine($"{entity} marked for death (ID: {entity.ID})");
                     markedForDeath.Add(entity);
                     continue;
                 }

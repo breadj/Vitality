@@ -22,6 +22,19 @@ namespace Capstone_Project.GameObjects.Entities
         public Agent LockOnTarget { get; private set; } = null;
         public DCircle LockOnHighlight { get; private set; } = null;
 
+        // MaxVitality and Vitality should be the same for Player
+        public override int MaxVitality 
+        {
+            get => Vitality;
+            protected set => Vitality = value;
+        }
+        public override int Vitality
+        {
+            get => vitality;
+            protected set => vitality = value < 0 ? 0 : value;
+        }                   // Can only be positive (or 0) and <= than MaxVitality
+        private int vitality = 1;
+
         public int MaxStamina { get; private set; }
         public float Stamina
         {
@@ -61,6 +74,8 @@ namespace Capstone_Project.GameObjects.Entities
             Look();
             Move();
 
+            LevelUp();
+
             Invincibility.Update(gameTime);
         }
 
@@ -96,6 +111,21 @@ namespace Capstone_Project.GameObjects.Entities
             //spriteBatch.DrawString(DebugFont, Position.ToString(), Position, Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.9f);
             //spriteBatch.Draw(BLANK, new Rectangle(Position.ToPoint(), new Point(Size)), null, new Color(Color.Pink, 0.5f), MathHelper.PiOver4, BLANK.Bounds.Size.ToVector2() / 2f, SpriteEffects.None, 0.05f);
             //spriteBatch.Draw(BLANK, Collider.BoundingBox, null, new Color(Color.Blue, 0.5f), 0f, Vector2.Zero, SpriteEffects.None, 0.9f);
+        }
+
+        protected void LevelUp()
+        {
+            if (Game1.Controls.ActivatedActions.Any(action => action.Name == "level-up"))
+            {
+                Vitality -= 10;
+                MaxStamina += 5;
+                Stamina += 5;
+
+                if (Vitality == 0)
+                {
+                    Kill();
+                }
+            }
         }
 
         public override void Move()
@@ -218,6 +248,13 @@ namespace Capstone_Project.GameObjects.Entities
                     StaminaRegenCD.Start();
                 }
             }
+        }
+
+        public override void AbsorbVitality(IVitalised vitalised)
+        {
+            int leakAmount = vitalised.LeakVitality();
+
+            Vitality += leakAmount;
         }
 
         private static Vector2 Movement(List<Input.Action> relevantActions)
