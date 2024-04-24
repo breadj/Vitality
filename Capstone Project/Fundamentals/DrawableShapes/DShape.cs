@@ -37,7 +37,7 @@ namespace Capstone_Project.Fundamentals.DrawableShapes
 
         public void DrawOutline()
         {
-            DrawOutline(Color.White);
+            DrawOutline(Color.Black);
         }
 
         public void DrawOutline(Color colour)
@@ -47,7 +47,7 @@ namespace Capstone_Project.Fundamentals.DrawableShapes
 
             foreach (var px in Outline)
             {
-                spriteBatch.Draw(Pixel, px.ToVector2(), null, colour, 0f, Vector2.Zero, 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, Layer);
+                spriteBatch.Draw(Pixel, px.ToVector2(), null, colour, 0f, Vector2.Zero, 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, Layer + 0.0001f);
             }
         }
 

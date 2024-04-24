@@ -14,6 +14,7 @@ namespace Capstone_Project.Globals
         }
 
         public static int Round(float x) => (int)(x + 0.5f);
+        public static Point Round(this Point p) => new Point(Round(p.X), Round(p.Y));
         public static Point IndexToCoord(int index, int width, int height) => new Point(index % width, index / width);
         public static int Sign(float x) => x < 0 ? -1 : 1;
         public static int Sign(int x) => x < 0 ? -1 : 1;

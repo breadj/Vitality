@@ -13,8 +13,8 @@ namespace Capstone_Project.GameObjects.Entities
         public static readonly new string DefaultSpriteName = "Enemy";
 
         public static readonly float DefaultLeakPercentage = 0.7f;
-        public static readonly int DefaultMaxVitality = DefaultVitality;
-        public static readonly int DefaultVitality = 50;
+        public static readonly int DefaultMaxVitality = 30;
+        public static readonly int DefaultVitality = 30;
         public static readonly float DefaultDefence = 5f;
 
         public static readonly float DefaultDamage = 10f;
@@ -35,8 +35,8 @@ namespace Capstone_Project.GameObjects.Entities
         public int Vitality
         {
             get => vitality;
-            protected set => vitality = value < 0 ? 0 : value;
-        }                   // Can only be positive (or 0)
+            protected set => vitality = value < 0 ? 0 : value <= MaxVitality ? value : MaxVitality;
+        }                   // Can only be positive (or 0) and <= than MaxVitality
         private int vitality = 1;
         public float Defence
         { 
@@ -71,7 +71,6 @@ namespace Capstone_Project.GameObjects.Entities
         {
             LeakPercentage = leakPercentage ?? DefaultLeakPercentage;
             MaxVitality = maxVitality ?? DefaultMaxVitality;
-            Vitality = vitality ?? DefaultVitality;
             Defence = defence ?? DefaultDefence;
 
             Damage = damage ?? DefaultDamage;
@@ -82,9 +81,25 @@ namespace Capstone_Project.GameObjects.Entities
             DashSpeedModifier = dashSpeedModifier ?? DefaultDashSpeedModifier;
 
             // special stuff
-            if (MaxVitality < Vitality)
+            if (maxVitality.HasValue && vitality.HasValue)
             {
-                MaxVitality = Vitality;
+                MaxVitality = maxVitality.Value;
+                Vitality = vitality.Value;
+            }
+            else if (maxVitality.HasValue)
+            {
+                MaxVitality = maxVitality.Value;
+                Vitality = MaxVitality;
+            }
+            else if (vitality.HasValue)
+            {
+                MaxVitality = vitality.Value;
+                Vitality = MaxVitality;
+            }
+            else
+            {
+                MaxVitality = DefaultMaxVitality;
+                Vitality = DefaultVitality;
             }
 
             BaseSpeed = Speed;
@@ -140,6 +155,9 @@ namespace Capstone_Project.GameObjects.Entities
         {
             lastPosition = Position;
             TargetPos = Position;
+
+            if (float.IsNaN(Direction.X))
+                Direction = Vector2.Zero;
 
             Velocity = Direction * Speed;
             actualVelocity = Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;

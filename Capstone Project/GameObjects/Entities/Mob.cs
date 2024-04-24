@@ -82,6 +82,7 @@ namespace Capstone_Project.GameObjects.Entities
         public void ManualPositionMove(Vector2 newPos)
         {
             Position = newPos;
+            TargetPos = newPos;
             Collider.MoveTo(newPos);
         }
 

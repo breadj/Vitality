@@ -4,8 +4,11 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
+    <File>C:/Users/asus/OneDrive - University of Essex/Year 3/CE301 - Capstone Project/23-24_CE301_darby_joseph_r_p/Capstone Project/Content/../Textures/burgundy_enemy.png</File>
+    <File>C:/Users/asus/OneDrive - University of Essex/Year 3/CE301 - Capstone Project/23-24_CE301_darby_joseph_r_p/Capstone Project/Content/../Textures/dark_blue_enemy.png</File>
     <File>C:/Users/asus/OneDrive - University of Essex/Year 3/CE301 - Capstone Project/23-24_CE301_darby_joseph_r_p/Capstone Project/Content/../Textures/default_exit.png</File>
     <File>C:/Users/asus/OneDrive - University of Essex/Year 3/CE301 - Capstone Project/23-24_CE301_darby_joseph_r_p/Capstone Project/Content/../Textures/directional_exit.png</File>
+    <File>C:/Users/asus/OneDrive - University of Essex/Year 3/CE301 - Capstone Project/23-24_CE301_darby_joseph_r_p/Capstone Project/Content/../Textures/enemy_but_purple.png</File>
     <File>C:/Users/asus/OneDrive - University of Essex/Year 3/CE301 - Capstone Project/23-24_CE301_darby_joseph_r_p/Capstone Project/Content/../Textures/Enemy.png</File>
     <File>C:/Users/asus/OneDrive - University of Essex/Year 3/CE301 - Capstone Project/23-24_CE301_darby_joseph_r_p/Capstone Project/Content/../Textures/mountain_range_tileset.png</File>
     <File>C:/Users/asus/OneDrive - University of Essex/Year 3/CE301 - Capstone Project/23-24_CE301_darby_joseph_r_p/Capstone Project/Content/../Textures/Player.png</File>
@@ -14,8 +17,11 @@
     <File>C:/Users/asus/OneDrive - University of Essex/Year 3/CE301 - Capstone Project/23-24_CE301_darby_joseph_r_p/Capstone Project/Content/DebugFont.spritefont</File>
   </SourceFiles>
   <DestFiles>
+    <File>burgundy_enemy.png</File>
+    <File>dark_blue_enemy.png</File>
     <File>default_exit.png</File>
     <File>directional_exit.png</File>
+    <File>enemy_but_purple.png</File>
     <File>Enemy.png</File>
     <File>mountain_range_tileset.png</File>
     <File>Player.png</File>

@@ -1,5 +1,6 @@
 ﻿using Capstone_Project.CollisionStuff;
 using Capstone_Project.Fundamentals;
+using Capstone_Project.Fundamentals.DrawableShapes;
 using Capstone_Project.GameObjects.Interfaces;
 using Capstone_Project.Globals;
 using Microsoft.Xna.Framework;
@@ -38,16 +39,18 @@ namespace Capstone_Project.GameObjects.Entities
         public bool Aggroed => PursuitTarget != null;
         public int AggroRange { get; protected set; }
         public Entity PursuitTarget { get; set; } = null;
-        public Vector2 TargetLastSeen { get; protected set; }
-        public LinkedList<Vector2> PursuitPath { get; } = new LinkedList<Vector2>();
+        protected Entity prevFrameTarget = null;
+        public Vector2? TargetLastSeen { get; protected set; } = null;
+        public LinkedList<Vector2> PursuitPath { get; protected set; } = new LinkedList<Vector2>();
         public Timer LoseAggroTimer { get; } = new Timer(5f);
 
         protected bool Hovering { get; set; } = false;
 
-        public bool TargetInView { get; protected set; }
         protected LinkedList<Vector2> returnToGuardPosition = new LinkedList<Vector2>();
 
         public float RotationSpeed { get; protected set; }
+
+        private Rectangle healthBar;
 
         public AIAgent(uint id, bool? visible = null, string spriteName = null, Color? colour = null, float? rotation = null, float? layer = null,
             bool? active = null, Vector2? position = null, Vector2? direction = null, Vector2? velocity = null, float? speed = null,
@@ -62,20 +65,21 @@ namespace Capstone_Project.GameObjects.Entities
                   collisionsComparer, orientation, leakPercentage, maxVitality, vitality, defence, damage, windupTime, lingerTime, 
                   cooldownTime, attackRange, dashTime, dashSpeedModifier, invincibilityTime)
         {
-            PatrolType = patrolType == PatrolType.None ? DefaultPatrolType : patrolType;
-
             this.patrolDirectionIsForward = patrolDirectionIsForward ?? DefaultPatrolDirectionIsForward;
             AggroRange = aggroRange ?? DefaultAggoRange;
 
             RotationSpeed = rotationSpeed ?? DefaultRotationSpeed;
 
             // special stuff
+            PatrolType = patrolType == PatrolType.None ? initialAIState == AIState.Guard ? PatrolType.None : DefaultPatrolType : patrolType;
+
             if (patrolPoints != null && patrolPoints.Count > 0)
             {
                 PatrolPoints = patrolPoints;
 
                 int fppi = firstPatrolPointIndex ?? DefaultFirstPatrolPointIndex;
                 int count = 0;
+                CurrentPatrolPoint = patrolPoints.First;
                 for (var cur = patrolPoints.First; cur != null; cur = cur.Next)
                 {
                     if (count++ == fppi)
@@ -84,6 +88,8 @@ namespace Capstone_Project.GameObjects.Entities
                         break;
                     }
                 }
+
+                Position = position ?? CurrentPatrolPoint.Value;
             }
             else
             {
@@ -94,33 +100,9 @@ namespace Capstone_Project.GameObjects.Entities
             CurrentState.Push(initialAIState == AIState.None ? (PatrolPoints.Count > 1 ? AIState.Patrol : DefaultInitialAIState) : initialAIState);
 
             LoseAggroTimer = new Timer(loseAggroTime ?? DefaultLoseAggroTime);
-        }
 
-        /*public AIAgent(string spriteName, Subsprite subsprite, Vector2 position, int vitality, float damage, LinkedList<Vector2> patrolPoints = null, int firstPatrolPointIndex = 0, 
-            AIState initialState = AIState.Guard, PatrolType patrolType = PatrolType.Boomerang, float attackRange = 100, float defence = 0, int size = 0, float speed = 1)
-            : base(spriteName, subsprite, position, vitality, damage, attackRange, defence, size, speed)
-        {
-            CurrentState.Push(initialState);
-            PatrolType = patrolType;
-            PatrolPoints = patrolPoints;
-            if (patrolPoints != null && patrolPoints.Count > 0)
-            {
-                int count = 0;
-                for (var cur = patrolPoints.First; cur != null; cur = cur.Next)
-                {
-                    if (count++ == firstPatrolPointIndex)
-                    {
-                        CurrentPatrolPoint = cur;
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                PatrolPoints = new LinkedList<Vector2>();
-                CurrentPatrolPoint = PatrolPoints.AddFirst(position);
-            }
-        }*/
+            healthBar = new Rectangle(Collider.BoundingBox.Left, Collider.BoundingBox.Bottom, Size, 5);
+        }
 
         public override void Update(GameTime gameTime)
         {
@@ -135,10 +117,22 @@ namespace Capstone_Project.GameObjects.Entities
             LoseAggroTimer.Update(gameTime);
         }
 
+        //DCircle aggroRange = new DCircle(Vector2.Zero, DefaultAggoRange + DefaultSize / 2f, new Color(Color.Yellow, 0.2f), 0.005f);
         public override void Draw()
         {
             base.Draw();
 
+            // health bar
+            float percentVitality = Vitality / (float)MaxVitality;
+            Rectangle curHealthBar = healthBar with { X = Collider.BoundingBox.Left, Y = Collider.BoundingBox.Bottom, Width = (int)(healthBar.Width * percentVitality)};
+            Globals.Globals.spriteBatch.Draw(Globals.Globals.Pixel, curHealthBar, null, Color.Red, 0f, Vector2.Zero, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, Layer + 0.01f);
+
+            /*aggroRange.MoveTo(Position);
+            aggroRange.Draw();*/
+            /*Globals.Globals.spriteBatch.DrawString(Globals.Globals.DebugFont, $"{TargetLastSeen}", Position, Color.Black, 0f, Vector2.Zero,
+                1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0.99f);*/
+            /*Globals.Globals.spriteBatch.DrawString(Globals.Globals.DebugFont, CurrentState.Peek().ToString(), Position, Color.Black, 0f, Vector2.Zero, 
+                1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0.99f);*/
             /*Globals.Globals.spriteBatch.DrawString(Globals.Globals.DebugFont, $"Rotation: {Rotation}", Position, Color.White, 0f, Vector2.Zero,
                 1f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0.5f);*/
             /*Globals.Globals.spriteBatch.DrawString(Globals.Globals.DebugFont, $"Speed: {Speed}", Position, Color.Black, 0f, 
@@ -149,10 +143,16 @@ namespace Capstone_Project.GameObjects.Entities
 
         public override void Move()
         {
+            if (Strike.Lock)
+                return;
+
+            lastPosition = Position;
+            TargetPos = Position;
+
             switch (CurrentState.Peek())
             {
                 case AIState.Guard:
-                    base.Move();
+                    Guard();
                     break;
                 case AIState.Patrol:
                     Patrol();
@@ -165,12 +165,15 @@ namespace Capstone_Project.GameObjects.Entities
 
         public override void Look()
         {
+            prevFrameTarget = PursuitTarget;
+
             // should be more sophisticated so it can recognise agents other than the Player as a target, but unnecessary right now
             if ((Game1.Player.Position - this.Position).Length() - (Game1.Player.Size + this.Size) / 2f <= AggroRange &&
                 TargetInLineOfSight(Game1.Player.Position))
             {
-                CurrentState.Push(AIState.Pursuit);
                 PursuitTarget = Game1.Player;
+                TargetLastSeen = PursuitTarget.Position;
+                CurrentState.Push(AIState.Pursuit);
             }
             else
             {
@@ -185,31 +188,35 @@ namespace Capstone_Project.GameObjects.Entities
             {
                 case AIState.Patrol:
                     newOrientation = CurrentPatrolPoint.Value - Position;
-                    TargetInView = TargetInLineOfSight(CurrentPatrolPoint.Value);
                     break;
                 case AIState.Pursuit:
-                    if (Aggroed && TargetInLineOfSight(PursuitTarget.Position))
+                    if (Aggroed && TargetInLineOfSight(TargetLastSeen.Value))
                     {
-                        newOrientation = PursuitTarget.Position - Position;
-                        TargetInView = true;
+                        newOrientation = TargetLastSeen.Value - Position;
                     }
-                    else if (PursuitPath.Count > 0)
+                    else if (PursuitPath.Any())
                     {
                         newOrientation = PursuitPath.First.Value - Position;
-                        TargetInView = TargetInLineOfSight(PursuitPath.First.Value);
                     }
-                    else
+                    else if (TargetLastSeen.HasValue)
                     {
-                        TargetInView = false;
+                        newOrientation = TargetLastSeen.Value - Position;
                     }
                     break;
                 case AIState.Guard:
+                    if (!Aggroed)
+                    {
+                        // TODO
+                    }
                     break;
             }
 
-            float unboundRotation = Utility.VectorToAngle(newOrientation);
-            Rotation += Utility.Sign(Utility.NormaliseRotation(unboundRotation - Rotation)) * RotationSpeed * (float)Globals.Globals.gameTime.ElapsedGameTime.TotalSeconds;
-            Orientation = Utility.AngleToVector(Rotation);
+            if (newOrientation != Orientation)
+            {
+                float unboundRotation = Utility.VectorToAngle(newOrientation);
+                Rotation += Utility.Sign(Utility.NormaliseRotation(unboundRotation - Rotation)) * RotationSpeed * (float)Globals.Globals.gameTime.ElapsedGameTime.TotalSeconds;
+                Orientation = Utility.AngleToVector(Rotation);
+            }
             /*Orientation = newOrientation;
 
             base.Look();*/
@@ -242,16 +249,44 @@ namespace Capstone_Project.GameObjects.Entities
             }
         }
 
+        public void Guard()
+        {
+            if (ArrivedAtPathPoint(CurrentPatrolPoint))
+            {
+                return;
+            }
+
+            if (TargetInLineOfSight(CurrentPatrolPoint.Value))
+            {
+                MoveTowards(CurrentPatrolPoint.Value);
+            }
+            else if (returnToGuardPosition.Count > 0)
+            {
+                if (!ArrivedAtPathPoint(returnToGuardPosition.First))
+                {
+                    MoveTowards(returnToGuardPosition.First.Value);
+                }
+                else
+                {
+                    returnToGuardPosition.RemoveFirst();
+                }
+            }
+            else
+            {
+                returnToGuardPosition = new LinkedList<Vector2>(Pathfinding.FindPath(Game1.TileMap.Walls, this.Position, CurrentPatrolPoint.Value, Game1.TileMap.TileSize));
+            }
+        }
+
         public void Patrol()
         {
-            if (returnToPatrolPath.Count == 0)
+            if (!returnToPatrolPath.Any())
             {
                 if (ArrivedAtPathPoint(CurrentPatrolPoint))
                 {
                     switch (PatrolType)
                     {
+                        default:
                         case PatrolType.None:
-                            CurrentPatrolPoint = CurrentPatrolPoint;
                             break;
                         case PatrolType.Circular:
                             CurrentPatrolPoint = CurrentPatrolPoint.Next ?? PatrolPoints.First;
@@ -267,105 +302,73 @@ namespace Capstone_Project.GameObjects.Entities
                             break;
                     }
                 }
+                else if (TargetInLineOfSight(CurrentPatrolPoint.Value))
+                {
+                    MoveTowards(CurrentPatrolPoint.Value);
+                }
                 else
                 {
-                    if (!TargetInLineOfSight(CurrentPatrolPoint.Value))
-                    {
-                        returnToPatrolPath = new LinkedList<Vector2>(Pathfinding.FindPath(Game1.TileMap.Walls, Position, PatrolPoints.ToArray()));
-                    }
+                    Debug.WriteLine("here");
+                    returnToPatrolPath = new LinkedList<Vector2>(Pathfinding.FindPath(Game1.TileMap.Walls, Position, CurrentPatrolPoint.Value, Game1.TileMap.TileSize));
                 }
             }
-            
-            if (returnToPatrolPath.Count > 0)
+            else
             {
-                MoveTowards(returnToPatrolPath.First.Value);
+                MoveTowards(returnToPatrolPath.First());
+
                 if (ArrivedAtPathPoint(returnToPatrolPath.First))
                 {
                     returnToPatrolPath.RemoveFirst();
                 }
             }
-            else
-            {
-                MoveTowards(CurrentPatrolPoint.Value);
-            }
         }
 
-        protected bool ArrivedAtPathPoint(LinkedListNode<Vector2> nodePoint)
-        {
-            // if this comes into 5px of the CurrentPatrolPoint
-            return (Position - nodePoint.Value).LengthSquared() < 25f;      // 5px^2 = 25
-        }
-
-        protected Entity prevFrameTarget;
         public void Pursue()
         {
-            if (prevFrameTarget != PursuitTarget)
+            if (Aggroed)    // if the Agent can see the target
             {
-                if (Aggroed) // new target starting this frame
+                if ((TargetLastSeen.Value - this.Position).Length() - PursuitTarget.Size / 2f <= AttackRange)       // if the Agent is within Hovering distance
                 {
-                    if (PursuitPath.Count > 0)
-                        PursuitPath.Clear();
-
-                    if (TargetInLineOfSight(PursuitTarget.Position))
-                    {
-                        MoveTowards(PursuitTarget.Position);
-                    }
-                    else
-                    {
-                        PursuitPath.AppendLinkedList(new LinkedList<Vector2>(Pathfinding.FindPath(Game1.TileMap.Walls, Position, PursuitTarget.Position)));
-                        MoveTowards(PursuitPath.First.Value);
-                    }
+                    HoverOrAttack();
                 }
-                else // if this frame is the first without a target
+                else if (Hovering)      // if the Agent was hovering last frame but is no longer within Hovering distance
                 {
-                    PursuitPath.Clear();
-                    CurrentState.Pop();
+                    Speed = BaseSpeed;
+                    Hovering = false;
+
+                    MoveTowards(TargetLastSeen.Value);
+                }
+                else                    // if the Agent is outside of Hovering distance (so it can close the gap)
+                {
+                    MoveTowards(PursuitTarget.Position);
                 }
             }
-            else if (Aggroed) // basically if pursuing the same target as last frame (and that target isn't null)
+            else if (prevFrameTarget != null)       // if the Agent cannot see the target, but could last frame
             {
-                if (TargetInLineOfSight(PursuitTarget.Position))
+                PursuitPath = new LinkedList<Vector2>(Pathfinding.FindPath(Game1.TileMap.Walls, Position, TargetLastSeen.Value, Game1.TileMap.TileSize));
+                if (PursuitPath.Any())
                 {
-                    if (PursuitPath.Count > 0)
-                        PursuitPath.Clear();
-                    
-                    // has to take into account the size of the target (not this, since the Attack originates from the centre)
-                    if ((PursuitTarget.Position - this.Position).Length() - PursuitTarget.Size / 2f <= AttackRange)
-                    {
-                        HoverOrAttack();
-                    }
-                    else
-                    {
-                        if (Hovering)
-                        {
-                            Speed = BaseSpeed;
-                            Hovering = false;
-                        }
-                        MoveTowards(PursuitTarget.Position);
-                    }
+                    MoveTowards(PursuitPath.First());
                 }
-                else if (PursuitPath.Count > 0)
+            }
+            else            // if the Agent cannot see the target, and couldn't before either
+            {
+                if (PursuitPath.Any())      // if the Agent is still "hot on the trail"
                 {
+                    MoveTowards(PursuitPath.First());
+
                     if (ArrivedAtPathPoint(PursuitPath.First))
                     {
                         PursuitPath.RemoveFirst();
                     }
-                    
-                    if (PursuitPath.Count > 0)
-                    {
-                        MoveTowards(PursuitPath.First.Value);
-                    }
                 }
-            }
-            else
-            {
-                PursuitPath.Clear();
-                CurrentState.Pop();
+                else            // if the Agent has "lost the scent"
+                {
+                    CurrentState.Pop();
+                }
             }
 
             Speed = Hovering ? BaseSpeed / 2f : BaseSpeed;
-
-            prevFrameTarget = PursuitTarget;
         }
 
         private float? prevDistanceFromPursuitTarget = null;
@@ -375,7 +378,7 @@ namespace Capstone_Project.GameObjects.Entities
             if (Strike.Lock)
                 return;
 
-            float distanceFromPursuitTarget = (PursuitTarget.Position - this.Position).Length() - PursuitTarget.Size / 2f;
+            float distanceFromPursuitTarget = (TargetLastSeen.Value - this.Position).Length() - PursuitTarget.Size / 2f;
 
             bool atHoverDistance = false;
             if (prevDistanceFromPursuitTarget.HasValue)
@@ -397,20 +400,20 @@ namespace Capstone_Project.GameObjects.Entities
                     if (distanceFromPursuitTarget > AttackRange)
                     {
                         Hovering = false;
-                        MoveTowards(PursuitTarget.Position);
+                        MoveTowards(TargetLastSeen.Value);
                     }
                     else
                     {
                         // if the distance between this and the PursuitTarget is less than half the AttackRange, move away from the PursuitTarget
                         var directionModifier = distanceFromPursuitTarget < AttackRange / 2f ? -1 : 1;
-                        Direction = directionModifier * Vector2.Normalize(PursuitTarget.Position - this.Position);
+                        Direction = directionModifier * Vector2.Normalize(TargetLastSeen.Value - this.Position);
                         base.Move();
                     }
                 }
             }
             else
             {
-                MoveTowards(PursuitTarget.Position);
+                MoveTowards(TargetLastSeen.Value);
             }
 
             prevDistanceFromPursuitTarget = distanceFromPursuitTarget;
@@ -419,6 +422,12 @@ namespace Capstone_Project.GameObjects.Entities
         public bool TargetInLineOfSight(Vector2 target)
         {
             return Position == target || !Collision.CastRay(new Ray2D(Position, target), Game1.SimulatedTiles.Cast<ICollidable>().ToList());
+        }
+
+        protected bool ArrivedAtPathPoint(LinkedListNode<Vector2> nodePoint)
+        {
+            // if this comes into 5px of the CurrentPatrolPoint
+            return (Position - nodePoint.Value).LengthSquared() < 25f;      // 5px^2 = 25
         }
 
         protected void MoveTowards(Vector2 target)

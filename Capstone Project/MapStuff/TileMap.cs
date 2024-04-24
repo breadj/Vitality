@@ -19,11 +19,11 @@ namespace Capstone_Project.MapStuff
 
         public Rectangle MapBounds => new Rectangle(0, 0, width, height);
         // width and height of the Tiles (tiles are square so w and h are the same value)
-        private readonly int tileSize;
+        public int TileSize { get; init; }
 
         public TileMap(int tileWidth, int tileHeight, int tileSize, Array2D<Tile> tiles, Array2D<bool> walls, Vector2 spawn, List<LevelExit> exits = null)
         {
-            this.tileSize = tileSize;
+            TileSize = tileSize;
 
             if (tiles.Length != tileWidth * tileHeight)
                 throw new Exception("Number of Tiles and size of the TileMap are different");
@@ -43,8 +43,7 @@ namespace Capstone_Project.MapStuff
         {
             for (int y = 0; y < TileArray.Height; y++)
                 for (int x = 0; x < TileArray.Width; x++)
-                    if (TileArray[x, y] != null)
-                        TileArray[x, y].Draw();
+                    TileArray[x, y]?.Draw();
         }
     }
 }

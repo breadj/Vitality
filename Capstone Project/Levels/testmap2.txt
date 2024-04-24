@@ -72,7 +72,23 @@ PatrolPoints = { { 15, 15 }, { 17, 11 }, { 22, 13 }, { 23, 17 }, { 20, 19 } }
 PatrolType = Circular
 
 [Enemy]
+Sprite = Burgundy_Enemy
 Position = { 2, 20 }
+RotationSpeed = 3
+Speed = 150
+Damage = 15
+AttackRange = 150
+AttackWindup = 1.2
+AttackLinger = 0.2
+AttackCooldown = 1
 
 [Enemy]
 Position = { 2, 22 }
+Sprite = Dark_Blue_Enemy
+RotationSpeed = 3
+Speed = 150
+Damage = 15
+AttackRange = 120
+AttackWindup = 1.7
+AttackLinger = 0.7
+AttackCooldown = 1.5

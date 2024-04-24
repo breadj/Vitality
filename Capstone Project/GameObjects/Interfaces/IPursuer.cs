@@ -9,7 +9,7 @@ namespace Capstone_Project.GameObjects.Interfaces
         public bool Aggroed { get; }
         public int AggroRange { get; }
         public Entity PursuitTarget { get; }
-        public Vector2 TargetLastSeen { get; }
+        public Vector2? TargetLastSeen { get; }
         public LinkedList<Vector2> PursuitPath { get; }
         public void Pursue();
         public bool TargetInLineOfSight(Vector2 target);

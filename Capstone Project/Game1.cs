@@ -48,7 +48,7 @@ namespace Capstone_Project
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
 #if DEBUG
-            graphics.IsFullScreen = false;      // turn back to '= true' for non-debug
+            graphics.IsFullScreen = false;
 #else
             graphics.IsFullScreen = true;
 #endif
@@ -98,20 +98,31 @@ namespace Capstone_Project
 
             DebugFont = Content.Load<SpriteFont>("DebugFont");
 
-            Texture2D playerSprite = Content.Load<Texture2D>("Player");
-            Texture2D enemySprite = Content.Load<Texture2D>("Enemy");
-            Texture2D defaultExit = Content.Load<Texture2D>("default_exit");
-            Texture2D directionalExit = Content.Load<Texture2D>("directional_exit");
+            {
+                Texture2D playerSprite = Content.Load<Texture2D>("Player");
+                Texture2D enemySprite = Content.Load<Texture2D>("Enemy");
+                Texture2D enemyButPurpleSprite = Content.Load<Texture2D>("enemy_but_purple");
+                Texture2D darkBlueEnemySprite = Content.Load<Texture2D>("dark_blue_enemy");
+                Texture2D burgundyEnemySprite = Content.Load<Texture2D>("burgundy_enemy");
+                Texture2D defaultExit = Content.Load<Texture2D>("default_exit");
+                Texture2D directionalExit = Content.Load<Texture2D>("directional_exit");
 
-            Subsprite playerSubsprite = new Subsprite(playerSprite, playerSprite.Bounds);
-            Subsprite enemySubsprite = new Subsprite(enemySprite, enemySprite.Bounds);
-            Subsprite defaultExitSubsprite = new Subsprite(defaultExit, defaultExit.Bounds);
-            Subsprite directionalExitSubsprite = new Subsprite(directionalExit, directionalExit.Bounds);
+                Subsprite playerSubsprite = new Subsprite(playerSprite);
+                Subsprite enemySubsprite = new Subsprite(enemySprite);
+                Subsprite enemyButPurpleSubsprite = new Subsprite(enemyButPurpleSprite);
+                Subsprite darkBlueEnemySubsprite = new Subsprite(darkBlueEnemySprite);
+                Subsprite burgundyEnemySubsprite = new Subsprite(burgundyEnemySprite);
+                Subsprite defaultExitSubsprite = new Subsprite(defaultExit);
+                Subsprite directionalExitSubsprite = new Subsprite(directionalExit);
 
-            LoadedSprites.Add("Player", playerSubsprite);
-            LoadedSprites.Add("Enemy", enemySubsprite);
-            LoadedSprites.Add("Default_Exit", defaultExitSubsprite);
-            LoadedSprites.Add("Directional_Exit", directionalExitSubsprite);
+                LoadedSprites.Add("Player", playerSubsprite);
+                LoadedSprites.Add("Enemy", enemySubsprite);
+                LoadedSprites.Add("Enemy_But_Purple", enemyButPurpleSubsprite);
+                LoadedSprites.Add("Dark_Blue_Enemy", darkBlueEnemySubsprite);
+                LoadedSprites.Add("Burgundy_Enemy", burgundyEnemySubsprite);
+                LoadedSprites.Add("Default_Exit", defaultExitSubsprite);
+                LoadedSprites.Add("Directional_Exit", directionalExitSubsprite);
+            }
 
             // for testing purposes
             /*int tileSize = 128;
@@ -125,8 +136,8 @@ namespace Capstone_Project
 
             tileMap = new TileMap(15, 9, tileSize, tiles);*/
             //Player = new Player(spriteName: "Player");
-            Player = new Player(spriteName: "Player", speed: 500);      // fast player for debugging
-            RetrieveLevel("testmap2", new Point(4, 4));
+            Player = new Player(spriteName: "Player"/*, speed: 500*/);      // fast player for debugging
+            RetrieveLevel("testmap1");
             //Enemy enemy = new Enemy(enemySubsprite, TileMap.MapBounds.Center.ToVector2() + new Vector2(128, 128), 15, 0);
 
             Entities.Add(Player);
@@ -143,22 +154,6 @@ namespace Capstone_Project
             if (Controls.ExitFlag)
                 Exit();
 
-            #region Player-on-Exit
-            
-            foreach (LevelExit exit in TileMap.Exits)
-            {
-                if (!exit.SpawnBlocked && Player.CollidesWith(exit, out _))
-                {
-                    ExitLevel(exit);
-                }
-                else
-                {
-                    exit.SpawnBlocked = false;
-                }
-            }
-
-            #endregion
-
             #region Simulated & Visible Tiles
 
             visibleTiles.Clear();
@@ -168,7 +163,7 @@ namespace Capstone_Project
             {
                 if (Collision.Rectangular(Camera.SimulationArea, TileMap.TileArray[i].Collider.BoundingBox))
                 {
-                    if (TileMap.TileArray[i].Active && TileMap.TileArray[i] is ICollidable)
+                    if (TileMap.TileArray[i].Active)
                         SimulatedTiles.Add(TileMap.TileArray[i]);
 
                     if (TileMap.TileArray[i].Visible && Collision.Rectangular(Camera.VisibleArea, TileMap.TileArray[i].Collider.BoundingBox))
@@ -242,6 +237,25 @@ namespace Capstone_Project
             #endregion
 
             base.Update(gameTime);
+
+            #region Player-on-Exit
+            
+            foreach (LevelExit exit in TileMap.Exits)
+            {
+                if (exit.CollidesWith(Player, out _))
+                {
+                    if (!exit.SpawnBlocked)
+                    {
+                        ExitLevel(exit);
+                    }
+                }
+                else if (exit.SpawnBlocked)
+                {
+                    exit.SpawnBlocked = false;
+                }
+            }
+
+            #endregion
         }
 
         protected override void Draw(GameTime gameTime)
@@ -258,7 +272,7 @@ namespace Capstone_Project
             foreach (Entity entity in visibleEntities)
                 entity.Draw();
 
-            spriteBatch.DrawString(DebugFont, $"PP={Player.Position}", Camera.ScreenToWorld(ScreenBounds.ToVector2() / 2f), Color.Black, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0.9f);
+            //spriteBatch.DrawString(DebugFont, $"PP={Player.Position}", Camera.ScreenToWorld(ScreenBounds.ToVector2() / 2f), Color.Black, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0.9f);
             //Point dev = new Point(220, 150);
             //spriteBatch.Draw(BLANK, new Rectangle((int)Camera.Position.X - dev.X, (int)Camera.Position.Y - dev.Y, dev.X * 2, dev.Y * 2), null, new Color(Color.Black, 0.2f), 0f, Vector2.Zero, SpriteEffects.None, 0.99f);
             //spriteBatch.Draw(BLANK, tileMap.MapBounds, null, new Color(Color.Purple, 0.5f), 0f, Vector2.Zero, SpriteEffects.None, 0.999f);
@@ -378,8 +392,8 @@ namespace Capstone_Project
                         break;
                 }
 
-                exits.Add(new LevelExit(position, level, destination, spriteName, LoadedSprites[spriteName], destRect, collider, rotation) 
-                        { SpawnBlocked = destinationTile != null && destinationTile.Value == exit.Tile });
+                exits.Add(new LevelExit(position, level, destination, spriteName, LoadedSprites[spriteName], destRect, collider, rotation, true) 
+                        { SpawnBlocked = (destinationTile ?? mapMD.Spawn) == exit.Tile });
             }
 
             TileMap = new TileMap(mapMD.Columns, mapMD.Rows, mapMD.TileSize, tileArray, walls, spawn, exits);

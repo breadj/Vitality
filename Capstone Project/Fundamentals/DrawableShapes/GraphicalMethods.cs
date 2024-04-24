@@ -133,7 +133,7 @@ namespace Capstone_Project.Fundamentals.DrawableShapes
             for (int y = 0; y < height; y++)
             {
                 int actualY = y + minY;
-                int lineWidth = centre.X - minXs[y] + centre.X;
+                int lineWidth = 2 * (centre.X - minXs[y]);
 
                 scanLines.Add(new Rectangle(minXs[y], actualY, lineWidth, 1));
             }
@@ -198,7 +198,7 @@ namespace Capstone_Project.Fundamentals.DrawableShapes
             for (int y = 0; y < height; y++)
             {
                 int actualY = y + minY;
-                int lineWidth = centre.X - minXs[y] + centre.X;
+                int lineWidth = 2 * (centre.X - minXs[y]);
 
                 for (int x = 0; x <= lineWidth; x++)
                 {

@@ -9,6 +9,11 @@ namespace Capstone_Project.SpriteTextures
         // The area on the SpriteSheet where the texture for this sprite is taken from
         public Rectangle Source { get; init; }   // might change the perms for mutator if it's animated
 
+        public Subsprite(Texture2D sprite) : this(sprite, sprite.Bounds)
+        {
+
+        }
+
         public Subsprite(Texture2D spriteSheet, Rectangle source)
         {
             SpriteSheet = spriteSheet;

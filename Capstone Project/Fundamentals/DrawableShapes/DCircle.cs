@@ -14,7 +14,7 @@ namespace Capstone_Project.Fundamentals.DrawableShapes
             Scanned = scanned;
             Radius = radius;
 
-            BoundingBox = new Rectangle((int)(centre.X - radius), (int)(centre.Y - radius), 2 * (int)radius + 1, 2 * (int)radius + 1);
+            BoundingBox = new Rectangle((int)(centre.X - radius), (int)(centre.Y - radius), (int)(2 * radius) + 1, (int)(2 * radius) + 1);
             Outline = GraphicalMethods.GenerateOutline(centre, radius);
             GenerateFillMode(Scanned);
         }
@@ -24,7 +24,7 @@ namespace Capstone_Project.Fundamentals.DrawableShapes
         {
             Radius = radius;
 
-            BoundingBox = new Rectangle((int)(centre.X - radius), (int)(centre.Y - radius), 2 * (int)radius + 1, 2 * (int)radius + 1);
+            BoundingBox = new Rectangle((int)(centre.X - radius), (int)(centre.Y - radius), (int)(2 * radius) + 1, (int)(2 * radius) + 1);
 
             Outline = GraphicalMethods.GenerateOutline(centre, radius);
             GenerateFillMode(scanned);
@@ -54,7 +54,8 @@ namespace Capstone_Project.Fundamentals.DrawableShapes
         public override void MoveTo(Vector2 target, float rotation = 0f)
         {
             Centre = target;
-            BoundingBox = new Rectangle((int)(Centre.X - Radius), (int)(Centre.Y - Radius), 2 * (int)Radius + 1, 2 * (int)Radius + 1);
+            //BoundingBox = new Rectangle((int)(Centre.X - Radius), (int)(Centre.Y - Radius), 2 * (int)Radius + 1, 2 * (int)Radius + 1);
+            BoundingBox = BoundingBox with { X = (int)(Centre.X - Radius), Y = (int)(Centre.Y - Radius) };
 
             Outline = GraphicalMethods.GenerateOutline(Centre, Radius);
             GenerateFillMode(Scanned);

@@ -6,6 +6,8 @@ using Capstone_Project.GameObjects.Interfaces;
 using Capstone_Project.CollisionStuff;
 using System.Linq;
 using Capstone_Project.Fundamentals.DrawableShapes;
+using System.Diagnostics;
+using Capstone_Project.Globals;
 
 namespace Capstone_Project.GameObjects.Entities
 {
@@ -13,29 +15,42 @@ namespace Capstone_Project.GameObjects.Entities
     {
         #region Default Attributes
         public static readonly new string DefaultSpriteName = "Player";
+
+        public static readonly int DefaultMaxStamina = 20;
         #endregion Default Attributes
 
         public Agent LockOnTarget { get; private set; } = null;
         public DCircle LockOnHighlight { get; private set; } = null;
+
+        public int MaxStamina { get; private set; }
+        public float Stamina
+        {
+            get => stamina;
+            set => stamina = value < 0 ? 0 : value > MaxStamina ? MaxStamina : value;
+        }               // can only be between 0-MaxStamina
+        private float stamina = 0f;
+        public Timer StaminaRegenCD { get; private set; } = new Timer(1.5f);
+        public float StaminaRegenAmount { get; private set; } = 2f;     // how much stamina is recovered per second
+
+        #region Stamina Costs
+        private readonly int dashStaminaCost = 5;
+        private readonly int attackStaminaCost = 7;
+        #endregion
 
         public Player(bool? visible = null, string spriteName = null, Color? colour = null, float? rotation = null, float? layer = null,
             bool? active = null, Vector2? position = null, Vector2? direction = null, Vector2? velocity = null, float? speed = null,
             int? size = null, bool? dead = null, Comparer<(ICollidable, CollisionDetails)> collisionsComparer = null,
             Vector2? orientation = null, float? leakPercentage = null, int? maxVitality = null, int? vitality = null, float? defence = null,
             float? damage = null, float? windupTime = null, float? lingerTime = null, float? cooldownTime = null, float? attackRange = null,
-            float? dashTime = null, float? dashSpeedModifier = null, float? invincibilityTime = null)
+            float? dashTime = null, float? dashSpeedModifier = null, float? invincibilityTime = null,
+            int? maxStamina = null)
             : base(0, visible, spriteName ?? DefaultSpriteName, colour, rotation, layer, active, position, direction, velocity, speed,
                   size, dead, collisionsComparer, orientation, leakPercentage, maxVitality, vitality, defence, damage, windupTime, 
                   lingerTime, cooldownTime, attackRange, dashTime, dashSpeedModifier, invincibilityTime)
         {
-            
+            MaxStamina = maxStamina ?? DefaultMaxStamina;
+            Stamina = MaxStamina;
         }
-
-        /*public Player(string spriteName, Subsprite subsprite, Vector2 position, int vitality, int damage, float attackRange = 100f, float defence = 0f, int size = 100, float speed = 250)
-            : base(spriteName, subsprite, position, vitality, damage, attackRange, defence, size, speed)
-        {
-            Strike.ChangeCDs(2f, 0.5f, 1f);
-        }*/
         
         public override void Update(GameTime gameTime)
         {
@@ -49,6 +64,9 @@ namespace Capstone_Project.GameObjects.Entities
             Invincibility.Update(gameTime);
         }
 
+        private readonly Rectangle staminaBar = new Rectangle(0, 0, 1, 30);
+        private readonly Vector2 vitalityIconLocation = new Vector2(60f, ScreenBounds.Y - 60f);     // bottom left of the screen
+        private DCircle vitalityIcon = new DCircle(Vector2.Zero, 60f, Color.Red, 0.99f, true);
         public override void Draw()
         {
             base.Draw();
@@ -58,7 +76,20 @@ namespace Capstone_Project.GameObjects.Entities
                     (int)(Size * Strike.Cooldown.Percentage), 10), null, new Color(Color.DarkGray, 0.9f), 0f, 
                     Vector2.Zero, SpriteEffects.None, Strike.Layer);
 
-            LockOnHighlight?.DrawOutline();
+            // Vitality icon stuff
+            vitalityIcon.MoveTo(Game1.Camera.ScreenToWorld(vitalityIconLocation));
+            vitalityIcon.Draw();
+            vitalityIcon.DrawOutline(Color.Black);
+
+            Vector2 vitalityIconTextLocation = vitalityIcon.Centre - (3f * DebugFont.MeasureString(Vitality.ToString()) / 2f);
+            spriteBatch.DrawString(DebugFont, Vitality.ToString(), vitalityIconTextLocation, Color.White, 0f, Vector2.Zero, 3f, SpriteEffects.None, 1f);
+
+            // Stamina bar stuff
+            Rectangle curStaminaBar = staminaBar with { Location = Game1.Camera.ScreenToWorld(Vector2.Zero).ToPoint().Round(), Width = (int)(30 * Stamina) };   // 30 pixels
+            spriteBatch.Draw(Pixel, curStaminaBar, null, Color.DarkOliveGreen, 0f, Vector2.Zero, SpriteEffects.None, 0.99f);
+            spriteBatch.DrawString(DebugFont, $"{(int)Stamina}/{MaxStamina}", curStaminaBar.Location.ToVector2(), Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 1f);
+
+            LockOnHighlight?.DrawOutline(Color.White);
 
             //spriteBatch.DrawString(DebugFont, $"MV: {MaxVitality}\nV: {Vitality}", Position, Color.White, 0f, Vector2.Zero, 1.5f, SpriteEffects.None, 0.6f);
             //spriteBatch.Draw(BLANK, PathCollider, null, new Color(Color.MediumPurple, 0.5f), 0f, Vector2.Zero, SpriteEffects.None, 0.9f);
@@ -78,9 +109,16 @@ namespace Capstone_Project.GameObjects.Entities
             if (bufActExists && !PerformingAction && Game1.Controls.ActionBuffer.Peek().Name == "dash")
             {
                 Game1.Controls.ActionBuffer.Remove();
-                if (Direction == Vector2.Zero)
-                    Direction = Orientation;
-                Dash.Start();
+
+                if (Stamina > dashStaminaCost)
+                {
+                    if (Direction == Vector2.Zero)
+                        Direction = Orientation;
+
+                    Dash.Start();
+                    Stamina -= dashStaminaCost;
+                    StaminaRegenCD.Start();
+                }
             }
 
             if (Dash.Active)
@@ -97,6 +135,15 @@ namespace Capstone_Project.GameObjects.Entities
                     Speed = BaseSpeed;
 
                 Direction = Movement(Game1.Controls.ActivatedActions);
+            }
+
+            if (StaminaRegenCD.Active)
+            {
+                StaminaRegenCD.Update(gameTime);
+            }
+            else if (StaminaRegenCD.Done && Stamina < MaxStamina)
+            {
+                Stamina += StaminaRegenAmount * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
 
             base.Move();
@@ -163,7 +210,13 @@ namespace Capstone_Project.GameObjects.Entities
             else if (bufActExists && !PerformingAction && Game1.Controls.ActionBuffer.Peek().Name == "attack")
             {
                 Game1.Controls.ActionBuffer.Remove();
-                Swing();
+
+                if (Stamina > attackStaminaCost)
+                {
+                    Swing();
+                    Stamina -= attackStaminaCost;
+                    StaminaRegenCD.Start();
+                }
             }
         }
 

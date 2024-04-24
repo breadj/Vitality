@@ -49,7 +49,7 @@ namespace Capstone_Project.GameObjects
         public bool CollidesWith(ICollidable other, out CollisionDetails cd)
         {
             cd = new CollisionDetails();
-            return Active & other.Active && Collision.Colliding(Collider, other.Collider, out cd);
+            return Active && other.Active && Collision.Colliding(Collider, other.Collider, out cd);
         }
 
         public void Draw()
@@ -57,6 +57,8 @@ namespace Capstone_Project.GameObjects
             Globals.Globals.spriteBatch.Draw(Subsprite.SpriteSheet, Destination, Subsprite.Source, Colour, Rotation, Origin, 
                 Microsoft.Xna.Framework.Graphics.SpriteEffects.None, Layer);
 
+            /*if (SpawnBlocked)
+                Globals.Globals.spriteBatch.Draw(Globals.Globals.Pixel, Destination, null, Color.Purple, 0f, Vector2.Zero, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0.99f);*/
             /*Globals.Globals.spriteBatch.Draw(Globals.Globals.Pixel, Destination, null, new Color(Color.Red, 0.5f), 0f, Vector2.Zero,
                 Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0.9f);*/
             Globals.Globals.spriteBatch.Draw(Globals.Globals.Pixel, Collider.BoundingBox, null, Color.Red, 0f, Vector2.Zero,

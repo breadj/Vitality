@@ -81,9 +81,22 @@ namespace Capstone_Project.GameObjects
                 return;
 
             if (Windup.Active)
-                Polygon.Draw(new Color(Polygon.Colour, Windup.Percentage <= 0.5f ? 0.5f * Windup.Percentage * 2f : 0.5f));
+            {
+                if (Windup.Percentage <= 0.5f)
+                {
+                    Polygon.Draw(new Color(Polygon.Colour, Windup.Percentage));
+                }
+                else
+                {
+                    Polygon.Draw(new Color(Polygon.Colour, 0.5f));
+                    Polygon.DrawOutline();
+                }
+            }
             else if (Linger.Active)
+            {
                 Polygon.Draw();
+                Polygon.DrawOutline();
+            }
         }
 
         public void Start(Vector2 centre, Vector2 direction, float range)

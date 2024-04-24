@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System;
 
 namespace Capstone_Project.Fundamentals
 {
@@ -13,20 +15,16 @@ namespace Capstone_Project.Fundamentals
 
         public static List<Vector2> FindPath(Array2D<bool> tileMap, Vector2 position, Vector2 targetPosition, int tileSize = 128)
         {
-            return FindPath(tileMap, position, new Vector2[]{targetPosition}, tileSize);
-        }
-
-        public static List<Vector2> FindPath(Array2D<bool> tileMap, Vector2 position, Vector2[] targetPositions, int tileSize = 128)
-        {
             Point pos = FindTile(position, tileSize);
+            Point target = FindTile(targetPosition, tileSize);
 
-            Point[] targets = new Point[targetPositions.Length];
-            for (int i = 0; i < targets.Length; i++)
-                targets[i] = FindTile(targetPositions[i], tileSize);
-
-            List<Point> path = AStar(tileMap, pos, targets);
+            //List<Point> path = AStar(tileMap, pos, target);
+            List<Point> path = AStar(tileMap, pos, target);
             if (path == null)
+            {
+                Debug.WriteLine("No path found");
                 return new List<Vector2>();
+            }
 
             path = ExtractCorners(path);
 
@@ -60,13 +58,51 @@ namespace Capstone_Project.Fundamentals
             return cornerless;
         }
 
-        private static List<Point> AStar(Array2D<bool> tileMap, Point start, Point[] targets)
+        private static List<Point> AStar(Array2D<bool> tileMap, Point start, Point target)
+        {
+            var open = new PriorityQueue<Node, float>();
+            var closed = new List<Node>();
+
+            var startNode = new Node(start, null, 0, H(start, target));
+            open.Enqueue(startNode, startNode.F);
+
+            while (open.TryDequeue(out Node cur, out _))
+            {
+                closed.Add(cur);
+
+                if (cur.Pos == target)
+                {
+                    var path = new List<Point> { cur.Pos };
+                    for (var node = cur.From; node != null; node = node.From)
+                        path.Insert(0, node.Pos);
+                    return path;
+                }
+
+                var adjacentNodes = GetAdjacentPoints(tileMap, cur.Pos).Select(p => new Node(p, cur, cur.G + 1, H(p, target)));
+                foreach (var adj in adjacentNodes)
+                {
+                    Node actual = closed.Find(n => n.Pos == adj.Pos);
+                    if (actual == null)
+                    {
+                        // if adj is not in open, or adj has a lower F than the one in open
+                        if ((actual = open.UnorderedItems.FirstOrDefault(n => n.Element.Pos == adj.Pos, (null, 0)).Element) == null || actual.F > adj.F)
+                        {
+                            open.Enqueue(adj, adj.F);
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /*private static List<Point> AStar(Array2D<bool> tileMap, Point start, Point target)
         {
             SortedLinkedList<Node> open = new SortedLinkedList<Node>(Comparer<Node>.Create((a, b) => a.F.CompareTo(b.F)));
             HashSet<Node> closed = new();
 
             {
-                Node startNode = new Node(start, null, 0, H(start, targets));
+                Node startNode = new Node(start, null, 0, H(start, target));
                 open.Add(startNode);
             }
 
@@ -76,37 +112,39 @@ namespace Capstone_Project.Fundamentals
                 open.RemoveFirst();
                 closed.Add(cur);
 
-                if (targets.Any(target => target == cur.Pos))
+                if (target == cur.Pos)
                 {
                     List<Point> path = new List<Point>();
-
                     for (Node node = cur; node != null; node = node.From)
                         path.Insert(0, node.Pos);
 
                     return path;
                 }
-                else
+
+                List<Node> adjacentNodes = GetAdjacentNodes(tileMap, cur, target);
+                foreach (var node in adjacentNodes)
                 {
-                    List<Node> adjacent = GetAdjacentNodes(tileMap, cur, targets);
+                    if (closed.Contains(node))
+                        continue;
 
-                    foreach (var adj in adjacent)
+                    var actual = open.Find(node);
+                    if (actual != null)
                     {
-                        if (closed.Contains(adj))
-                            continue;
-
-                        var actual = open.Find(adj);
-                        if (actual == null || adj.F < actual!.Value.F)
+                        if (node.G < actual.Value.G)
                         {
-                            if (actual != null)
-                                open.Remove(actual);
-                            open.Add(adj);
+                            open.Remove(actual);
+                            open.Add(node);
                         }
+                    }
+                    else
+                    {
+                        open.Add(node);
                     }
                 }
             }
 
             return null;
-        }
+        }*/
 
         private class Node
         {
@@ -141,41 +179,29 @@ namespace Capstone_Project.Fundamentals
         private static float H(Point pos, Point target)
         {
             Point dist = target - pos;
-            return dist.X * dist.X + dist.Y * dist.Y;
+            return MathF.Sqrt(dist.X * dist.X + dist.Y * dist.Y);
         }
 
-        private static float H(Point pos, Point[] targets)
-        {
-            return targets.Min(target => H(pos, target));       // returns the closest (smallest) H-score between all targets
-        }
-
-        private static Point ClosestTarget(Point pos, Point[] targets)
-        {
-            return targets.MinBy(target => H(pos, target));
-        }
-
-        private static List<Node> GetAdjacentNodes(Array2D<bool> tileMap, Node node, Point[] targets)
+        /*private static List<Node> GetAdjacentNodes(Array2D<bool> tileMap, Node node, Point target)
         {
             List<Point> adjacentPoints = GetAdjacentPoints(tileMap, node.Pos);
-
-            List<Node> adjacentNodes = new List<Node>(adjacentPoints.Count);
-            foreach (var point in adjacentPoints)
-                adjacentNodes.Add(new Node(point, node, node.G + 1, H(point, targets)));
+            List<Node> adjacentNodes = adjacentPoints.Select(point => new Node(point, node, node.G + 1, H(point, target))).ToList();
 
             return adjacentNodes;
-        }
+        }*/
 
         private static List<Point> GetAdjacentPoints(Array2D<bool> tileMap, Point pos)
         {
             List<Point> adj = new List<Point>();
 
-            if (pos.X > 0 && !tileMap[pos.X - 1, pos.Y])
+            // if there's a wall at the tile (x,y), then wall[x,y] = true
+            if (pos.X > 0 && !tileMap[pos.X - 1, pos.Y])                    // left
                 adj.Add(new Point(pos.X - 1, pos.Y));
-            if (pos.X < tileMap.Width - 1 && !tileMap[pos.X + 1, pos.Y])
+            if (pos.X < tileMap.Width - 1 && !tileMap[pos.X + 1, pos.Y])    // right
                 adj.Add(new Point(pos.X + 1, pos.Y));
-            if (pos.Y > 0 && !tileMap[pos.X, pos.Y - 1])
+            if (pos.Y > 0 && !tileMap[pos.X, pos.Y - 1])                    // up
                 adj.Add(new Point(pos.X, pos.Y - 1));
-            if (pos.Y > tileMap.Height - 1 && !tileMap[pos.X, pos.Y + 1])
+            if (pos.Y < tileMap.Height - 1 && !tileMap[pos.X, pos.Y + 1])   // down
                 adj.Add(new Point(pos.X, pos.Y + 1));
 
             return adj;

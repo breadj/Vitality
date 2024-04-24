@@ -231,13 +231,16 @@ namespace Capstone_Project.MapStuff.Parser
         {
             string spriteName = null;
             Point? position = null;
-            
+
+            float? speed = null;
+
             int? vitality = null;
             
             int? damage = null;
             float? windup = null;
             float? linger = null;
             float? cooldown = null;
+            float? range = null;
 
             List<Point> patrolPoints = null;
             int? patrolStartIndex = null;
@@ -269,6 +272,9 @@ namespace Capstone_Project.MapStuff.Parser
                             throw new Exception("Invalid point");
                         position = tempPoint;
                         break;
+                    case "Speed":
+                        speed = float.TryParse(value, out tempFloat) ? tempFloat : null;
+                        break;
                     case "Vitality":
                         vitality = ParseIntWithDefault(value, field, 100);
                         break;
@@ -283,6 +289,9 @@ namespace Capstone_Project.MapStuff.Parser
                         break;
                     case "AttackCooldown":
                         cooldown = float.TryParse(value, out tempFloat) ? tempFloat : null;
+                        break;
+                    case "AttackRange":
+                        range = float.TryParse(value, out tempFloat) ? tempFloat : null;
                         break;
                     case "PatrolPoints":
                         if (!TryParseEmbeddedArray(value, out string[] tempPP))
@@ -337,20 +346,22 @@ namespace Capstone_Project.MapStuff.Parser
             LinkedList<Vector2> actualPatrolPoints;
 
             int tileSize = md.MapMD.Value.TileSize;
-            Vector2 halfTileSizeVector = new Vector2(tileSize / 2);
+            Vector2 halfTileSizeVector = new Vector2(tileSize / 2f);
 
-            actualPosition = (position != null ? position.Value.ToVector2() : patrolPoints[patrolStartIndex.Value].ToVector2()) * tileSize + halfTileSizeVector;
+            actualPosition = (position ?? patrolPoints[patrolStartIndex ?? AIAgent.DefaultFirstPatrolPointIndex]).ToVector2() * tileSize + halfTileSizeVector;
 
             if (patrolPoints != null)
+            {
                 actualPatrolPoints = new LinkedList<Vector2>(patrolPoints.Select(point => point.ToVector2() * tileSize + halfTileSizeVector));
+            }
             else
             {
                 actualPatrolPoints = new LinkedList<Vector2>();
                 actualPatrolPoints.AddFirst(actualPosition);
             }
 
-            md.Enemies.Add(new AIAgent(killableID++, spriteName: spriteName, position: actualPosition, vitality: vitality, damage: damage, windupTime: windup, 
-                lingerTime: linger, cooldownTime: cooldown, patrolPoints: actualPatrolPoints, firstPatrolPointIndex: patrolStartIndex, 
+            md.Enemies.Add(new AIAgent(killableID++, spriteName: spriteName, position: actualPosition, speed: speed, vitality: vitality, damage: damage, windupTime: windup, 
+                lingerTime: linger, cooldownTime: cooldown, attackRange: range, patrolPoints: actualPatrolPoints, firstPatrolPointIndex: patrolStartIndex, 
                 initialAIState: aiType, patrolType: patrolType, aggroRange: aggroRange, rotationSpeed: rotationSpeed));
         }
 
