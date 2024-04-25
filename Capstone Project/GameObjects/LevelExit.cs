@@ -23,13 +23,14 @@ namespace Capstone_Project.GameObjects
         public bool Visible { get; set; } = true;
         public float Layer { get; init; } = 0.0011f;      // just above the Tile draw layer
 
+        public Point Tile { get; init; }
         public Vector2 Position { get; init; }
         public string DestinationLevel { get; init; }
         public Point? DestinationTile { get; init; }
 
         public bool SpawnBlocked { get; set; } = false;
 
-        public LevelExit(Vector2 position, string destinationLevel, Point? destinationTile, string spriteName, Subsprite subsprite, Rectangle destination, CShape collider, float rotation, bool active = true)
+        public LevelExit(Point tile, Vector2 position, string destinationLevel, Point? destinationTile, string spriteName, Subsprite subsprite, Rectangle destination, CShape collider, float rotation, bool active = true)
         {
             Active = active;
             Collider = collider;
@@ -39,6 +40,7 @@ namespace Capstone_Project.GameObjects
             Destination = destination;
             Rotation = rotation;
 
+            Tile = tile;
             Position = position;
             DestinationLevel = destinationLevel;
             DestinationTile = destinationTile;
@@ -61,8 +63,8 @@ namespace Capstone_Project.GameObjects
                 Globals.Globals.spriteBatch.Draw(Globals.Globals.Pixel, Destination, null, Color.Purple, 0f, Vector2.Zero, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0.99f);*/
             /*Globals.Globals.spriteBatch.Draw(Globals.Globals.Pixel, Destination, null, new Color(Color.Red, 0.5f), 0f, Vector2.Zero,
                 Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0.9f);*/
-            Globals.Globals.spriteBatch.Draw(Globals.Globals.Pixel, Collider.BoundingBox, null, Color.Red, 0f, Vector2.Zero,
-                Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0.9f);
+            /*Globals.Globals.spriteBatch.Draw(Globals.Globals.Pixel, Collider.BoundingBox, null, Color.Red, 0f, Vector2.Zero,
+                Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0.9f);*/
         }
     }
 }

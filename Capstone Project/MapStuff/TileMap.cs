@@ -10,6 +10,7 @@ namespace Capstone_Project.MapStuff
     {
         public Array2D<Tile> TileArray { get; init; }
         public Array2D<bool> Walls { get; init; }       // for pathfinding AI, true = wall (impassable)
+        public Point SpawnTile { get; init; }
         public Vector2 Spawn { get; init; }
         public List<LevelExit> Exits { get; init; }
 
@@ -21,7 +22,7 @@ namespace Capstone_Project.MapStuff
         // width and height of the Tiles (tiles are square so w and h are the same value)
         public int TileSize { get; init; }
 
-        public TileMap(int tileWidth, int tileHeight, int tileSize, Array2D<Tile> tiles, Array2D<bool> walls, Vector2 spawn, List<LevelExit> exits = null)
+        public TileMap(int tileWidth, int tileHeight, int tileSize, Array2D<Tile> tiles, Array2D<bool> walls, Point spawnTile, Vector2 spawn, List<LevelExit> exits = null)
         {
             TileSize = tileSize;
 

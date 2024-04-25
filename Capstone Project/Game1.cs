@@ -392,11 +392,11 @@ namespace Capstone_Project
                         break;
                 }
 
-                exits.Add(new LevelExit(position, level, destination, spriteName, LoadedSprites[spriteName], destRect, collider, rotation, true) 
+                exits.Add(new LevelExit(exit.Tile, position, level, destination, spriteName, LoadedSprites[spriteName], destRect, collider, rotation, true) 
                         { SpawnBlocked = (destinationTile ?? mapMD.Spawn) == exit.Tile });
             }
 
-            TileMap = new TileMap(mapMD.Columns, mapMD.Rows, mapMD.TileSize, tileArray, walls, spawn, exits);
+            TileMap = new TileMap(mapMD.Columns, mapMD.Rows, mapMD.TileSize, tileArray, walls, mapMD.Spawn, spawn, exits);
 
             // Entities + Player
             if (destinationTile != null && destinationTile.Value.X >= 0 && destinationTile.Value.Y >= 0 &&
@@ -431,6 +431,14 @@ namespace Capstone_Project
 
         private void ExitLevel(LevelExit exit)
         {
+            if (exit.DestinationLevel == this.LevelName)
+            {
+                Point teleportToTile = exit.DestinationTile ?? TileMap.SpawnTile;
+                Player.ManualPositionMove(teleportToTile.ToVector2() * TileMap.TileSize + new Vector2(TileMap.TileSize / 2f));
+                TileMap.Exits.ForEach(e => e.SpawnBlocked = e.Tile == teleportToTile);
+                return;
+            }
+
             Entities.Clear();
             Debug.WriteLine($"Entering {exit.DestinationLevel}");
             RetrieveLevel(exit.DestinationLevel, exit.DestinationTile);

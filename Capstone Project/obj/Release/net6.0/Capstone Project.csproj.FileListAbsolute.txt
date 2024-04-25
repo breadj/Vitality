@@ -31,3 +31,6 @@ C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-
 C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\obj\Release\net6.0\Capstone Project.pdb
 C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\obj\Release\net6.0\Capstone Project.genruntimeconfig.cache
 C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\obj\Release\net6.0\ref\Capstone Project.dll
+C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\bin\Release\net6.0\Content\burgundy_enemy.xnb
+C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\bin\Release\net6.0\Content\dark_blue_enemy.xnb
+C:\Users\asus\OneDrive - University of Essex\Year 3\CE301 - Capstone Project\23-24_CE301_darby_joseph_r_p\Capstone Project\bin\Release\net6.0\Content\enemy_but_purple.xnb
