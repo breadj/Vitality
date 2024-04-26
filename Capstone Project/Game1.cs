@@ -309,15 +309,15 @@ namespace Capstone_Project
             }
 
             // Spritesheet
-            Texture2D ssTexture = Content.Load<Texture2D>(md.SpritesheetMD.Value.Name);
-            if (md.SpritesheetMD.Value.Bounds.HasValue)
+            Texture2D ssTexture = Content.Load<Texture2D>(md.TilesetMD.Value.Name);
+            if (md.TilesetMD.Value.Bounds.HasValue)
             {
-                (int width, int height) = md.SpritesheetMD.Value.Bounds.Value;
+                (int width, int height) = md.TilesetMD.Value.Bounds.Value;
                 Spritesheet = new Spritesheet(ssTexture, width, height);
             }
             else
             {
-                Spritesheet = new Spritesheet(ssTexture, md.SpritesheetMD.Value.TileSize.Value);
+                Spritesheet = new Spritesheet(ssTexture, md.TilesetMD.Value.TileSize.Value);
             }
 
             // Tile array

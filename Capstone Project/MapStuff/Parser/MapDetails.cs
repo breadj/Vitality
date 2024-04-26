@@ -8,7 +8,7 @@ namespace Capstone_Project.MapStuff.Parser
 {
     public struct MapDetails
     {
-        public SpritesheetMetaData? SpritesheetMD = null;
+        public TilesetMetaData? TilesetMD = null;
         public MapMetaData? MapMD = null;
         public Array2D<int> TileMap = null;
         public List<AIAgent> Enemies = new List<AIAgent>();
@@ -17,7 +17,7 @@ namespace Capstone_Project.MapStuff.Parser
         public MapDetails() { }
     }
 
-    public struct SpritesheetMetaData
+    public struct TilesetMetaData
     {
         public string Name;
         public (int Columns, int Rows)? Bounds;

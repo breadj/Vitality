@@ -46,7 +46,7 @@ namespace Capstone_Project.Input
 
             // buffered Actions
             Action Attack = new Action("attack", new List<Input> { Button.Left }, ActionType.OnRelease);
-            Action Dash = new Action("dash", new List<Input> { Keys.LeftShift }, ActionType.OnPress);
+            Action Dash = new Action("dash", new List<Input> { Keys.LeftShift, Button.Right }, ActionType.OnPress);
 
             BufferedActions = new Action[] { Attack, Dash };
         }

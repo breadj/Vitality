@@ -76,7 +76,7 @@ namespace Capstone_Project.MapStuff.Parser
                 }
             }
 
-            if (!mapDetails.SpritesheetMD.HasValue)
+            if (!mapDetails.TilesetMD.HasValue)
                 throw new Exception("The [Tileset] section must be included in the file");
             if (!mapDetails.MapMD.HasValue)
                 throw new Exception("The [MapMetaData] section must be included in the file");
@@ -129,7 +129,7 @@ namespace Capstone_Project.MapStuff.Parser
             if (!(columns.HasValue && rows.HasValue) && !tileSize.HasValue)
                 throw new Exception("Both Tileset's (Columns, Rows) and TileSize cannot be null");
 
-            md.SpritesheetMD = new SpritesheetMetaData()
+            md.TilesetMD = new TilesetMetaData()
             {
                 Name = name,
                 Bounds = tileSize.HasValue ? null : (columns.Value, rows.Value),        // if tileSize is null, then columns and rows must both have values (as checked by the above if statement)
