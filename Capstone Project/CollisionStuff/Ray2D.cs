@@ -4,7 +4,7 @@ using System;
 
 namespace Capstone_Project.CollisionStuff
 {
-    public struct Ray2D
+    public readonly struct Ray2D
     {
         public readonly Vector2 Start;
         public readonly Vector2 Direction;

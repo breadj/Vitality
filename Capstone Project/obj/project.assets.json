@@ -108,11 +108,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Capstone Project.csproj",
+      "projectUniqueName": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Capstone Project.csproj",
       "projectName": "Capstone Project",
-      "projectPath": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Capstone Project.csproj",
+      "projectPath": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Capstone Project.csproj",
       "packagesPath": "C:\\Users\\asus\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\obj\\",
+      "outputPath": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -175,7 +175,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303\\RuntimeIdentifierGraph.json"
       }
     }
   }

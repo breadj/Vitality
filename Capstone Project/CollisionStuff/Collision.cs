@@ -208,7 +208,7 @@ namespace Capstone_Project.CollisionStuff
             return false;
         }
 
-        #endregion
+        #endregion Proper Collision Detection
 
         #region AABB Collision
 

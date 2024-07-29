@@ -61,7 +61,7 @@ namespace Capstone_Project.Fundamentals
         private static List<Point> AStar(Array2D<bool> tileMap, Point start, Point target)
         {
             var open = new PriorityQueue<Node, float>();
-            var closed = new List<Node>();
+            var closed = new HashSet<Node>();
 
             var startNode = new Node(start, null, 0, H(start, target));
             open.Enqueue(startNode, startNode.F);
@@ -81,11 +81,11 @@ namespace Capstone_Project.Fundamentals
                 var adjacentNodes = GetAdjacentPoints(tileMap, cur.Pos).Select(p => new Node(p, cur, cur.G + 1, H(p, target)));
                 foreach (var adj in adjacentNodes)
                 {
-                    Node actual = closed.Find(n => n.Pos == adj.Pos);
-                    if (actual == null)
+                    if (!closed.Contains(adj))
                     {
                         // if adj is not in open, or adj has a lower F than the one in open
-                        if ((actual = open.UnorderedItems.FirstOrDefault(n => n.Element.Pos == adj.Pos, (null, 0)).Element) == null || actual.F > adj.F)
+                        Node actual = open.UnorderedItems.FirstOrDefault(n => n.Element.Pos == adj.Pos, (null, 0)).Element;
+                        if (actual == null || actual.F > adj.F)
                         {
                             open.Enqueue(adj, adj.F);
                         }
