@@ -1,37 +1,45 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\",
+  "WorkspaceRootPath": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\game1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:game1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\collisionstuff\\collision.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive\\university of essex stuff\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\collisionstuff\\collision.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:collisionstuff\\collision.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\collisionstuff\\collisionshapes\\cpolygon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:collisionstuff\\collisionshapes\\cpolygon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive\\university of essex stuff\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\globals\\utility.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:globals\\utility.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\collisionstuff\\collisionshapes\\crectangle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:collisionstuff\\collisionshapes\\crectangle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive\\university of essex stuff\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\collisionstuff\\collisiondetails.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:collisionstuff\\collisiondetails.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\collisionstuff\\collisionshapes\\ccircle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:collisionstuff\\collisionshapes\\ccircle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\collisionstuff\\collisionshapes\\cshape.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive\\university of essex stuff\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\collisionstuff\\collisionshapes\\cshape.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:collisionstuff\\collisionshapes\\cshape.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\fundamentals\\pathfinding.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive\\university of essex stuff\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\collisionstuff\\collisionshapes\\ccircle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:collisionstuff\\collisionshapes\\ccircle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive\\university of essex stuff\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\game1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:game1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive\\university of essex stuff\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\collisionstuff\\collisionshapes\\cpolygon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:collisionstuff\\collisionshapes\\cpolygon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive\\university of essex stuff\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\collisionstuff\\collisionshapes\\crectangle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:collisionstuff\\collisionshapes\\crectangle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive\\university of essex stuff\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\fundamentals\\pathfinding.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:fundamentals\\pathfinding.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive - university of essex\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\gameobjects\\entities\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|c:\\users\\asus\\onedrive\\university of essex stuff\\year 3\\ce301 - capstone project\\23-24_ce301_darby_joseph_r_p\\capstone project\\gameobjects\\entities\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E0031575-C799-4549-A18D-7CF81312144F}|Capstone Project.csproj|solutionrelative:gameobjects\\entities\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -42,17 +50,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 268,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 5,
               "Title": "Game1.cs",
-              "DocumentMoniker": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Game1.cs",
+              "DocumentMoniker": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Game1.cs",
               "RelativeDocumentMoniker": "Game1.cs",
-              "ToolTip": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Game1.cs",
+              "ToolTip": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Game1.cs",
               "RelativeToolTip": "Game1.cs",
-              "ViewState": "AQIAADEAAAAAAAAAAAAgwDwAAAArAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACABAAAeAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-02-20T22:23:27.797Z",
               "IsPinned": true,
@@ -61,66 +69,27 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Collision.cs",
-              "DocumentMoniker": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\Collision.cs",
-              "RelativeDocumentMoniker": "CollisionStuff\\Collision.cs",
-              "ToolTip": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\Collision.cs",
-              "RelativeToolTip": "CollisionStuff\\Collision.cs",
-              "ViewState": "AQIAAHMBAAAAAAAAAAAIwH0AAAAAAAAA",
+              "Title": "Utility.cs",
+              "DocumentMoniker": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Globals\\Utility.cs",
+              "RelativeDocumentMoniker": "Globals\\Utility.cs",
+              "ToolTip": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Globals\\Utility.cs",
+              "RelativeToolTip": "Globals\\Utility.cs",
+              "ViewState": "AQIAAC4AAAAAAAAAAAAIwAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-09T13:27:43.755Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "CRectangle.cs",
-              "DocumentMoniker": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\CollisionShapes\\CRectangle.cs",
-              "RelativeDocumentMoniker": "CollisionStuff\\CollisionShapes\\CRectangle.cs",
-              "ToolTip": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\CollisionShapes\\CRectangle.cs",
-              "RelativeToolTip": "CollisionStuff\\CollisionShapes\\CRectangle.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-09T13:27:31.984Z",
+              "WhenOpened": "2024-08-04T21:03:07.509Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "CPolygon.cs",
-              "DocumentMoniker": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\CollisionShapes\\CPolygon.cs",
-              "RelativeDocumentMoniker": "CollisionStuff\\CollisionShapes\\CPolygon.cs",
-              "ToolTip": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\CollisionShapes\\CPolygon.cs",
-              "RelativeToolTip": "CollisionStuff\\CollisionShapes\\CPolygon.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Title": "CollisionDetails.cs",
+              "DocumentMoniker": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\CollisionDetails.cs",
+              "RelativeDocumentMoniker": "CollisionStuff\\CollisionDetails.cs",
+              "ToolTip": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\CollisionDetails.cs",
+              "RelativeToolTip": "CollisionStuff\\CollisionDetails.cs",
+              "ViewState": "AQIAAAoAAAAAAAAAAAAgwAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-09T13:27:31.282Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "CCircle.cs",
-              "DocumentMoniker": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\CollisionShapes\\CCircle.cs",
-              "RelativeDocumentMoniker": "CollisionStuff\\CollisionShapes\\CCircle.cs",
-              "ToolTip": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\CollisionShapes\\CCircle.cs",
-              "RelativeToolTip": "CollisionStuff\\CollisionShapes\\CCircle.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-09T13:27:30.326Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "CShape.cs",
-              "DocumentMoniker": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\CollisionShapes\\CShape.cs",
-              "RelativeDocumentMoniker": "CollisionStuff\\CollisionShapes\\CShape.cs",
-              "ToolTip": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\CollisionShapes\\CShape.cs",
-              "RelativeToolTip": "CollisionStuff\\CollisionShapes\\CShape.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-09T13:27:27.121Z",
+              "WhenOpened": "2024-08-04T22:24:01.221Z",
               "EditorCaption": ""
             },
             {
@@ -145,24 +114,86 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Pathfinding.cs",
-              "DocumentMoniker": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Fundamentals\\Pathfinding.cs",
-              "RelativeDocumentMoniker": "Fundamentals\\Pathfinding.cs",
-              "ToolTip": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Fundamentals\\Pathfinding.cs",
-              "RelativeToolTip": "Fundamentals\\Pathfinding.cs",
-              "ViewState": "AQIAAAsAAAAAAAAAAAAowFcAAAA/AAAA",
+              "DocumentIndex": 0,
+              "Title": "Collision.cs",
+              "DocumentMoniker": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\Collision.cs",
+              "RelativeDocumentMoniker": "CollisionStuff\\Collision.cs",
+              "ToolTip": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\Collision.cs",
+              "RelativeToolTip": "CollisionStuff\\Collision.cs",
+              "ViewState": "AQIAABgBAAAAAAAAAAAwwNQAAAAIAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-26T09:19:31.662Z",
+              "WhenOpened": "2024-05-09T13:27:43.755Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
+              "Title": "CRectangle.cs",
+              "DocumentMoniker": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\CollisionShapes\\CRectangle.cs",
+              "RelativeDocumentMoniker": "CollisionStuff\\CollisionShapes\\CRectangle.cs",
+              "ToolTip": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\CollisionShapes\\CRectangle.cs",
+              "RelativeToolTip": "CollisionStuff\\CollisionShapes\\CRectangle.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-09T13:27:31.984Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "CPolygon.cs",
+              "DocumentMoniker": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\CollisionShapes\\CPolygon.cs",
+              "RelativeDocumentMoniker": "CollisionStuff\\CollisionShapes\\CPolygon.cs",
+              "ToolTip": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\CollisionShapes\\CPolygon.cs",
+              "RelativeToolTip": "CollisionStuff\\CollisionShapes\\CPolygon.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-09T13:27:31.282Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "CCircle.cs",
+              "DocumentMoniker": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\CollisionShapes\\CCircle.cs",
+              "RelativeDocumentMoniker": "CollisionStuff\\CollisionShapes\\CCircle.cs",
+              "ToolTip": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\CollisionShapes\\CCircle.cs",
+              "RelativeToolTip": "CollisionStuff\\CollisionShapes\\CCircle.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABkAAAAmAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-09T13:27:30.326Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "CShape.cs",
+              "DocumentMoniker": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\CollisionShapes\\CShape.cs",
+              "RelativeDocumentMoniker": "CollisionStuff\\CollisionShapes\\CShape.cs",
+              "ToolTip": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\CollisionStuff\\CollisionShapes\\CShape.cs",
+              "RelativeToolTip": "CollisionStuff\\CollisionShapes\\CShape.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-09T13:27:27.121Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Pathfinding.cs",
+              "DocumentMoniker": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Fundamentals\\Pathfinding.cs",
+              "RelativeDocumentMoniker": "Fundamentals\\Pathfinding.cs",
+              "ToolTip": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\Fundamentals\\Pathfinding.cs",
+              "RelativeToolTip": "Fundamentals\\Pathfinding.cs",
+              "ViewState": "AQIAAAsAAAAAAAAAAAAowFcAAAA/AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-26T09:19:31.662Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
               "Title": "Player.cs",
-              "DocumentMoniker": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\GameObjects\\Entities\\Player.cs",
+              "DocumentMoniker": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\GameObjects\\Entities\\Player.cs",
               "RelativeDocumentMoniker": "GameObjects\\Entities\\Player.cs",
-              "ToolTip": "C:\\Users\\asus\\OneDrive - University of Essex\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\GameObjects\\Entities\\Player.cs",
+              "ToolTip": "C:\\Users\\asus\\OneDrive\\University of Essex stuff\\Year 3\\CE301 - Capstone Project\\23-24_CE301_darby_joseph_r_p\\Capstone Project\\GameObjects\\Entities\\Player.cs",
               "RelativeToolTip": "GameObjects\\Entities\\Player.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAAfAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
